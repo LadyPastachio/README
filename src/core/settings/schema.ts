@@ -27,15 +27,49 @@ export const accessibilitySchema = z.object({
   highContrast: z.boolean().catch(false),
 });
 
+export const learningSchema = z.object({
+  /** How many activities Home suggests per day. Never changes what counts as mastery. */
+  dailyLoad: z.number().int().min(1).max(3).catch(2),
+  /** When the hint button becomes available in a lesson. */
+  hintTiming: z.enum(['anytime', 'after-attempt']).catch('anytime'),
+  /** When "Show solution" appears. Using it is recorded and means the skill needs another challenge. */
+  solutionReveal: z.enum(['after-1', 'after-2', 'never']).catch('after-2'),
+  /** Read the explanation first, or try a question before reading. */
+  lessonOrder: z.enum(['explain-first', 'try-first']).catch('explain-first'),
+  /** Ask "how sure are you?" before checking an answer. */
+  askConfidence: z.boolean().catch(true),
+});
+
+export const EXPLANATION_FORMATS = ['diagrams', 'worked-examples', 'step-by-step', 'analogies', 'experiments', 'short-text'] as const;
+export const FORMAT_LABELS: Record<(typeof EXPLANATION_FORMATS)[number], string> = {
+  diagrams: 'Diagrams',
+  'worked-examples': 'Worked examples',
+  'step-by-step': 'Step-by-step walkthroughs',
+  analogies: 'Real-world analogies',
+  experiments: 'Hands-on experiments',
+  'short-text': 'Short written explanations',
+};
+
+/** What the learner says about how they learn. Observed evidence is calculated separately. */
+export const profileSchema = z.object({
+  preferredFormats: z.array(z.enum(EXPLANATION_FORMATS)).catch([]),
+  confusingTopics: z.string().max(1000).catch(''),
+  notes: z.string().max(1000).catch(''),
+});
+
 export const settingsSchema = z.object({
   version: z.literal(1).catch(1),
   appearance: appearanceSchema.catch(appearanceSchema.parse({})),
   accessibility: accessibilitySchema.catch(accessibilitySchema.parse({})),
+  learning: learningSchema.catch(learningSchema.parse({})),
+  profile: profileSchema.catch(profileSchema.parse({})),
 });
 
 export type Settings = z.infer<typeof settingsSchema>;
 export type Appearance = Settings['appearance'];
 export type Accessibility = Settings['accessibility'];
+export type LearningPrefs = Settings['learning'];
+export type Profile = Settings['profile'];
 
 export const DEFAULT_SETTINGS: Settings = settingsSchema.parse({});
 
@@ -46,6 +80,8 @@ export function normalizeSettings(input: unknown): Settings {
     ...base,
     appearance: (base as Record<string, unknown>).appearance ?? {},
     accessibility: (base as Record<string, unknown>).accessibility ?? {},
+    learning: (base as Record<string, unknown>).learning ?? {},
+    profile: (base as Record<string, unknown>).profile ?? {},
   };
   return settingsSchema.parse(withSections);
 }

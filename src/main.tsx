@@ -11,6 +11,7 @@ import { createAppRouter } from './app/router';
 import { SettingsProvider } from './core/settings/SettingsContext';
 import { createLocalStorageAdapter } from './core/persistence/storage';
 import { ToastProvider } from './app/Toast';
+import { LearningProvider } from './core/learning/LearningContext';
 
 const storage = createLocalStorageAdapter();
 const router = createAppRouter();
@@ -18,9 +19,11 @@ const router = createAppRouter();
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <SettingsProvider storage={storage}>
-      <ToastProvider>
-        <RouterProvider router={router} />
-      </ToastProvider>
+      <LearningProvider storage={storage}>
+        <ToastProvider>
+          <RouterProvider router={router} />
+        </ToastProvider>
+      </LearningProvider>
     </SettingsProvider>
   </StrictMode>,
 );

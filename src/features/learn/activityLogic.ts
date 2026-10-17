@@ -29,3 +29,18 @@ export function moveItem<T>(items: readonly T[], from: number, to: number): T[] 
 export function countInPlace<T>(current: readonly T[], correct: readonly T[]): number {
   return current.reduce((n, x, i) => n + (x === correct[i] ? 1 : 0), 0);
 }
+
+/** Checks a fill-the-gap answer. Spacing is ignored; case matters unless the activity says otherwise. */
+export function checkFill(
+  activity: { accepted: string[]; caseSensitive: boolean; commonWrong: { answer: string; why: string; misconception?: string }[] },
+  input: string,
+): { correct: boolean; why: string | null; misconception: string | null } {
+  const norm = (s: string) => {
+    const t = s.replace(/\s+/g, '');
+    return activity.caseSensitive ? t : t.toLowerCase();
+  };
+  const given = norm(input);
+  if (activity.accepted.some((a) => norm(a) === given)) return { correct: true, why: null, misconception: null };
+  const known = activity.commonWrong.find((w) => norm(w.answer) === given);
+  return { correct: false, why: known?.why ?? null, misconception: known?.misconception ?? null };
+}

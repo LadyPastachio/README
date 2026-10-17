@@ -5,6 +5,7 @@ import { LearnPage } from '@/features/learn/LearnPage';
 import { PathPage } from '@/features/learn/PathPage';
 import { LessonPage } from '@/features/learn/LessonPage';
 import { GlossaryPage } from '@/features/learn/GlossaryPage';
+import { ReviewPage } from '@/features/learn/ReviewPage';
 import { ProjectsPage } from '@/features/projects/ProjectsPage';
 import { CodeLabPage } from '@/features/codelab/CodeLabPage';
 import { AIWorkshopPage } from '@/features/ai-workshop/AIWorkshopPage';
@@ -22,6 +23,7 @@ export const routes: RouteObject[] = [
       { path: '/learn/path/:pathId', element: <PathPage /> },
       { path: '/learn/lesson/:lessonId', element: <LessonPage /> },
       { path: '/learn/glossary', element: <GlossaryPage /> },
+      { path: '/review', element: <ReviewPage /> },
       { path: '/projects', element: <ProjectsPage /> },
       { path: '/lab', element: <CodeLabPage /> },
       { path: '/ai', element: <AIWorkshopPage /> },

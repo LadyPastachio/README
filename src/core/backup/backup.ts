@@ -2,6 +2,7 @@ import { z } from 'zod';
 import type { StorageAdapter } from '../persistence/storage';
 import { SETTINGS_KEY } from '../settings/store';
 import { normalizeSettings } from '../settings/schema';
+import { RECORDS_KEY, normalizeRecords } from '../learning/records';
 
 /**
  * Backup files: a portable copy of everything the app saves locally.
@@ -16,6 +17,7 @@ export const BACKUP_VERSION = 1;
 /** Keys we know how to back up, with a validator for each. Grows as features are added. */
 const KNOWN_KEYS: Record<string, (value: unknown) => unknown> = {
   [SETTINGS_KEY]: normalizeSettings,
+  [RECORDS_KEY]: (value) => ({ version: 1, events: normalizeRecords(value) }),
 };
 
 const backupFileSchema = z.object({

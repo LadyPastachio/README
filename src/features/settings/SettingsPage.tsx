@@ -3,7 +3,11 @@ import { useScrollToHash } from '@/app/useScrollToHash';
 import { Sun, Moon, Monitor, Download, Upload, Trash2, Copy } from 'lucide-react';
 import { PageHeader, Panel, Segmented, Switch, Range, Button, Notice, Planned, Dialog } from '@/design/components';
 import { useSettings } from '@/core/settings/SettingsContext';
-import { ACCENTS } from '@/core/settings/schema';
+import { ACCENTS, EXPLANATION_FORMATS, FORMAT_LABELS } from '@/core/settings/schema';
+import { useLearning } from '@/core/learning/LearningContext';
+import { RECORDS_KEY } from '@/core/learning/records';
+import { observe } from '@/core/learning/observations';
+import { LESSONS } from '@/content/lessons';
 import { createBackup, planImport, applyImport, clearAllLocalData, type ImportPlan } from '@/core/backup/backup';
 import { SETTINGS_KEY } from '@/core/settings/store';
 import { useToast } from '@/app/Toast';
@@ -14,6 +18,7 @@ const SECTIONS = [
   { id: 'appearance', label: 'Appearance' },
   { id: 'accessibility', label: 'Accessibility' },
   { id: 'learning', label: 'Learning' },
+  { id: 'profile', label: 'Learning profile' },
   { id: 'ai', label: 'AI' },
   { id: 'data', label: 'Privacy and data' },
   { id: 'about', label: 'About' },
@@ -21,10 +26,15 @@ const SECTIONS = [
 
 const ACCENT_LABELS: Record<(typeof ACCENTS)[number], string> = { teal: 'Teal', clay: 'Clay', indigo: 'Indigo', moss: 'Moss', plum: 'Plum' };
 const ACCENT_SWATCH: Record<(typeof ACCENTS)[number], string> = { teal: '#1d6b64', clay: '#a9492f', indigo: '#4650a8', moss: '#44702f', plum: '#84417a' };
-const KEY_NAMES: Record<string, string> = { [SETTINGS_KEY]: 'Settings' };
+const KEY_NAMES: Record<string, string> = { [SETTINGS_KEY]: 'Settings and learning profile', [RECORDS_KEY]: 'Learning records (answers, hints, reviews)' };
 
 export function SettingsPage() {
-  const { settings, saveState, updateAppearance, updateAccessibility, resetToDefaults, reload, storage } = useSettings();
+  const { settings, saveState, updateAppearance, updateAccessibility, updateLearning, updateProfile, resetProfile, resetToDefaults, reload, storage } = useSettings();
+  const learning = useLearning();
+  const l = settings.learning;
+  const pr = settings.profile;
+  const obs = observe(learning.events, LESSONS);
+  const [confirmProfileReset, setConfirmProfileReset] = useState(false);
   const toast = useToast();
   const a = settings.appearance;
   const x = settings.accessibility;
@@ -54,6 +64,7 @@ export function SettingsPage() {
   const onConfirmImport = () => {
     if (plan?.ok && applyImport(plan, storage)) {
       reload();
+      learning.reload();
       toast('Backup restored');
     } else toast('Restore failed: the browser refused to save. Nothing was changed.');
     setPlan(null);
@@ -61,6 +72,7 @@ export function SettingsPage() {
   const onReset = () => {
     clearAllLocalData(storage);
     reload();
+    learning.reload();
     setConfirmReset(false);
     toast('Local data deleted. Settings are back to defaults.');
   };
@@ -137,15 +149,90 @@ export function SettingsPage() {
           </Panel>
 
           <Panel title="Learning" id="learning">
-            <Planned phase={2}>
-              Daily learning load, review reminders, default hint level and when solutions can be revealed. Changing your load will
-              never lower what counts as mastery.
-            </Planned>
-            <div style={{ marginTop: 'var(--space-3)' }}>
-              <Planned phase={5}>
-                Your personalized learning profile: how you prefer explanations, what seems to help you retain things, and the
-                evidence behind it. You'll be able to view, edit, reset and export it.
-              </Planned>
+            <Row label="Daily learning load" hint="How many activities Home suggests each day. It never changes what counts as mastery.">
+              <Segmented label="Daily learning load" value={String(l.dailyLoad) as '1' | '2' | '3'} onChange={(v) => updateLearning({ dailyLoad: Number(v) })} options={[{ value: '1', label: '1' }, { value: '2', label: '2' }, { value: '3', label: '3' }]} />
+            </Row>
+            <Row label="Lesson order" hint="Try a question before the explanation, or read first. Your records will show which works better for you.">
+              <Segmented label="Lesson order" value={l.lessonOrder} onChange={(lessonOrder) => updateLearning({ lessonOrder })} options={[{ value: 'explain-first', label: 'Explain first' }, { value: 'try-first', label: 'Try first' }]} />
+            </Row>
+            <Row label="Hints" hint="When the hint button becomes available in a lesson.">
+              <Segmented label="Hints" value={l.hintTiming} onChange={(hintTiming) => updateLearning({ hintTiming })} options={[{ value: 'anytime', label: 'Any time' }, { value: 'after-attempt', label: 'After my first try' }]} />
+            </Row>
+            <Row label="Show solution" hint="When the “Show solution” button appears. Using it is recorded and marks the skill as needing another challenge.">
+              <Segmented label="Show solution" value={l.solutionReveal} onChange={(solutionReveal) => updateLearning({ solutionReveal })} options={[{ value: 'after-1', label: 'After 1 miss' }, { value: 'after-2', label: 'After 2 misses' }, { value: 'never', label: 'Never' }]} />
+            </Row>
+            <Row label="Ask how sure I am" hint="A quick confidence check before each answer. Being sure and wrong often points to a misunderstanding worth fixing.">
+              <Switch label="Ask how sure I am" checked={l.askConfidence} onChange={(askConfidence) => updateLearning({ askConfidence })} />
+            </Row>
+          </Panel>
+
+          <Panel title="Learning profile" id="profile">
+            <p className="muted small profile-intro">
+              What you tell us is kept separate from what your activity shows. Neither is a fixed “learning style”: enjoying a format isn't always the same as learning best from it, so both are worth checking now and then.
+            </p>
+            <div className="profile-cols">
+              <div className="profile-col">
+                <h3 className="profile-h">What you say helps</h3>
+                <fieldset className="format-picks">
+                  <legend className="field__label">Explanations I find helpful</legend>
+                  {EXPLANATION_FORMATS.map((f) => (
+                    <label key={f} className="check">
+                      <input type="checkbox" checked={pr.preferredFormats.includes(f)} onChange={() => updateProfile({ preferredFormats: pr.preferredFormats.includes(f) ? pr.preferredFormats.filter((x) => x !== f) : [...pr.preferredFormats, f] })} />
+                      <span>{FORMAT_LABELS[f]}</span>
+                    </label>
+                  ))}
+                </fieldset>
+                <div className="field">
+                  <label htmlFor="confusing" className="field__label">Topics I find confusing</label>
+                  <textarea id="confusing" className="input textarea textarea--sm" maxLength={1000} value={pr.confusingTopics} onChange={(e) => updateProfile({ confusingTopics: e.target.value })} placeholder="e.g. when to use return, or what JSON.parse does" />
+                </div>
+                <div className="field">
+                  <label htmlFor="notes" className="field__label">Anything else about how you learn</label>
+                  <textarea id="notes" className="input textarea textarea--sm" maxLength={1000} value={pr.notes} onChange={(e) => updateProfile({ notes: e.target.value })} placeholder="e.g. I like to see a working example before I try" />
+                </div>
+                <p className="subtle small">Included in your Learning Evidence and assessor prompts today. Phase 5 uses it to pick alternative explanations.</p>
+              </div>
+              <div className="profile-col profile-col--observed">
+                <h3 className="profile-h">What your activity shows</h3>
+                {obs.answered === 0 ? (
+                  <p className="muted small">Nothing yet. This fills in as you answer questions.</p>
+                ) : (
+                  <>
+                    <dl className="obs-list">
+                      <div><dt>Answers recorded</dt><dd className="tabular">{obs.answered}</dd></div>
+                      <div><dt>Right first time</dt><dd className="tabular">{obs.firstTryRate}%</dd></div>
+                      <div><dt>With a hint open</dt><dd className="tabular">{obs.hintRate}%</dd></div>
+                      <div><dt>Solutions shown</dt><dd className="tabular">{obs.revealCount}</dd></div>
+                      <div><dt>Sure, but wrong</dt><dd className="tabular">{obs.confidentlyWrong}</dd></div>
+                    </dl>
+                    {obs.byFormat.length > 0 && (
+                      <ul className="format-bars" aria-label="First-try accuracy by activity type">
+                        {obs.byFormat.map((f) => (
+                          <li key={f.label}>
+                            <span className="format-bars__label">{f.label} <span className="subtle tabular">({f.attempts})</span></span>
+                            <span className="format-bars__track"><span style={{ width: `${f.firstTryRate}%` }} /></span>
+                            <span className="tabular small">{f.firstTryRate}%</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {obs.statements.length > 0 ? (
+                      <ul className="obs-statements">{obs.statements.map((t) => <li key={t}>{t}</li>)}</ul>
+                    ) : (
+                      <p className="subtle small">Patterns are only suggested once there are at least 8 answers and a clear difference. Does this match your experience? You can note it on the left.</p>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+            <div className="btn-row profile-actions">
+              <Button size="sm" onClick={async () => toast((await copyText(JSON.stringify({ stated: pr, observed: obs, exportedAt: new Date().toISOString() }, null, 2))) ? 'Profile copied' : 'Copy was blocked by the browser')}>
+                <Copy size={14} aria-hidden="true" /> Copy profile
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => toast(downloadText(`learning-profile-${dateStamp()}.json`, JSON.stringify({ stated: pr, observed: obs, exportedAt: new Date().toISOString() }, null, 2)) ? 'Profile downloaded' : 'Download was blocked. Use Copy instead.')}>
+                <Download size={14} aria-hidden="true" /> Download
+              </Button>
+              <Button size="sm" variant="ghost" className="btn--danger-ghost" onClick={() => setConfirmProfileReset(true)}>Reset what I said</Button>
             </div>
           </Panel>
 
@@ -161,7 +248,7 @@ export function SettingsPage() {
 
           <Panel title="Privacy and data" id="data">
             <div className="data-facts">
-              <div><span className="eyebrow">Stored on this device</span><p>Your settings. Nothing else is saved yet.</p></div>
+              <div><span className="eyebrow">Stored on this device</span><p>Settings, your learning profile, and learning records: answers, explanations, hints and reviews.</p></div>
               <div><span className="eyebrow">Sent to a server</span><p>Nothing. There is no server or account yet.</p></div>
               <div><span className="eyebrow">Shared with circles</span><p>Nothing. Circles don't exist yet.</p></div>
             </div>
@@ -193,8 +280,8 @@ export function SettingsPage() {
           <Panel title="About" id="about">
             <dl className="about-list">
               <div><dt>Version</dt><dd className="tabular">{__APP_VERSION__}</dd></div>
-              <div><dt>Release</dt><dd>Phase 1: design system and navigation</dd></div>
-              <div><dt>Built so far</dt><dd>Navigation, search, glossary, a sample lesson, these settings, backup and restore</dd></div>
+              <div><dt>Release</dt><dd>Phase 2: learning engine</dd></div>
+              <div><dt>Built so far</dt><dd>10 lessons, saved progress, mastery from evidence, spaced review, Learning Evidence export, learning profile, settings, backup and restore</dd></div>
             </dl>
             <div className="data-action" style={{ marginTop: 'var(--space-4)' }}>
               <div><strong>Diagnostic report</strong><p className="subtle">For troubleshooting. Contains app version, settings and browser details. Never your answers, notes or keys.</p></div>
@@ -236,7 +323,17 @@ export function SettingsPage() {
         labelledBy="reset-title"
         actions={<><Button onClick={() => setConfirmReset(false)}>Cancel</Button><Button variant="danger" onClick={onReset}>Delete everything</Button></>}
       >
-        <p className="muted">This removes everything Atelier Academy saved in this browser. It can't be undone. Download a backup first if you might want it back.</p>
+        <p className="muted">This removes everything Atelier Academy saved in this browser, including all your learning records. It can't be undone. Download a backup first if you might want it back.</p>
+      </Dialog>
+
+      <Dialog
+        open={confirmProfileReset}
+        onClose={() => setConfirmProfileReset(false)}
+        title="Reset what you said about how you learn?"
+        labelledBy="profile-reset-title"
+        actions={<><Button onClick={() => setConfirmProfileReset(false)}>Cancel</Button><Button variant="danger" onClick={() => { resetProfile(); setConfirmProfileReset(false); toast('Profile reset'); }}>Reset</Button></>}
+      >
+        <p className="muted">This clears your preferred formats, confusing topics and notes. Your learning records and what they show are not affected.</p>
       </Dialog>
     </>
   );

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { PageHeader, Panel, PathTag, Planned } from '@/design/components';
 import { PATHS } from '@/content/paths';
-import { PathGlyph } from '@/features/learn/PathGlyph';
+import { PathArt } from '@/design/illustrations/PathArt';
 
 const KINDS = [
   { name: 'Exercise', text: 'A small, guided task inside a lesson. It checks one idea.' },
@@ -30,8 +30,8 @@ export function ProjectsPage() {
       <div className="project-grid">
         {PATHS.map((p) => (
           <Panel key={p.id} as="article" className="project-card">
+            <PathArt path={p.id} className="project-card__art" />
             <div className="project-card__head">
-              <PathGlyph path={p.id} />
               <div>
                 <h2 className="panel__title">{p.name}</h2>
                 <PathTag path={p.id} />

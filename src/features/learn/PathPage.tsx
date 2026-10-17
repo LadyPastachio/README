@@ -1,27 +1,28 @@
 import { Link, useParams } from 'react-router-dom';
-import { PageHeader, Panel, PathTag, Planned, ButtonLink } from '@/design/components';
+import { PageHeader, Panel, PathTag, Planned } from '@/design/components';
+import { PathArt } from '@/design/illustrations/PathArt';
 import { getPath } from '@/content/paths';
 import { getSkill } from '@/content/skills';
-import { howTheWebWorks } from '@/content/lessons/how-the-web-works';
+import { LESSONS } from '@/content/lessons';
+import { useLearning } from '@/core/learning/LearningContext';
+import { lessonResult, skillResult } from '@/core/learning/mastery';
 import { NotFoundPage } from '@/app/NotFoundPage';
-import { PathGlyph } from './PathGlyph';
+import { LessonCard } from './LessonCard';
 
 export function PathPage() {
   const { pathId = '' } = useParams();
+  const { events } = useLearning();
   const path = getPath(pathId);
   if (!path) return <NotFoundPage />;
+  const lessons = LESSONS.filter((l) => l.paths.includes(path.id));
+  const results = new Map(LESSONS.map((l) => [l.id, lessonResult(events, l)]));
 
   return (
     <>
-      <PageHeader
-        breadcrumbs={[{ label: 'Learn', to: '/learn' }, { label: path.name }]}
-        title={path.name}
-        description={path.pitch}
-      />
-
-      <div className="path-hero" data-path={path.id}>
-        <PathGlyph path={path.id} size={56} />
+      <div className="path-hero">
+        <PathArt path={path.id} className="path-hero__art" />
         <div className="path-hero__text">
+          <PageHeader breadcrumbs={[{ label: 'Learn', to: '/learn' }, { label: path.name }]} title={path.name} description={path.pitch} />
           <PathTag path={path.id} />
           <p><strong>You'll build:</strong> {path.project}.</p>
           <p className="muted"><strong>AI feature:</strong> {path.aiFeature}</p>
@@ -35,10 +36,17 @@ export function PathPage() {
           <div><span className="eyebrow">Build with understanding</span><strong className="tabular">{path.timeline.capable}</strong><span className="subtle">More capable development</span></div>
           <div><span className="eyebrow">Advanced exploration</span><strong className="tabular">{path.timeline.advanced}</strong><span className="subtle">Production-quality depth</span></div>
         </div>
-        <p className="subtle footnote">At about 5–7 hours a week. You move on when you've demonstrated a skill, not when time passes.</p>
+        <p className="subtle footnote">At about 5–7 hours a week. You move on when you've shown you can do something, not when time passes.</p>
       </section>
 
-      <div className="home-grid">
+      <section className="section" aria-labelledby="lessons-h">
+        <div className="section__head"><h2 id="lessons-h">Foundation lessons for this path</h2><p className="muted">{lessons.length} lessons. Anything you finish here also counts toward the other paths.</p></div>
+        <div className="lesson-grid">
+          {lessons.map((l) => <LessonCard key={l.id} lesson={l} result={results.get(l.id)!} ready={l.prerequisites.every((p) => results.get(p)?.complete)} />)}
+        </div>
+      </section>
+
+      <section className="section">
         <Panel title="Milestones">
           <ol className="steps">
             {path.milestones.map((m) => (
@@ -48,23 +56,25 @@ export function PathPage() {
                   <div className="milestone__head"><h3>{m.title}</h3><span className="chip tabular">{m.estimate}</span></div>
                   <p className="muted">{m.deliverable}</p>
                   <ul className="skill-chips">
-                    {m.skills.map((id) => (
-                      <li key={id}><Link className="chip chip--link" to={`/progress#skill-${id}`}>{getSkill(id)?.name ?? id}</Link></li>
-                    ))}
+                    {m.skills.map((id) => {
+                      const st = skillResult(events, id, LESSONS).status;
+                      return (
+                        <li key={id}>
+                          <Link className="chip chip--link chip--status" data-status={st} to={`/progress#skill-${id}`} title={st === 'none' ? 'Not introduced' : undefined}>
+                            <span className="chip__dot" aria-hidden="true" />
+                            {getSkill(id)?.name ?? id}
+                          </Link>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               </li>
             ))}
           </ol>
+          <Planned phase={4}>Path-specific lessons, milestone tracking and project workspaces.</Planned>
         </Panel>
-        <Panel title="Where to begin">
-          <div className="stack">
-            <p className="muted">Every path starts with the same first lesson. Path-specific lessons come right after it.</p>
-            <ButtonLink to={`/learn/lesson/${howTheWebWorks.id}`} variant="primary">Start: {howTheWebWorks.title}</ButtonLink>
-            <Planned phase={4}>Path-specific lessons, milestone tracking and switching paths without repeating mastered skills.</Planned>
-          </div>
-        </Panel>
-      </div>
+      </section>
     </>
   );
 }

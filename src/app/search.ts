@@ -2,7 +2,7 @@ import { NAV_ITEMS } from './navigation';
 import { PATHS } from '@/content/paths';
 import { SKILLS } from '@/content/skills';
 import { GLOSSARY } from '@/content/glossary';
-import { LESSONS } from '@/content/lessons/how-the-web-works';
+import { LESSONS } from '@/content/lessons';
 
 export interface SearchResult {
   kind: 'Page' | 'Path' | 'Lesson' | 'Skill' | 'Glossary';

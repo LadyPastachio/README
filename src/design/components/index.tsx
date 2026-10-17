@@ -129,9 +129,10 @@ export function Notice({ kind = 'info', children }: { kind?: keyof typeof NOTICE
 /** Marks something that is designed but not built yet. Never use it for finished features. */
 export function Planned({ phase, children }: { phase: number; children: ReactNode }) {
   return (
-    <Notice kind="planned">
-      <strong>Planned for Phase {phase}.</strong> {children}
-    </Notice>
+    <p className="planned">
+      <span className="planned__badge"><Hammer size={12} aria-hidden="true" /> Phase {phase}</span>
+      <span className="planned__text"><span className="visually-hidden">Planned for Phase {phase}. </span>{children}</span>
+    </p>
   );
 }
 
@@ -207,3 +208,6 @@ export function Dialog({
     </dialog>
   );
 }
+
+export { CodeBlock } from './CodeBlock';
+export { ActivityBadge, ACTIVITY_META, activityType, type ActivityType } from './ActivityBadge';

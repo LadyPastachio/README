@@ -83,3 +83,35 @@ Short records of decisions that shape the project. Each says what was decided, w
 **Why:** Works offline, sends no requests to third parties, and looks the same everywhere.
 
 **Cost to reverse:** Low.
+
+## D10. Mastery is calculated from an event log, not stored
+
+**Decision:** Every answer, solution reveal and explanation is saved as an event (`src/core/learning/records.ts`). Lesson status, skill status, review dates, recommendations and observations are pure functions of that log (`mastery.ts`, `schedule.ts`, `recommend.ts`, `observations.ts`).
+
+**Why:** Every status can be traced back to the attempts behind it, which is what Learning Evidence needs. Changing a rule (for example, how many retries still count as independent) immediately applies to past records with no migration. Pure functions are easy to test: 38 tests cover these rules.
+
+**Rules in short:** first try with no hints → independent (one retry allowed); hints or more retries → practiced with support; solution shown or unsolved → needs another challenge; a spaced review passed at least 2 days later → retained; a missed review → needs another challenge until relearned. The most recent visit to an activity is what counts, so relearning works.
+
+**Cost to reverse:** Medium. The log format is versioned and validated per entry.
+
+## D11. Learning records stay in browser storage for now
+
+**Decision:** Records use the same synchronous storage adapter as settings, capped at 5,000 events (about 2 MB). This updates the note in D4: moving to IndexedDB isn't needed yet.
+
+**Why:** Each event is small, the cap is far above a year of daily use, and staying synchronous keeps the code simpler while you're learning it. Records are re-read before each save so two open tabs don't erase each other's work.
+
+**When to revisit:** When accounts arrive (Phase 8) or the cap gets close. The adapter interface means only the storage layer changes.
+
+## D12. Illustrations are drawn in code
+
+**Decision:** Project and lesson illustrations are SVG components (`src/design/illustrations/`) that use the theme's color tokens. No image files or stock art.
+
+**Why:** They adapt to light, dark and high-contrast themes automatically, stay sharp at any size, weigh almost nothing, and each one shows the concept it illustrates (indexed cells for arrays, a fork for conditions) rather than decorating.
+
+**Cost to reverse:** Low.
+
+## D13. Lessons are validated at load time
+
+**Decision:** Every lesson file is parsed with the Zod schema in `src/content/schema.ts` when the app starts. An invalid lesson throws an error naming the lesson and the problem. The test suite checks the same, plus cross-references (skills, prerequisites, review questions that differ from lesson questions).
+
+**Why:** Content will grow in batches, sometimes drafted with AI help. Mistakes like two correct options, a fill-in with no gap, or a duplicate id should fail loudly before anyone sees a broken lesson.

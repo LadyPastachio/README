@@ -1,7 +1,7 @@
 /**
  * Shapes of curriculum content. Content is plain data, kept apart from the
- * screens that display it (DECISIONS.md, D5). Phase 2 adds runtime
- * validation for these shapes so new lessons can be checked automatically.
+ * screens that display it (DECISIONS.md, D5). Lessons are validated at
+ * runtime by ./schema.ts so new lessons are checked automatically.
  */
 
 export type PathId = 'web' | 'finance' | 'chess' | 'automation';
@@ -45,47 +45,5 @@ export interface GlossaryTerm {
   related?: string[];
 }
 
-/* Lessons ------------------------------------------------------------- */
-
-export interface OrderActivity {
-  kind: 'order';
-  id: string;
-  prompt: string;
-  /** Listed in the correct order; the screen shuffles them. */
-  steps: string[];
-  feedback: { correct: string; incorrect: string };
-}
-
-export interface ChoiceActivity {
-  kind: 'choice';
-  id: string;
-  prompt: string;
-  options: { id: string; text: string; correct: boolean; why: string }[];
-}
-
-export interface ExplainActivity {
-  kind: 'explain';
-  id: string;
-  prompt: string;
-  /** What a good answer mentions. Shown after the learner writes theirs. */
-  lookFor: string[];
-}
-
-export type Activity = OrderActivity | ChoiceActivity | ExplainActivity;
-
-export interface Lesson {
-  id: string;
-  title: string;
-  skill: string;
-  paths: PathId[];
-  minutes: number;
-  objective: string;
-  whyItMatters: string;
-  prerequisites: string[];
-  sections: { heading: string; body: string[] }[];
-  activities: Activity[];
-  misconceptions: { myth: string; reality: string }[];
-  hints: string[];
-  masteryRequirement: string;
-  reviewPlan: string;
-}
+/* Lessons: shapes are defined (and validated) in ./schema.ts */
+export type { Lesson, Activity, OrderActivity, ChoiceActivity, FillActivity, ExplainActivity, GradedActivity } from './schema';

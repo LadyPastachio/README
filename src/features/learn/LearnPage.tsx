@@ -1,13 +1,20 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, BookOpen, Map } from 'lucide-react';
-import { PageHeader, Panel, PathTag, Planned, ButtonLink } from '@/design/components';
+import { ArrowRight, BookOpen, Map as MapIcon } from 'lucide-react';
+import { PageHeader, PathTag, ButtonLink } from '@/design/components';
+import { PathArt } from '@/design/illustrations/PathArt';
 import { PATHS } from '@/content/paths';
-import { LESSONS } from '@/content/lessons/how-the-web-works';
+import { LESSONS } from '@/content/lessons';
 import { SKILLS, AREA_NAMES } from '@/content/skills';
-import { PathGlyph } from './PathGlyph';
+import { useLearning } from '@/core/learning/LearningContext';
+import { lessonResult } from '@/core/learning/mastery';
+import { LessonCard } from './LessonCard';
 
 export function LearnPage() {
+  const { events } = useLearning();
+  const results = new Map(LESSONS.map((l) => [l.id, lessonResult(events, l)]));
+  const done = [...results.values()].filter((r) => r.complete).length;
   const shared = SKILLS.filter((s) => s.paths.length === 4);
+
   return (
     <>
       <PageHeader
@@ -17,56 +24,48 @@ export function LearnPage() {
         actions={<ButtonLink to="/learn/glossary"><BookOpen size={16} aria-hidden="true" /> Glossary</ButtonLink>}
       />
 
+      <section className="section section--first" aria-labelledby="found-h">
+        <div className="section__head section__head--row">
+          <div>
+            <h2 id="found-h">Foundations</h2>
+            <p className="muted">Shared by every path. <span className="tabular">{done} of {LESSONS.length}</span> finished.</p>
+          </div>
+          <Link to="/progress" className="link-quiet"><MapIcon size={15} aria-hidden="true" /> Skill map</Link>
+        </div>
+        <div className="lesson-grid">
+          {LESSONS.map((l) => (
+            <LessonCard key={l.id} lesson={l} result={results.get(l.id)!} ready={l.prerequisites.every((p) => results.get(p)?.complete)} />
+          ))}
+        </div>
+      </section>
+
       <section className="section" aria-labelledby="paths-h">
-        <div className="section__head"><h2 id="paths-h">Project paths</h2></div>
-        <div className="path-list">
+        <div className="section__head"><h2 id="paths-h">Project paths</h2><p className="muted">Path-specific lessons arrive in Phase 4. The foundations above are where every path starts.</p></div>
+        <div className="path-showcase">
           {PATHS.map((p) => (
-            <Link key={p.id} to={`/learn/path/${p.id}`} className="path-row">
-              <PathGlyph path={p.id} size={44} />
-              <div className="path-row__main">
-                <div className="path-row__title"><h3>{p.name}</h3><PathTag path={p.id} /></div>
+            <Link key={p.id} to={`/learn/path/${p.id}`} className="showcase-card">
+              <PathArt path={p.id} className="showcase-card__art" />
+              <div className="showcase-card__body">
+                <div className="showcase-card__title"><h3>{p.name}</h3><PathTag path={p.id} /></div>
                 <p className="muted">{p.pitch}</p>
+                <dl className="showcase-card__times">
+                  <div><dt>First milestone</dt><dd>{p.timeline.early}</dd></div>
+                  <div><dt>Capable</dt><dd>{p.timeline.capable}</dd></div>
+                </dl>
               </div>
-              <dl className="path-row__times">
-                <div><dt>Early milestone</dt><dd>{p.timeline.early}</dd></div>
-                <div><dt>Capable</dt><dd>{p.timeline.capable}</dd></div>
-              </dl>
-              <ArrowRight size={18} className="path-row__arrow" aria-hidden="true" />
+              <ArrowRight size={18} className="showcase-card__arrow" aria-hidden="true" />
             </Link>
           ))}
         </div>
-        <p className="subtle footnote">Time ranges assume about 5–7 hours a week. They are provisional estimates, not deadlines, and will be refined as each path's lessons are written.</p>
+        <p className="subtle footnote">Time ranges assume about 5–7 hours a week. They're provisional estimates, not deadlines.</p>
       </section>
 
-      <div className="home-grid home-grid--even">
-        <Panel title="Start with the shared foundations">
-          <ul className="lesson-list">
-            {LESSONS.map((l) => (
-              <li key={l.id}>
-                <Link to={`/learn/lesson/${l.id}`} className="lesson-link">
-                  <span>
-                    <strong>{l.title}</strong>
-                    <span className="subtle">{l.minutes} min · {AREA_NAMES.foundations}</span>
-                  </span>
-                  <ArrowRight size={16} aria-hidden="true" />
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <div style={{ marginTop: 'var(--space-4)' }}>
-            <Planned phase={2}>More foundation lessons, saved progress and mastery checks. This is the first complete sample lesson.</Planned>
-          </div>
-        </Panel>
-
-        <Panel title="Skills every path shares" action={<Link to="/progress" className="link-quiet"><Map size={15} aria-hidden="true" /> Full map</Link>}>
-          <ul className="skill-chips">
-            {shared.map((s) => (
-              <li key={s.id}><Link to={`/progress#skill-${s.id}`} className="chip chip--link">{s.name}</Link></li>
-            ))}
-          </ul>
-          <p className="subtle footnote">{SKILLS.length} skills in the framework so far, across {Object.keys(AREA_NAMES).length} areas.</p>
-        </Panel>
-      </div>
+      <section className="section" aria-labelledby="skills-h">
+        <div className="section__head"><h2 id="skills-h">Skills every path shares</h2><p className="muted">{SKILLS.length} skills across {Object.keys(AREA_NAMES).length} areas.</p></div>
+        <ul className="skill-chips">
+          {shared.map((s) => <li key={s.id}><Link to={`/progress#skill-${s.id}`} className="chip chip--link">{s.name}</Link></li>)}
+        </ul>
+      </section>
     </>
   );
 }

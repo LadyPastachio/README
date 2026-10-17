@@ -10,12 +10,18 @@ Each screen's purpose, main actions, layout at each size, and important states. 
 - **Phone:** Top bar (name + search) and a bottom bar: Home, Learn, Projects, Lab, More. "More" opens a sheet with AI Workshop, My Progress, Learning Circles, Settings.
 - **Global:** Search (`/` or `Ctrl K`), skip link, focus moves to the page on navigation, toasts for confirmations.
 
-## Home: "What to work on next"
+## Home: "Today's plan"
 
 - **Purpose:** Answer "what should I work on next, and why?"
-- **Actions:** Start the recommended activity; open a path; see reviews due; open Code Lab.
-- **Layout:** Recommendation (wide) + reviews (narrow) side by side on desktop, stacked on phone; four path cards (4 → 2 → 1 columns).
-- **States:** No history yet (current): recommends the shared first lesson and explains why. With history (Phase 2+): recommendation based on evidence and due reviews. No streaks, totals or completion percentages.
+- **Actions:** Start the top recommendation; open other suggestions; start a review; open a project.
+- **Layout:** Illustrated feature card for the top pick + compact rows for the rest (count = daily load); Reviews and "Needs another try" panels alongside (stacked on phone); four illustrated project cards (4 → 2 → 1 columns).
+- **States:** New learner ("Welcome. Here's where to start."); due reviews (count + Start review); nothing due (next dates listed); skills flagged after a failed activity or missed review; misconceptions seen. No streaks, totals or completion percentages.
+
+## Review
+
+- **Purpose:** Spaced retrieval: one new question per due lesson.
+- **Layout:** Progress strip, one question card at a time, Next button after answering.
+- **States:** Nothing due (next date shown); no reviews scheduled yet; in progress; finished. No hints; only the first answer counts.
 
 ## Learn
 
@@ -24,7 +30,7 @@ Each screen's purpose, main actions, layout at each size, and important states. 
 - **Layout:** Path list with timelines (timelines move under the text on narrow screens); foundations and shared skills side by side, stacked on phone.
 - **Sub-screens:**
   - **Path:** pitch, AI feature, three-stage timeline, milestones with skills, where to begin.
-  - **Lesson:** reading column + sticky guide (objective, hints, mastery requirement, review plan). The guide moves above the lesson on narrow screens. States: unanswered, incorrect with specific feedback, correct; hints revealed one at a time.
+  - **Lesson:** illustrated header with objective and status; "why this matters" callout; sections with highlighted code and diagrams; optional "Try this first" warm-up; Practice with hints box and activity cards (type icon, confidence check, feedback, Show solution per settings, "Last time" result); misconceptions; summary with evidence export and next lesson. Sticky guide on desktop (mastery requirement, progress dots, review plan), placed after the lesson on narrow screens.
   - **Glossary:** filterable list; search results scroll to and highlight the term.
 - **States:** Unknown path or lesson shows the not-found page.
 
@@ -53,7 +59,7 @@ Each screen's purpose, main actions, layout at each size, and important states. 
 - **Purpose:** Show what you can do, based on evidence.
 - **Actions:** Read the mastery legend; jump to any skill (from search or chips elsewhere).
 - **Layout:** Legend, then skills grouped by area, each with paths that use it, prerequisites and status. Rows stack on phone.
-- **States:** All skills "Not introduced" until Phase 2 records evidence.
+- **Layout now:** overview bar of all 29 skills by status, skill tiles grouped by area (status, three-step ladder, reason, lessons), misconceptions spotted, recent answers, Learning Evidence per started lesson.
 
 ## Learning Circles
 
@@ -64,7 +70,7 @@ Each screen's purpose, main actions, layout at each size, and important states. 
 ## Settings
 
 - **Purpose:** Control appearance, accessibility and your data. Every control shown works.
-- **Sections:** Appearance, Accessibility, Learning (planned, Phases 2 and 5), AI (status; planned, Phase 6), Privacy and data, About.
+- **Sections:** Appearance, Accessibility, Learning (daily load, lesson order, hints, solutions, confidence), Learning profile (stated vs. observed; copy, download, reset), AI (status; planned, Phase 6), Privacy and data, About.
 - **Layout:** Section links on the left (desktop) or a scrolling chip row (phone/tablet); one panel per section.
 - **States:** "All changes saved" / "Not saved: this browser is blocking storage"; restore preview dialog listing what will be replaced; invalid backup error; delete confirmation dialog; toasts for completed actions.
 

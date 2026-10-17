@@ -1,6 +1,6 @@
-import type { Lesson } from '../types';
+import type { LessonInput } from '../schema';
 
-export const howTheWebWorks: Lesson = {
+export const lesson: LessonInput = {
   id: 'how-a-page-reaches-you',
   title: 'How a web page reaches your screen',
   skill: 'how-web-works',
@@ -17,6 +17,7 @@ export const howTheWebWorks: Lesson = {
         'Opening a page is a conversation between two programs. Your browser asks for something; a server somewhere answers. The rules for that conversation are called HTTP.',
         'Each exchange has two halves. The request says what the browser wants, such as "GET /about". The response carries a status code that says how it went (200 means OK, 404 means not found) plus the content itself.',
       ],
+      diagram: 'request-response',
     },
     {
       heading: 'Finding the server first',
@@ -54,11 +55,12 @@ export const howTheWebWorks: Lesson = {
     {
       kind: 'choice',
       id: 'status-404',
+      variant: 'concept',
       prompt: 'A page loads, but its photo is missing. In the developer tools, the request for the photo shows status 404. What does that tell you?',
       options: [
         { id: 'a', text: 'The server was reached, but it has nothing at that address.', correct: true, why: 'Right. 404 means the request arrived and the server answered "not found". Check the image\'s path for a typo or a file that was never uploaded.' },
-        { id: 'b', text: 'The internet connection dropped.', correct: false, why: 'If the connection had dropped, there would be no response at all, so no status code. Getting a 404 proves the server answered.' },
-        { id: 'c', text: 'The server crashed while sending the photo.', correct: false, why: 'Server failures usually come back as 500-range codes. 404 is the server working normally and reporting that the file doesn\'t exist.' },
+        { id: 'b', text: 'The internet connection dropped.', correct: false, why: 'If the connection had dropped, there would be no response at all, so no status code. Getting a 404 proves the server answered.', misconception: 'Thinks an error status means the connection failed' },
+        { id: 'c', text: 'The server crashed while sending the photo.', correct: false, why: 'Server failures usually come back as 500-range codes. 404 is the server working normally and reporting that the file doesn\'t exist.', misconception: 'Confuses 404 (not found) with 500 (server error)' },
         { id: 'd', text: 'The browser doesn\'t support that image format.', correct: false, why: 'The status code comes from the server, before the browser tries to display anything. A format problem wouldn\'t change it.' },
       ],
     },
@@ -85,11 +87,32 @@ export const howTheWebWorks: Lesson = {
   ],
   masteryRequirement:
     'Order the steps without hints, interpret a status code correctly, and explain a partial page failure in your own words. Mastery is confirmed later by a new scenario during spaced review.',
-  reviewPlan: 'A short retrieval question in 2 days, then a new debugging scenario in about a week.',
+  review: [
+    {
+      kind: 'choice',
+      id: 'review-500',
+      variant: 'concept',
+      prompt: 'You submit a form and get back a page saying "500 Internal Server Error". Where is the problem most likely to be?',
+      options: [
+        { id: 'a', text: 'In the server\'s code, which failed while handling the request.', correct: true, why: 'Right. 500-range codes mean the server received the request but something went wrong on its side.' },
+        { id: 'b', text: 'In your browser, which sent the wrong address.', correct: false, why: 'A wrong address usually gives 404. A 500 means the server found something to run, and that code failed.', misconception: 'Confuses 404 (not found) with 500 (server error)' },
+        { id: 'c', text: 'In DNS, which could not find the server.', correct: false, why: 'If DNS failed, the browser would never reach the server, so there would be no status code at all.', misconception: 'Thinks an error status means the connection failed' },
+      ],
+    },
+    {
+      kind: 'order',
+      id: 'review-order-short',
+      prompt: 'Order what happens when a page loads its stylesheet.',
+      steps: [
+        'The browser receives the HTML',
+        'It reads a <link> to style.css in the HTML',
+        'It sends a request for style.css',
+        'It applies the styles and redraws the page',
+      ],
+      feedback: {
+        correct: 'Yes: the HTML has to arrive and be read before the browser knows the stylesheet exists.',
+        incorrect: 'Think about how the browser learns that style.css exists at all.',
+      },
+    },
+  ],
 };
-
-export const LESSONS = [howTheWebWorks];
-
-export function getLesson(id: string) {
-  return LESSONS.find((l) => l.id === id);
-}

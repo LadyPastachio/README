@@ -53,11 +53,16 @@ export function AppShell() {
           <kbd className="sidebar__kbd">Ctrl K</kbd>
         </button>
         <nav className="sidebar__nav">
-          {NAV_ITEMS.map((item) => (
-            <NavLink key={item.id} to={item.path} end={item.path === '/'} className="nav-link" title={item.label}>
-              <item.icon size={19} strokeWidth={1.8} aria-hidden="true" />
-              <span className="sidebar__label">{item.label}</span>
-            </NavLink>
+          {(['Learn', 'Build', 'You'] as const).map((group) => (
+            <div key={group} className="sidebar__group">
+              <span className="sidebar__group-label" aria-hidden="true">{group}</span>
+              {NAV_ITEMS.filter((n) => n.group === group).map((item) => (
+                <NavLink key={item.id} to={item.path} end={item.path === '/'} className="nav-link" title={item.label}>
+                  <item.icon size={19} strokeWidth={1.8} aria-hidden="true" />
+                  <span className="sidebar__label">{item.label}</span>
+                </NavLink>
+              ))}
+            </div>
           ))}
         </nav>
         <div className="sidebar__foot">

@@ -1,7 +1,10 @@
 import { test, expect, type Page } from '@playwright/test';
 
 const PAGES = [
-  { hash: '#/', heading: 'What to work on next' },
+  { hash: '#/', heading: 'Welcome. Here’s where to start.' },
+  { hash: '#/review', heading: 'Nothing due right now' },
+  { hash: '#/learn/lesson/values-and-variables', heading: 'Values and variables' },
+  { hash: '#/learn/lesson/html-structure', heading: 'HTML: structure and meaning' },
   { hash: '#/learn', heading: 'Paths, skills and lessons' },
   { hash: '#/learn/path/chess', heading: 'Chess game' },
   { hash: '#/learn/lesson/how-a-page-reaches-you', heading: 'How a web page reaches your screen' },
@@ -90,4 +93,45 @@ test('rejects a file that is not a backup', async ({ page }) => {
   await page.goto('/#/settings');
   await page.locator('#import-file').setInputFiles({ name: 'x.json', mimeType: 'application/json', buffer: Buffer.from('{"hello":1}') });
   await expect(page.getByText("doesn't look like an Atelier Academy backup")).toBeVisible();
+});
+
+test('completing a lesson updates mastery, Home and Progress', async ({ page }) => {
+  await page.goto('/#/learn/lesson/how-a-page-reaches-you');
+  // Activity 1: put steps in order using the move buttons until correct.
+  const correct = [
+    'You type an address and press Enter',
+    "The browser looks up the server's address in DNS",
+    'The browser sends an HTTP request to the server',
+    'The server sends back a response with HTML',
+    'The browser requests the CSS, JavaScript and images the HTML mentions',
+    'The browser draws the page and runs its scripts',
+  ];
+  const items = page.locator('.order-item__text');
+  for (let target = 0; target < correct.length; target++) {
+    const texts = await items.allTextContents();
+    let from = texts.indexOf(correct[target]!);
+    while (from > target) {
+      await page.getByRole('button', { name: `Move “${correct[target]}” up` }).click();
+      from--;
+    }
+  }
+  await page.getByRole('button', { name: 'Check order' }).click();
+  await expect(page.getByText('All 6 in place.')).toBeVisible();
+  // Activity 2: multiple choice.
+  await page.getByText('The server was reached, but it has nothing at that address.').click();
+  await page.getByRole('button', { name: 'Check answer' }).click();
+  await expect(page.getByText('Correct.', { exact: true })).toBeVisible();
+  // Summary shows completion and the next review.
+  await expect(page.getByText('Lesson complete')).toBeVisible();
+  await expect(page.getByText(/Next review:/)).toBeVisible();
+  await expect(page.locator('.summary').getByText('Demonstrated independently')).toBeVisible();
+
+  await page.goto('/#/progress');
+  await expect(page.locator('#skill-how-web-works').getByText('Demonstrated independently')).toBeVisible();
+  await page.goto('/#/');
+  await expect(page.getByRole('heading', { level: 1, name: 'Today’s plan' })).toBeVisible();
+  await expect(page.getByText(/Nothing due right now/)).toBeVisible();
+  await expect(page.locator('.upcoming').getByText('How a web page reaches your screen')).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole('heading', { level: 1, name: 'Today’s plan' })).toBeVisible();
 });

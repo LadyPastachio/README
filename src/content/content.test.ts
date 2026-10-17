@@ -1,17 +1,19 @@
 import { SKILLS } from './skills';
 import { PATHS } from './paths';
-import { LESSONS } from './lessons/how-the-web-works';
+import { LESSONS, parseLessons } from './lessons';
+import type { LessonInput } from './schema';
 
-/** Guards the curriculum data against broken references. */
+/** Guards the curriculum data against broken references and invalid lessons. */
 describe('curriculum data', () => {
   const ids = new Set(SKILLS.map((s) => s.id));
+  const lessonIds = new Set(LESSONS.map((l) => l.id));
 
   it('has unique skill ids and valid prerequisites', () => {
     expect(ids.size).toBe(SKILLS.length);
     for (const s of SKILLS) for (const p of s.prerequisites) expect(ids, `${s.id} → ${p}`).toContain(p);
   });
 
-  it('has no circular prerequisites', () => {
+  it('has no circular skill prerequisites', () => {
     const byId = new Map(SKILLS.map((s) => [s.id, s]));
     const visit = (id: string, seen: Set<string>): void => {
       expect(seen.has(id), `cycle at ${id}`).toBe(false);
@@ -22,21 +24,50 @@ describe('curriculum data', () => {
 
   it('only references real skills in milestones and lessons', () => {
     for (const p of PATHS) for (const m of p.milestones) for (const s of m.skills) expect(ids, `${m.id} → ${s}`).toContain(s);
-    for (const l of LESSONS) expect(ids).toContain(l.skill);
+    for (const l of LESSONS) expect(ids, l.id).toContain(l.skill);
   });
 
-  it('has four distinct paths, each with milestones', () => {
-    expect(PATHS.map((p) => p.id)).toEqual(['web', 'finance', 'chess', 'automation']);
-    for (const p of PATHS) expect(p.milestones.length).toBeGreaterThan(0);
+  it('has ten valid lessons with unique ids and real, earlier prerequisites', () => {
+    expect(LESSONS).toHaveLength(10);
+    expect(lessonIds.size).toBe(LESSONS.length);
+    LESSONS.forEach((l, i) => {
+      for (const p of l.prerequisites) {
+        expect(lessonIds, `${l.id} → ${p}`).toContain(p);
+        expect(LESSONS.findIndex((x) => x.id === p), `${p} should come before ${l.id}`).toBeLessThan(i);
+      }
+    });
   });
 
-  it('gives every lesson the required parts', () => {
+  it('uses a variety of activity types across lessons', () => {
+    const kinds = new Set(LESSONS.flatMap((l) => l.activities.map((a) => (a.kind === 'choice' ? a.variant : a.kind))));
+    expect([...kinds].sort()).toEqual(['bug', 'concept', 'explain', 'fill', 'order', 'predict']);
+  });
+
+  it('keeps review questions separate from lesson questions', () => {
     for (const l of LESSONS) {
-      expect(l.objective && l.masteryRequirement && l.reviewPlan).toBeTruthy();
-      expect(l.activities.length).toBeGreaterThan(0);
-      expect(l.misconceptions.length).toBeGreaterThan(0);
-      expect(l.hints.length).toBeGreaterThan(0);
-      for (const a of l.activities) if (a.kind === 'choice') expect(a.options.filter((o) => o.correct)).toHaveLength(1);
+      const prompts = new Set(l.activities.map((a) => a.prompt + ('code' in a ? a.code : '')));
+      for (const r of l.review) expect(prompts.has(r.prompt + ('code' in r ? r.code : '')), `${l.id}/${r.id}`).toBe(false);
     }
+  });
+
+  it('gives targeted feedback for fill-the-gap answers that are also accepted elsewhere', () => {
+    for (const l of LESSONS) {
+      for (const a of [...l.activities, ...l.review]) {
+        if (a.kind !== 'fill') continue;
+        for (const w of a.commonWrong) expect(a.accepted, `${l.id}/${a.id}: "${w.answer}" is both right and wrong`).not.toContain(w.answer);
+      }
+    }
+  });
+
+  it('rejects invalid lessons with a clear message', () => {
+    const base = LESSONS[0]! as LessonInput;
+    const twoCorrect = {
+      ...base,
+      id: 'broken',
+      activities: [{ kind: 'choice', id: 'x', prompt: 'p', options: [{ id: 'a', text: 'a', correct: true, why: 'w' }, { id: 'b', text: 'b', correct: true, why: 'w' }] }, base.activities[1]!],
+    } as LessonInput;
+    expect(() => parseLessons([twoCorrect])).toThrow(/Lesson "broken" is invalid: .*exactly one option/);
+    const badGap = { ...base, id: 'gap', activities: [{ kind: 'fill', id: 'f', prompt: 'p', code: 'no gap here', accepted: ['x'], explanation: 'e' }, base.activities[1]!] } as LessonInput;
+    expect(() => parseLessons([badGap])).toThrow(/exactly one ___/);
   });
 });

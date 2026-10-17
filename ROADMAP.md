@@ -2,7 +2,7 @@
 
 The academy is built in phases. Each phase ends runnable, tested and documented. Time estimates for learning paths live in the app (Learn → a path); this file tracks building the app itself.
 
-**Current status:** Phase 0 and Phase 1 complete. Next: Phase 2.
+**Current status:** Phases 0–2 complete. Next: Phase 3 (Code Lab).
 
 ---
 
@@ -29,25 +29,36 @@ The academy is built in phases. Each phase ends runnable, tested and documented.
 - 39 unit tests: settings validation and storage, blocked-storage handling, backup export/import/rejection, search ranking, curriculum references and prerequisite cycles, activity logic, navigation, settings applying to the page, lesson activities
 - 48 browser checks (16 tests × desktop, tablet, phone): every page renders with no console errors and no sideways scroll; navigation adapts by screen size; theme survives reload; search opens a glossary term; backup round-trip only changes data after confirmation; non-backup files are rejected
 
-**Known limitations:**
-- Lesson answers, hints used and explanations are not saved (Phase 2).
-- On phones, the lesson guide (objective, hints) sits above the lesson text, so the first section starts further down. Revisit with the Phase 5 lesson controls.
-- Browser tests were run in Chromium only.
+**Known limitations at the time** (resolved in Phase 2): answers weren't saved; on phones the lesson guide pushed the lesson text down.
 
 ---
 
-## Phase 2: Working learning engine ⏭ next
+## Phase 2: Working learning engine ✅
 
-Goal: lessons that remember what you did and turn it into evidence.
+- [x] Lesson schema with runtime validation (Zod); one file per lesson; invalid lessons fail loudly ([DECISIONS.md](DECISIONS.md) D13)
+- [x] Learning records: answers, hints shown, confidence, solution reveals, misconceptions, explanations and self-checks ([D10](DECISIONS.md))
+- [x] Mastery rules for activities, lessons and skills, with plain-language reasons
+- [x] Spaced review (2 → 7 → 21 → 60 days; a miss returns next day) and a Review screen
+- [x] Home recommendations driven by records, with the reason for each
+- [x] Learning settings: daily load, lesson order (explain first / try first), hint timing, solution reveal rule, confidence check
+- [x] Initial learning profile: stated preferences vs. observed evidence; view, edit, reset, copy, download
+- [x] Learning Evidence export (Markdown, JSON) and an independent-assessor prompt
+- [x] My Progress: skill map with statuses, misconceptions spotted, recent answers, evidence per lesson
+- [x] 9 new lessons (10 total) using six activity types
+- [x] Records included in backups and validated on restore
+- [x] **Design upgrade** (requested mid-phase): illustrations for each project and lesson, highlighted code panels with line numbers, activity-type icons, A/B/C answer keys, grouped sidebar, quieter "Phase N" labels, softer elevation
 
-- [ ] Lesson schemas with runtime validation (Zod); one file per lesson
-- [ ] Learning records: attempts, hints used, solution reveals, confidence, explanations
-- [ ] Mastery state machine (the five statuses) with tested transitions
-- [ ] Async storage for learning records (IndexedDB), included in backups
-- [ ] Learning settings: daily load, hint level, solution reveal rules (load never lowers mastery requirements)
-- [ ] Learning Evidence export (Markdown and JSON) + optional independent-assessor prompt
-- [ ] Home recommendations and spaced review driven by real records
-- [ ] 6–10 more complete foundation lessons using different activity types (predict the output, find the bug, fill the gap)
+**Tests at end of Phase 2** (all run and passing on 2026-10-17):
+- 78 unit tests, including 38 for the learning engine (mastery transitions, retention timing, review scheduling, recommendations, record storage and damage recovery, observations, evidence) and 8 for curriculum validation
+- 60 browser checks (20 tests × desktop, tablet, phone), including a full lesson walkthrough that checks mastery, Home and Progress update and survive a reload
+
+**Known limitations:**
+- No code runs yet: activities test reading and reasoning about code. Writing and running code is Phase 3.
+- Explanations are self-assessed against a checklist. Independent written feedback needs a model (Phase 6), or the assessor prompt in a separate AI chat.
+- Observed patterns in the profile need at least 8 answers and are deliberately cautious.
+- Code words in lesson text aren't styled as code yet (they are in code panels).
+- "Download" buttons don't work inside the shared phone preview (the viewer blocks downloads); "Copy" does. Both work when running the app normally.
+- Browser tests run in Chromium only.
 
 ## Phase 3: Functional Code Lab
 
