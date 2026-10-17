@@ -3,6 +3,7 @@ import type { StorageAdapter } from '../persistence/storage';
 import { SETTINGS_KEY } from '../settings/store';
 import { normalizeSettings } from '../settings/schema';
 import { RECORDS_KEY, normalizeRecords } from '../learning/records';
+import { LAB_KEY, normalizeLabStore } from '../lab/workspaceStore';
 
 /**
  * Backup files: a portable copy of everything the app saves locally.
@@ -18,6 +19,7 @@ export const BACKUP_VERSION = 1;
 const KNOWN_KEYS: Record<string, (value: unknown) => unknown> = {
   [SETTINGS_KEY]: normalizeSettings,
   [RECORDS_KEY]: (value) => ({ version: 1, events: normalizeRecords(value) }),
+  [LAB_KEY]: normalizeLabStore,
 };
 
 const backupFileSchema = z.object({

@@ -2,7 +2,7 @@
 
 The academy is built in phases. Each phase ends runnable, tested and documented. Time estimates for learning paths live in the app (Learn → a path); this file tracks building the app itself.
 
-**Current status:** Phases 0–2 complete. Next: Phase 3 (Code Lab).
+**Current status:** Phases 0–3 complete. Next: Phase 4 (competency map and the four paths).
 
 ---
 
@@ -60,14 +60,29 @@ The academy is built in phases. Each phase ends runnable, tested and documented.
 - "Download" buttons don't work inside the shared phone preview (the viewer blocks downloads); "Copy" does. Both work when running the app normally.
 - Browser tests run in Chromium only.
 
-## Phase 3: Functional Code Lab
+## Phase 3: Functional Code Lab ✅
 
-- [ ] Editor with syntax highlighting (CodeMirror 6), file explorer, tabs
-- [ ] Sandboxed iframe execution for HTML/CSS/JS (`sandbox="allow-scripts"`, no access to app storage)
-- [ ] Console capture, plain-language errors, run/reset
-- [ ] Code-reading, debugging and prediction exercises with automatic checks
-- [ ] Tests for sandbox isolation and failure handling
-- [ ] Phone layout: switch between edit, preview and console
+- [x] Editor with syntax highlighting (CodeMirror 6), file tabs for index.html, style.css and script.js, undo history per file
+- [x] Sandboxed execution (iframe `sandbox="allow-scripts"`, no same-origin, network blocked by CSP) ([D14](DECISIONS.md))
+- [x] Syntax errors caught before running; runaway loops stopped after a second
+- [x] Console capture with plain-language error explanations and a button to jump to the line
+- [x] Live preview while typing, Run (Ctrl/Cmd+Enter), Reset with confirmation, code saved as you type and included in backups
+- [x] Shows how files connect: warns when index.html doesn't link style.css or script.js
+- [x] 8 exercises with automatic checks: build (first page, style a card, counter button, chess board row), debug (budget total, accessible form), predict (loops), refactor (with a comparison of approaches and trade-offs), plus a playground
+- [x] Hints and the solution follow your learning settings; passing counts toward mastery ([D15](DECISIONS.md))
+- [x] Phone layout: one panel at a time (Task, Code, Preview, Console); desktop: resizable editor/preview, collapsible task panel
+- [x] **Certification recommendations** (requested): 12 verified certifications matched to demonstrated skills, a Certifications page, prompts after finishing a lesson or exercise, and a card on Home and My Progress ([D16](DECISIONS.md))
+
+**Tests at end of Phase 3** (all run and passing on 2026-10-17):
+- 103 unit tests, adding the loop guard, error explanations, document builder (linking, CSP, script escaping, syntax errors), lab storage, lab mastery and certification readiness
+- 100 browser checks across desktop, tablet and phone (17 skipped by design: per-exercise content checks run on desktop only). These include sandbox isolation (no access to the parent page, storage or network), infinite-loop recovery, error line numbers, and every exercise's starter failing while its reference solution passes
+
+**Bugs found by these tests and fixed:** on phones and tablets, every lab panel showed at once (a style overrode the `hidden` attribute app-wide), and "Check my work" jumped away from the results.
+
+**Known limitations:**
+- Only HTML, CSS and JavaScript run. React, TypeScript, SQL and backend code come with later phases.
+- Exercise checks run beside your code, so they can be fooled on purpose.
+- Certification details were verified on 2026-10-17 and will drift; the app says to confirm on the provider's site.
 
 ## Phase 4: Competency map and four paths
 

@@ -4,6 +4,7 @@ import { PathArt } from '@/design/illustrations/PathArt';
 import { getPath } from '@/content/paths';
 import { getSkill } from '@/content/skills';
 import { LESSONS } from '@/content/lessons';
+import { LAB_EXERCISES } from '@/content/lab/exercises';
 import { useLearning } from '@/core/learning/LearningContext';
 import { lessonResult, skillResult } from '@/core/learning/mastery';
 import { NotFoundPage } from '@/app/NotFoundPage';
@@ -57,7 +58,7 @@ export function PathPage() {
                   <p className="muted">{m.deliverable}</p>
                   <ul className="skill-chips">
                     {m.skills.map((id) => {
-                      const st = skillResult(events, id, LESSONS).status;
+                      const st = skillResult(events, id, LESSONS, LAB_EXERCISES).status;
                       return (
                         <li key={id}>
                           <Link className="chip chip--link chip--status" data-status={st} to={`/progress#skill-${id}`} title={st === 'none' ? 'Not introduced' : undefined}>

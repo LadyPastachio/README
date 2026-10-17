@@ -2,6 +2,7 @@ import type { Lesson } from '@/content/schema';
 import { isGraded } from '@/content/schema';
 import { getSkill } from '@/content/skills';
 import type { Profile } from '../settings/schema';
+import type { LabExercise } from '@/content/lab/schema';
 import { FORMAT_LABELS } from '../settings/schema';
 import type { LearningEvent } from './records';
 import { lessonResult, skillResult, type ActivityOutcome } from './mastery';
@@ -45,10 +46,10 @@ export interface LessonEvidence {
   codeReview: string;
 }
 
-export function buildEvidence(events: LearningEvent[], lesson: Lesson, lessons: Lesson[], profile: Profile, now = new Date()): LessonEvidence {
+export function buildEvidence(events: LearningEvent[], lesson: Lesson, lessons: Lesson[], profile: Profile, now = new Date(), labs: LabExercise[] = []): LessonEvidence {
   const mine = events.filter((e) => e.lessonId === lesson.id && e.context === 'lesson');
   const result = lessonResult(events, lesson);
-  const skill = skillResult(events, lesson.skill, lessons);
+  const skill = skillResult(events, lesson.skill, lessons, labs);
   const skillName = getSkill(lesson.skill)?.name ?? lesson.skill;
 
   const graded = lesson.activities.filter(isGraded);

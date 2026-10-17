@@ -6,6 +6,9 @@ import { PathArt } from '@/design/illustrations/PathArt';
 import { PATHS } from '@/content/paths';
 import { LESSONS, getLesson } from '@/content/lessons';
 import { SKILLS } from '@/content/skills';
+import { LAB_EXERCISES } from '@/content/lab/exercises';
+import { certificationStatus } from '@/core/learning/certifications';
+import { Award } from 'lucide-react';
 import { useLearning } from '@/core/learning/LearningContext';
 import { useSettings } from '@/core/settings/SettingsContext';
 import { recommend, type Recommendation } from '@/core/learning/recommend';
@@ -32,9 +35,10 @@ export function HomePage() {
   const due = dueReviews(events, LESSONS, now);
   const upcoming = upcomingReviews(events, LESSONS, now).slice(0, 3);
   const [first, ...rest] = recs;
-  const reinforce = SKILLS.map((s) => skillResult(events, s.id, LESSONS)).filter((r) => r.status === 'challenge');
+  const reinforce = SKILLS.map((s) => skillResult(events, s.id, LESSONS, LAB_EXERCISES)).filter((r) => r.status === 'challenge');
   const obs = observe(events, LESSONS);
   const isNew = events.length === 0;
+  const readyCerts = certificationStatus(events, LESSONS, LAB_EXERCISES).filter((c) => c.readiness === 'ready');
   const fmt = (d: Date) => d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
 
   return (
@@ -115,6 +119,17 @@ export function HomePage() {
               </ul>
             )}
           </Panel>
+
+          {readyCerts.length > 0 && (
+            <Link to="/progress/certifications" className="cert-home">
+              <Award size={22} aria-hidden="true" />
+              <span>
+                <span className="eyebrow">Consider getting certified</span>
+                <strong>{readyCerts[0]!.cert.name}</strong>
+                <span className="subtle small">{readyCerts[0]!.cert.provider} · {readyCerts[0]!.cert.cost === 'free' ? 'Free' : readyCerts[0]!.cert.price}{readyCerts.length > 1 ? ` · and ${readyCerts.length - 1} more` : ''}</span>
+              </span>
+            </Link>
+          )}
 
           <Panel title="Needs another try">
             {reinforce.length === 0 && obs.misconceptions.length === 0 ? (

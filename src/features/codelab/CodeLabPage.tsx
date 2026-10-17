@@ -1,48 +1,81 @@
-import { FileCode2, Eye, SquareTerminal, Lock } from 'lucide-react';
-import { PageHeader, Panel, Planned, ButtonLink } from '@/design/components';
+import { Link, useParams } from 'react-router-dom';
+import { Hammer, Bug, Eye, Recycle, Sparkles, Clock, ShieldCheck, ArrowRight } from 'lucide-react';
+import { PageHeader, MasteryPill } from '@/design/components';
+import { LAB_EXERCISES, getLabExercise } from '@/content/lab/exercises';
+import { getSkill } from '@/content/skills';
+import { useLearning } from '@/core/learning/LearningContext';
+import { labResult } from '@/core/learning/mastery';
+import { NotFoundPage } from '@/app/NotFoundPage';
+import { LabWorkspace } from './LabWorkspace';
+import './codelab.css';
 
-const PARTS = [
-  { icon: FileCode2, title: 'Files and tabs', text: 'A file explorer and editor tabs for HTML, CSS and JavaScript, with syntax highlighting.' },
-  { icon: Eye, title: 'Live preview', text: 'Run your code and see the result immediately. Reset to the starting files at any time.' },
-  { icon: SquareTerminal, title: 'Console and errors', text: 'See console output and errors explained in plain language, with the line they came from.' },
-  { icon: Lock, title: 'Isolated execution', text: 'Your code runs in a sealed frame that can\'t read the app, your saved data or any secrets.' },
-];
+const KIND = {
+  build: { label: 'Build', icon: Hammer },
+  debug: { label: 'Debug', icon: Bug },
+  predict: { label: 'Predict', icon: Eye },
+  refactor: { label: 'Refactor', icon: Recycle },
+  playground: { label: 'Playground', icon: Sparkles },
+} as const;
 
 export function CodeLabPage() {
+  const { exerciseId } = useParams();
+  if (exerciseId) {
+    const ex = getLabExercise(exerciseId);
+    return ex ? <LabWorkspace key={ex.id} exercise={ex} /> : <NotFoundPage />;
+  }
+  return <LabHome />;
+}
+
+function LabHome() {
+  const { events } = useLearning();
+  const exercises = LAB_EXERCISES.filter((x) => x.kind !== 'playground');
+  const playground = LAB_EXERCISES.find((x) => x.kind === 'playground');
   return (
     <>
       <PageHeader
         eyebrow="Code Lab"
         title="Write, run and debug code"
-        description="A real development workspace, built in Phase 3. Until then this page shows what it will include rather than an imitation editor."
+        description="Real HTML, CSS and JavaScript, running in a sealed preview. Each exercise has acceptance criteria that are checked automatically."
       />
-      <Planned phase={3}>The working editor, preview, console and challenges. Your editor font and size from Settings are already applied below.</Planned>
-
-      <div className="lab-parts">
-        {PARTS.map((p) => (
-          <Panel key={p.title} as="div" className="lab-part">
-            <p.icon size={20} className="subtle" aria-hidden="true" />
-            <h2 className="panel__title">{p.title}</h2>
-            <p className="muted">{p.text}</p>
-          </Panel>
-        ))}
+      <div className="lab-intro">
+        <ShieldCheck size={18} aria-hidden="true" />
+        <p className="small"><strong>Safe to experiment.</strong> <span className="muted">Your code runs in an isolated sandbox: it can't read your saved data, the rest of the app or the internet, and loops that never end are stopped after a second. Your code is saved in this browser as you type.</span></p>
       </div>
 
-      <section className="section" aria-labelledby="font-preview">
-        <div className="section__head">
-          <h2 id="font-preview">Editor font preview</h2>
-          <p className="muted">Change this in Settings → Appearance.</p>
-        </div>
-        <pre className="code-sample" tabIndex={0}><code>
-<span className="tok-c">{'// Add up the amounts in a list of transactions'}</span>{'\n'}
-<span className="tok-k">function</span>{' total(transactions) {\n  '}
-<span className="tok-k">return</span>{' transactions.reduce((sum, t) => sum + t.amount, '}<span className="tok-n">0</span>{');\n}\n\n'}
-{'console.log(total([{ amount: '}<span className="tok-n">12.5</span>{' }, { amount: '}<span className="tok-n">30</span>{' }])); '}<span className="tok-c">{'// 42.5'}</span>
-        </code></pre>
-        <div style={{ marginTop: 'var(--space-3)' }}>
-          <ButtonLink to="/settings#appearance">Change editor font</ButtonLink>
+      <section className="section section--first" aria-labelledby="ex-h">
+        <div className="section__head"><h2 id="ex-h">Exercises</h2><p className="muted">Passing one on your own counts as evidence for its skill.</p></div>
+        <div className="lab-list">
+          {exercises.map((x) => {
+            const K = KIND[x.kind];
+            const r = labResult(events, x.id);
+            return (
+              <Link key={x.id} to={`/lab/${x.id}`} className="lab-card" data-kind={x.kind}>
+                <span className="lab-card__icon" aria-hidden="true"><K.icon size={20} /></span>
+                <span className="lab-card__body">
+                  <span className="lab-card__meta"><span className="lab-kind" data-kind={x.kind}>{K.label}</span>{x.skill && <span className="subtle">{getSkill(x.skill)?.name}</span>}</span>
+                  <strong>{x.title}</strong>
+                  <span className="muted small">{x.summary}</span>
+                  <span className="lab-card__foot">
+                    <span className="subtle"><Clock size={12} aria-hidden="true" /> {x.minutes} min · {x.checks.length} checks</span>
+                    {r.status !== 'none' && <MasteryPill status={r.status} />}
+                  </span>
+                </span>
+                <ArrowRight size={16} className="lab-card__arrow" aria-hidden="true" />
+              </Link>
+            );
+          })}
         </div>
       </section>
+
+      {playground && (
+        <section className="section" aria-labelledby="pg-h">
+          <Link to={`/lab/${playground.id}`} className="lab-playground">
+            <Sparkles size={22} aria-hidden="true" />
+            <span><strong id="pg-h">Playground</strong><span className="muted small">A blank page to try anything. Nothing is checked.</span></span>
+            <ArrowRight size={16} aria-hidden="true" />
+          </Link>
+        </section>
+      )}
     </>
   );
 }

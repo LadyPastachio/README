@@ -39,6 +39,7 @@ export const SKILLS: Skill[] = [
   { id: 'tool-calling', name: 'Tool calling', area: 'ai', summary: 'Letting a model request actions your code performs and verifies.', prerequisites: ['structured-outputs'], paths: ['automation'] },
   { id: 'agent-loops', name: 'Controlled agent loops', area: 'ai', summary: 'Plans, state, stopping conditions, approval and recovery.', prerequisites: ['tool-calling'], paths: ['automation'] },
   { id: 'ai-evaluation', name: 'AI evaluation', area: 'ai', summary: 'Measuring whether an AI system does the job, and catching regressions.', prerequisites: ['structured-outputs', 'testing'], paths: ['finance', 'automation'] },
+  { id: 'csharp', name: 'C# and .NET', area: 'foundations', summary: 'A typed language for backends and business software (later in the roadmap).', prerequisites: ['js-functions', 'typescript'], paths: ['finance', 'automation'] },
   { id: 'tech-communication', name: 'Describing what you want', area: 'communication', summary: 'Requirements, acceptance criteria, bug reports and trade-offs.', prerequisites: [], paths: ['web', 'finance', 'chess', 'automation'] },
 ];
 

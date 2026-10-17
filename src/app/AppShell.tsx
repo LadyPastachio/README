@@ -82,7 +82,7 @@ export function AppShell() {
       </header>
 
       <main id="main" tabIndex={-1} className="main">
-        <div className="main__inner">
+        <div className={`main__inner${/^\/lab\/.+/.test(location.pathname) ? ' main__inner--wide' : ''}`}>
           <Outlet />
         </div>
       </main>

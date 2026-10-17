@@ -2,10 +2,12 @@
 
 A personal, project-based academy for learning software engineering and AI systems engineering, built as a real application you can use, read and improve.
 
-> **Status: Phase 2 complete (learning engine and design upgrade).** See [ROADMAP.md](ROADMAP.md) for what is built, what is planned, and what comes next. "Atelier Academy" is a working name; change it in `src/app/navigation.ts` and `index.html`.
+> **Status: Phase 3 complete (Code Lab and certification recommendations).** See [ROADMAP.md](ROADMAP.md) for what is built, what is planned, and what comes next. "Atelier Academy" is a working name; change it in `src/app/navigation.ts` and `index.html`.
 
 ## What works today
 
+- **Code Lab**: write real HTML, CSS and JavaScript with a proper editor, live preview, console and plain-language errors that link to the line. Code runs in a sealed sandbox, and runaway loops are stopped automatically. 8 exercises (build, debug, predict, refactor) with automatic checks, plus a playground
+- **Certification recommendations**: 12 certifications (freeCodeCamp, GitHub, Anthropic, AWS, Microsoft, Meta, IAAP, CompTIA) matched to your demonstrated skills, with cost, format, effort, what else to prepare, and sources. You're prompted when you've demonstrated every skill one needs
 - **10 complete foundation lessons**: how the web works, values and variables, conditions, functions, arrays and objects, reading errors, JSON, HTML structure, what a language model does, and writing precise requirements
 - **Six activity types**: predict the output, find the bug, fill the gap, put steps in order, check your understanding, explain it yourself
 - **Everything you do is saved**: answers, hints used, confidence, solutions shown, your explanations
@@ -16,7 +18,7 @@ A personal, project-based academy for learning software engineering and AI syste
 - **Learning profile**: what you say helps, kept separate from what your activity shows
 - **Learning settings**: daily load, lesson order (explain first or try first), when hints and solutions appear, confidence check
 - **Illustrated, responsive design**: a drawn scene for each project and a concept picture for each lesson, highlighted code panels, light and dark themes
-- Search, glossary (26 terms), skill map (29 skills), appearance and accessibility settings, backup and restore, delete local data
+- Search, glossary (26 terms), skill map (30 skills), appearance and accessibility settings, backup and restore, delete local data
 
 Anything not built yet is marked with a **Phase N** label in the app. Nothing pretends to work.
 
@@ -58,6 +60,7 @@ Good files to read first:
 3. `src/core/backup/backup.ts`: how an import is checked before anything is written
 4. `src/content/schema.ts` and `src/content/lessons/functions.ts`: the lesson format, and a complete lesson written in it
 5. `src/core/learning/mastery.ts`: the rules that turn your answers into mastery statuses
+6. `src/core/lab/buildDocument.ts`: how your lab code is run safely
 
 ## Privacy
 

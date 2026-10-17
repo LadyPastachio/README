@@ -13,6 +13,7 @@ import { ProgressPage } from '@/features/progress/ProgressPage';
 import { CirclesPage } from '@/features/circles/CirclesPage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
 import { NotFoundPage } from './NotFoundPage';
+import { CertificationsPage } from '@/features/certifications/CertificationsPage';
 
 export const routes: RouteObject[] = [
   {
@@ -26,8 +27,10 @@ export const routes: RouteObject[] = [
       { path: '/review', element: <ReviewPage /> },
       { path: '/projects', element: <ProjectsPage /> },
       { path: '/lab', element: <CodeLabPage /> },
+      { path: '/lab/:exerciseId', element: <CodeLabPage /> },
       { path: '/ai', element: <AIWorkshopPage /> },
       { path: '/progress', element: <ProgressPage /> },
+      { path: '/progress/certifications', element: <CertificationsPage /> },
       { path: '/circles', element: <CirclesPage /> },
       { path: '/settings', element: <SettingsPage /> },
       { path: '*', element: <NotFoundPage /> },

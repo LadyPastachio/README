@@ -43,10 +43,17 @@ Each screen's purpose, main actions, layout at each size, and important states. 
 
 ## Code Lab
 
-- **Purpose:** Write, run and debug code safely.
-- **Now:** Explains the four parts being built and shows a live preview of the editor font settings. No imitation editor.
-- **Planned (Phase 3):** Desktop: explorer | editor | preview + console, resizable. Phone: one panel at a time with Edit / Preview / Console tabs.
-- **States (planned):** running, runtime error with line, console output, reset confirmation.
+- **Purpose:** Write, run and debug real code safely.
+- **Exercise list:** safety note; exercise cards (type, skill, time, number of checks, status); playground.
+- **Workspace (desktop):** collapsible task panel (instructions, prediction box, acceptance criteria with live pass/fail, hints, solution, comparison after passing, certification prompt) | editor with file tabs, Run and Reset, and a footer showing how files connect and a Live preview toggle | resizable divider | preview above console.
+- **Workspace (phone and tablet under 900px):** Task / Code / Preview / Console switcher, one panel at a time.
+- **States:** live preview; running checks; all passed (wording depends on hints or solution used); runtime error with explanation and line link; syntax error before running; unlinked file notice; loop stopped; checks timed out; reset confirmation.
+
+## Certifications (under My Progress)
+
+- **Purpose:** Recommend certifications as skills are demonstrated.
+- **Layout:** what "ready to consider" means and the verification date; groups: Ready to consider, Building toward, Skills ready but not open yet, Later. Each card: provider, cost, level, value, format, effort, skill checklist, what else to prepare, availability warning, Visit provider, sources.
+- **Elsewhere:** prompt after finishing a lesson or exercise that completes a certification's skills; card on Home; summary panel on My Progress.
 
 ## AI Workshop
 

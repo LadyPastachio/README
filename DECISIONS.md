@@ -115,3 +115,27 @@ Short records of decisions that shape the project. Each says what was decided, w
 **Decision:** Every lesson file is parsed with the Zod schema in `src/content/schema.ts` when the app starts. An invalid lesson throws an error naming the lesson and the problem. The test suite checks the same, plus cross-references (skills, prerequisites, review questions that differ from lesson questions).
 
 **Why:** Content will grow in batches, sometimes drafted with AI help. Mistakes like two correct options, a fill-in with no gap, or a duplicate id should fail loudly before anyone sees a broken lesson.
+
+## D14. Code Lab runs learner code in a sandboxed iframe
+
+**Decision:** Learner HTML, CSS and JavaScript run in `<iframe sandbox="allow-scripts allow-modals">` with no `allow-same-origin`, built with `srcdoc`. Inside it, a Content-Security-Policy blocks all network requests. JavaScript is parsed with acorn first: syntax errors are reported without running anything, and a guard is added to every loop so one that runs longer than a second is stopped. The page and the app talk only through `postMessage`, and the app ignores messages that don't come from the current run's iframe.
+
+**Why:** Without `allow-same-origin` the preview gets an opaque origin, so the browser itself prevents it from reading the app, its storage or cookies. That's stronger than anything our own code could promise. Nothing runs on a server, so there is no server to attack. Browser tests confirm the boundaries: reading the parent page, local storage or the network all fail.
+
+**Like a real browser:** `style.css` and `script.js` only load if `index.html` links them, and the lab says so when they don't. This teaches how files actually connect.
+
+**Limits:** Plain HTML/CSS/JS only for now. React, TypeScript and SQL need a build step or a different runtime and come later. An exercise's checks run in the same sandbox as the learner's code, so a determined learner could fool them; that only cheats themselves.
+
+## D15. Lab exercises count toward mastery, without penalizing iteration
+
+**Decision:** Passing all of an exercise's checks without hints or the solution counts as "Demonstrated independently" for its skill. Failed check runs before passing don't count against you; hints mean "practiced with support"; using the solution means "needs another challenge". Skills taught only through lab exercises can reach "independent" but not "retained", since retention needs spaced review.
+
+**Why:** Running code, seeing it fail and fixing it is how programming works. Punishing that would teach the wrong habit.
+
+## D16. Certification recommendations are verified data with honest readiness
+
+**Decision:** `src/content/certifications.ts` lists each certification with the academy skills it relies on, cost, format, effort, what else to prepare, availability limits and source links, plus the date it was checked (`VERIFIED_ON`). A certification is "ready to consider" only when every related skill is demonstrated independently or retained. Partner-only exams show as "skills ready, but not open to you yet".
+
+**Why:** Recommendations must never be invented, and "ready to consider" must not be read as "ready to pass". Most certifications need projects or study beyond this academy, so each card says what else is needed and to confirm prices on the provider's site.
+
+**Maintenance:** Prices and exam versions change (for example, Microsoft replaced AI-900 with AI-901, and CompTIA Security+ V8 is expected around November 2026). Re-check the sources and update `VERIFIED_ON` every few months.

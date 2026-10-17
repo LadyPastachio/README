@@ -9,6 +9,8 @@ import { lessonResult } from '@/core/learning/mastery';
 import { reviewPlan } from '@/core/learning/schedule';
 import { buildEvidence, evidenceToMarkdown, assessorPrompt } from '@/core/learning/evidence';
 import { useToast } from '@/app/Toast';
+import { LAB_EXERCISES } from '@/content/lab/exercises';
+import { CertPrompt } from '@/features/certifications/CertPrompt';
 import { copyText, downloadText, dateStamp } from '@/features/settings/fileHelpers';
 
 const OUTCOME_LABEL = { unattempted: 'Not tried', 'first-try': 'First try', retried: 'After a retry', revealed: 'Solution shown', failed: 'Not solved yet' } as const;
@@ -24,7 +26,7 @@ export function LessonSummary({ lesson }: { lesson: Lesson }) {
   const plan = reviewPlan(events, lesson);
   const idx = LESSONS.findIndex((l) => l.id === lesson.id);
   const next = LESSONS[idx + 1];
-  const evidence = () => buildEvidence(events, lesson, LESSONS, settings.profile);
+  const evidence = () => buildEvidence(events, lesson, LESSONS, settings.profile, new Date(), LAB_EXERCISES);
   const file = `evidence-${lesson.id}-${dateStamp()}`;
 
   const copy = async (text: string, what: string) => toast((await copyText(text)) ? `${what} copied` : 'Copy was blocked by the browser. Try Download instead.');
@@ -78,6 +80,8 @@ export function LessonSummary({ lesson }: { lesson: Lesson }) {
           <Button size="sm" onClick={() => copy(assessorPrompt(evidence()), 'Assessment prompt')}><Sparkles size={14} aria-hidden="true" /> Copy prompt</Button>
         </div>
       </div>
+
+      {result.complete && <CertPrompt skillId={lesson.skill} />}
 
       {result.complete && next && (
         <Link to={`/learn/lesson/${next.id}`} className="summary__next">

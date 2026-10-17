@@ -39,6 +39,7 @@
   padding-right: max(var(--space-6), env(safe-area-inset-right, 0px));
 }
 
+.main__inner--wide { max-width: none; padding-block: var(--space-4) var(--space-4); }
 .topbar, .bottom-nav { display: none; }
 
 /* Tablet: icon rail with small labels */

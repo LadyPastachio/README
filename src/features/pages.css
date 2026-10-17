@@ -409,3 +409,45 @@
 .format-bars__track span { display: block; height: 100%; background: var(--accent); border-radius: 3px; }
 .obs-statements { margin: 0; padding-left: 1.1em; display: grid; gap: var(--space-2); font-size: var(--text-sm); }
 .profile-actions { margin-top: var(--space-5); padding-top: var(--space-4); border-top: 1px solid var(--line); }
+
+/* ---------- Certifications page ---------- */
+.cert-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: var(--space-4); }
+@media (max-width: 420px) { .cert-grid { grid-template-columns: minmax(0, 1fr); } }
+.cert-card { display: grid; gap: var(--space-3); align-content: start; padding: var(--space-5); border-radius: var(--radius-lg); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-card); min-width: 0; }
+.cert-card[data-readiness='ready'] { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+.cert-card[data-readiness='later'] { box-shadow: none; background: color-mix(in srgb, var(--surface) 70%, var(--bg)); }
+.cert-card__head { display: grid; gap: var(--space-2); }
+.cert-card__head h3 { font-size: var(--text-md); }
+.cert-card__provider { font-size: var(--text-xs); font-weight: 650; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.06em; }
+.cert-card__chips { display: flex; gap: var(--space-1); flex-wrap: wrap; }
+.chip[data-cost='free'] { background: var(--ok-soft); color: var(--ok); border-color: transparent; }
+.cert-card__facts { margin: 0; display: grid; gap: var(--space-1); font-size: var(--text-xs); }
+.cert-card__facts > div { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: var(--space-2); }
+.cert-card__facts dt { color: var(--ink-3); }
+.cert-card__facts dd { margin: 0; color: var(--ink-2); }
+.cert-card__skills, .cert-card__also { display: grid; gap: var(--space-1); }
+.cert-card__skills ul, .cert-card__also ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); font-size: var(--text-xs); }
+.cert-card__also ul { display: grid; gap: 2px; list-style: disc; padding-left: 1.1em; color: var(--ink-2); }
+.cert-card__skills li { display: inline-flex; gap: 4px; align-items: center; color: var(--ink-3); }
+.cert-card__skills li[data-state='done'] { color: var(--ok); font-weight: 600; }
+.cert-card__skills li[data-state='progress'] { color: var(--m-supported); }
+.cert-card__foot { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); flex-wrap: wrap; padding-top: var(--space-3); border-top: 1px solid var(--line); }
+.cert-card__sources { font-size: var(--text-xs); color: var(--ink-3); }
+.cert-card__sources summary { cursor: pointer; }
+.cert-card__sources ul { margin: var(--space-2) 0 0; padding-left: 1.1em; display: grid; gap: 2px; word-break: break-all; }
+.cert-h-icon { vertical-align: -3px; margin-right: 6px; color: var(--accent); }
+.cert-foot { display: flex; gap: var(--space-2); align-items: center; margin-top: var(--space-5); }
+.cert-summary { display: grid; gap: var(--space-3); }
+.cert-summary ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); font-size: var(--text-sm); }
+.cert-summary li { display: flex; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
+
+/* ---------- Certifications ---------- */
+.cert-prompt { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-3); padding: var(--space-4); border-radius: var(--radius); background: linear-gradient(0deg, var(--accent-soft), var(--accent-soft)); border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); }
+.cert-prompt__icon { color: var(--accent); }
+.cert-prompt__body { display: grid; gap: var(--space-2); font-size: var(--text-sm); }
+.cert-prompt__body ul { margin: 0; padding-left: 1.1em; display: grid; gap: 2px; }
+.section--tight { margin-top: var(--space-5); }
+.cert-home { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-3); align-items: start; padding: var(--space-4); border-radius: var(--radius-lg); background: var(--accent-soft); color: var(--accent-soft-ink); text-decoration: none; border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); }
+.cert-home > span { display: grid; gap: 2px; }
+.cert-home strong { color: var(--ink); }
+.cert-home .eyebrow { color: var(--accent-soft-ink); }

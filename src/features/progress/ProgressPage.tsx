@@ -3,6 +3,9 @@ import { Copy, CheckCircle2, XCircle, Eye, MessageSquareText } from 'lucide-reac
 import { PageHeader, Panel, MasteryPill, MASTERY_LABELS, PathTag, Button, EmptyState, type MasteryStatus } from '@/design/components';
 import { SKILLS, AREA_NAMES, getSkill } from '@/content/skills';
 import { LESSONS, getLesson } from '@/content/lessons';
+import { LAB_EXERCISES, getLabExercise } from '@/content/lab/exercises';
+import { certificationStatus } from '@/core/learning/certifications';
+import { Award } from 'lucide-react';
 import type { SkillArea } from '@/content/types';
 import { useScrollToHash } from '@/app/useScrollToHash';
 import { useLearning } from '@/core/learning/LearningContext';
@@ -38,12 +41,15 @@ export function ProgressPage() {
   const { events } = useLearning();
   const { settings } = useSettings();
   const toast = useToast();
-  const skills = SKILLS.map((s) => ({ skill: s, result: skillResult(events, s.id, LESSONS) }));
+  const skills = SKILLS.map((s) => ({ skill: s, result: skillResult(events, s.id, LESSONS, LAB_EXERCISES) }));
   const counts = Object.fromEntries(ORDER.map((st) => [st, skills.filter((x) => x.result.status === st).length])) as Record<MasteryStatus, number>;
   const obs = observe(events, LESSONS);
   const recent = events.filter((e) => e.type === 'answer' || e.type === 'reveal').slice(-12).reverse();
   const started = LESSONS.filter((l) => lessonResult(events, l).status !== 'none');
   const areas = Object.keys(AREA_NAMES) as SkillArea[];
+  const certs = certificationStatus(events, LESSONS, LAB_EXERCISES);
+  const readyCerts = certs.filter((c) => c.readiness === 'ready');
+  const buildingCerts = certs.filter((c) => c.readiness === 'building');
 
   return (
     <>
@@ -65,6 +71,25 @@ export function ProgressPage() {
         </ul>
       </Panel>
 
+      <Panel as="section" className="cert-summary section--tight" aria-labelledby="certs-h">
+        <div className="panel__head">
+          <h2 id="certs-h" className="panel__title"><Award size={18} aria-hidden="true" className="cert-h-icon" />Certifications</h2>
+          <Link to="/progress/certifications" className="link-quiet">All {certs.length} →</Link>
+        </div>
+        {readyCerts.length > 0 ? (
+          <>
+            <p className="muted small">You've demonstrated every skill for these. Consider getting certified:</p>
+            <ul>{readyCerts.map((c) => <li key={c.cert.id}><strong>{c.cert.name}</strong><span className="subtle">{c.cert.provider} · {c.cert.cost === 'free' ? 'Free' : c.cert.price}</span></li>)}</ul>
+          </>
+        ) : (
+          <p className="muted small">
+            {buildingCerts.length > 0
+              ? `You're building toward ${buildingCerts.length} certification${buildingCerts.length === 1 ? '' : 's'}. Closest: ${buildingCerts[0]!.cert.name} (${buildingCerts[0]!.done.length} of ${buildingCerts[0]!.cert.skills.length} skills demonstrated).`
+              : 'As you demonstrate skills, matching certifications from freeCodeCamp, GitHub, Anthropic, AWS, Microsoft and others are recommended here.'}
+          </p>
+        )}
+      </Panel>
+
       <div className="skill-areas">
         {areas.map((area) => (
           <section key={area} aria-labelledby={`area-${area}`} className="skill-area">
@@ -78,9 +103,10 @@ export function ProgressPage() {
                   </div>
                   <MasteryPill status={result.status} />
                   <p className="subtle small">{result.status === 'none' && result.lessons.length === 0 ? s.summary : result.reason}</p>
-                  {result.lessons.length > 0 && (
+                  {(result.lessons.length > 0 || result.labs.length > 0) && (
                     <div className="skill-tile__lessons">
                       {result.lessons.map((r) => <Link key={r.lessonId} to={`/learn/lesson/${r.lessonId}`}>{getLesson(r.lessonId)?.title}</Link>)}
+                      {result.labs.map((r) => <Link key={r.exerciseId} to={`/lab/${r.exerciseId}`}>Lab: {getLabExercise(r.exerciseId)?.title}</Link>)}
                     </div>
                   )}
                   {s.prerequisites.length > 0 && <span className="skill-tile__pre">Builds on {s.prerequisites.map((p) => getSkill(p)?.name).join(', ')}</span>}
@@ -138,7 +164,7 @@ export function ProgressPage() {
             {started.map((l) => (
               <li key={l.id}>
                 <span><strong>{l.title}</strong> <MasteryPill status={lessonResult(events, l).status} /></span>
-                <Button size="sm" variant="ghost" onClick={async () => toast((await copyText(evidenceToMarkdown(buildEvidence(events, l, LESSONS, settings.profile)))) ? 'Evidence copied' : 'Copy was blocked by the browser')}>
+                <Button size="sm" variant="ghost" onClick={async () => toast((await copyText(evidenceToMarkdown(buildEvidence(events, l, LESSONS, settings.profile, new Date(), LAB_EXERCISES)))) ? 'Evidence copied' : 'Copy was blocked by the browser')}>
                   <Copy size={14} aria-hidden="true" /> Copy
                 </Button>
               </li>

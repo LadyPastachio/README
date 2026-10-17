@@ -20,12 +20,12 @@ export const learningEventSchema = z.object({
   at: z.string(), // ISO time
   /** answer = the learner submitted something; reveal = they asked to see the solution. */
   type: z.enum(['answer', 'reveal']),
-  context: z.enum(['lesson', 'review']),
+  context: z.enum(['lesson', 'review', 'lab']),
   /** One visit to a lesson, or one review. Groups attempts together. */
   sessionId: z.string(),
   lessonId: z.string(),
   activityId: z.string(),
-  kind: z.enum(['order', 'choice', 'fill', 'explain']),
+  kind: z.enum(['order', 'choice', 'fill', 'explain', 'lab']),
   /** null for activities that aren't checked automatically. */
   correct: z.boolean().nullable(),
   /** What the learner answered, in words (for evidence). */

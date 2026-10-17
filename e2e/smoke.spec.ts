@@ -11,6 +11,8 @@ const PAGES = [
   { hash: '#/learn/glossary', heading: 'Glossary' },
   { hash: '#/projects', heading: 'Your four projects' },
   { hash: '#/lab', heading: 'Write, run and debug code' },
+  { hash: '#/lab/counter-button', heading: 'Make a button count' },
+  { hash: '#/progress/certifications', heading: 'Certifications' },
   { hash: '#/ai', heading: 'Prompts, APIs, tools and agents' },
   { hash: '#/progress', heading: 'What you can actually do' },
   { hash: '#/circles', heading: 'Learn alongside friends' },
