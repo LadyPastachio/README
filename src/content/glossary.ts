@@ -1,0 +1,31 @@
+import type { GlossaryTerm } from './types';
+
+/** Plain-language definitions. Grows as lessons introduce terms in context. */
+export const GLOSSARY: GlossaryTerm[] = [
+  { term: 'Browser', definition: 'The program that requests web pages, then reads their HTML, CSS and JavaScript to draw and run them.', related: ['Server', 'HTTP'] },
+  { term: 'Server', definition: 'A computer program that waits for requests and sends back responses, such as a page, data or an error.', related: ['Browser', 'API'] },
+  { term: 'HTTP', definition: 'The set of rules browsers and servers use to ask for things and answer. Each exchange is a request followed by a response.', related: ['Status code'] },
+  { term: 'Status code', definition: 'A three-digit number in an HTTP response that says how the request went: 200 means OK, 404 means not found, 500 means the server failed.', related: ['HTTP'] },
+  { term: 'DNS', definition: 'The internet\'s address book. It turns a name like example.com into the numeric address of the server to contact.' },
+  { term: 'HTML', definition: 'The language that describes a page\'s structure and meaning: headings, paragraphs, links, forms.', related: ['CSS', 'DOM'] },
+  { term: 'CSS', definition: 'The language that controls how HTML looks: colors, spacing, fonts and layout.', related: ['HTML'] },
+  { term: 'JavaScript', definition: 'The programming language browsers run. It makes pages respond to people and fetch data.', related: ['TypeScript', 'DOM'] },
+  { term: 'TypeScript', definition: 'JavaScript with types added, so many mistakes are caught before the code runs.', related: ['JavaScript'] },
+  { term: 'DOM', definition: 'The browser\'s live, editable model of the page. JavaScript changes the page by changing the DOM.', related: ['HTML', 'JavaScript'] },
+  { term: 'React', definition: 'A JavaScript library for building interfaces out of reusable components that update when their data changes.' },
+  { term: 'API', definition: 'A defined way for one program to ask another for data or actions, such as "give me this user\'s transactions".', related: ['HTTP', 'JSON'] },
+  { term: 'JSON', definition: 'A text format for data made of names, values, lists and nested objects. Most APIs send and receive JSON.', related: ['API'] },
+  { term: 'Database', definition: 'Software that stores data so it survives restarts and can be searched and updated safely.', related: ['SQL'] },
+  { term: 'SQL', definition: 'The language used to ask relational databases for data and to change it.', related: ['Database'] },
+  { term: 'Git', definition: 'A tool that records snapshots of your project so you can see history, try ideas on branches and undo mistakes.' },
+  { term: 'Authentication', definition: 'Checking who someone is, for example with a password or a sign-in link.', related: ['Authorization'] },
+  { term: 'Authorization', definition: 'Deciding what an identified person is allowed to see or do.', related: ['Authentication'] },
+  { term: 'Large language model (LLM)', definition: 'A model trained on large amounts of text to predict likely next words. Useful and flexible, but it can state wrong things confidently.', related: ['Prompt', 'Token'] },
+  { term: 'Prompt', definition: 'The instructions and context you give a language model. Precise prompts behave like good specifications.', related: ['Large language model (LLM)'] },
+  { term: 'Token', definition: 'A chunk of text (often part of a word) that models read and write. Usage, limits and cost are counted in tokens.' },
+  { term: 'Structured output', definition: 'Model output in a fixed shape, such as JSON matching a schema, so ordinary code can check and use it.' },
+  { term: 'Retrieval', definition: 'Looking up relevant approved documents and giving them to a model, so answers come from known sources.' },
+  { term: 'Tool calling', definition: 'A model asking your code to perform an action, such as checking a calendar. Your code runs it and reports the real result.' },
+  { term: 'Agent', definition: 'A system that uses a model in a loop to decide steps and call tools toward a goal, within limits you set.', related: ['Tool calling'] },
+  { term: 'Prompt injection', definition: 'Text from an untrusted source that tries to override a model\'s instructions, like an email saying "ignore your rules".' },
+];
