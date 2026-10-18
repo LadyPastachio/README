@@ -5,6 +5,7 @@ import { normalizeSettings } from '../settings/schema';
 import { RECORDS_KEY, normalizeRecords } from '../learning/records';
 import { LAB_KEY, normalizeLabStore } from '../lab/workspaceStore';
 import { PROJECTS_KEY, normalizeProjects } from '../projects/notesStore';
+import { EXPERIMENTS_KEY, normalizeExperiments } from '../experiments/progressStore';
 
 /**
  * Backup files: a portable copy of everything the app saves locally.
@@ -21,6 +22,7 @@ export const BACKUP_KEY_NAMES: Record<string, string> = {
   [RECORDS_KEY]: 'Learning records (answers, hints, reviews)',
   [LAB_KEY]: 'Your Code Lab code',
   [PROJECTS_KEY]: 'Your project notes',
+  [EXPERIMENTS_KEY]: 'Your guided experiments',
 };
 export const BACKUP_VERSION = 1;
 
@@ -30,6 +32,7 @@ const KNOWN_KEYS: Record<string, (value: unknown) => unknown> = {
   [RECORDS_KEY]: (value) => ({ version: 1, events: normalizeRecords(value) }),
   [LAB_KEY]: normalizeLabStore,
   [PROJECTS_KEY]: normalizeProjects,
+  [EXPERIMENTS_KEY]: normalizeExperiments,
 };
 
 const backupFileSchema = z.object({

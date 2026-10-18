@@ -14,6 +14,8 @@ import { NotFoundPage } from '@/app/NotFoundPage';
 import { OrderTask, ChoiceTask, FillTask, ExplainTask } from './Activities';
 import { RequestDiagram } from './RequestDiagram';
 import { LessonSummary } from './LessonSummary';
+import { experimentsForLesson } from '@/content/experiments';
+import { ExperimentCard } from '@/features/experiments/ExperimentCard';
 import { LessonHelpProvider, LessonHelpPanel } from './LessonHelp';
 import type { ActivityContext } from './useActivity';
 
@@ -124,6 +126,14 @@ function LessonView({ lessonId }: { lessonId: string }) {
               {s.diagram === 'request-response' && <RequestDiagram />}
             </section>
           ))}
+
+          {experimentsForLesson(lesson.id).length > 0 && (
+            <section className="lesson-section" aria-labelledby="experiment-h">
+              <h2 id="experiment-h">Try it for real</h2>
+              <p className="muted">A short guided experiment: change real code, run it, and check your work step by step.</p>
+              {experimentsForLesson(lesson.id).map((x) => <ExperimentCard key={x.id} x={x} />)}
+            </section>
+          )}
 
           <LessonHelpPanel />
 

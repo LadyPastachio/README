@@ -243,3 +243,11 @@ Short records of decisions that shape the project. Each says what was decided, w
 **Decision (requested by the learner):** Background #FAF9F6; primary #0F4C5C for all buttons and active states; antique gold #B98A2F only for tiny decorative marks (the logo's crossbar, the thin bar beside the current page, a short rule before page labels); text #1E2A28 and #4A5A56. Dark mode: background #101817 with #6FB5A8 buttons (dark text on them).
 
 **Why gold is never text:** it measures about 3:1 against the background, below the 4.5:1 that WCAG AA requires for text. All other pairs were measured: deep teal buttons 9.5:1, dark-mode buttons 7.3:1, secondary text 6.9:1. The accessibility audit runs on the final theme.
+
+## D33. Guided experiments are data, run by one screen built from Code Lab parts
+
+**Decision:** Each experiment is a validated data file (`src/content/experiments/`) listing its lessons, starter files and steps. Each step names one file to edit, gives a task, the expected result, hints from a small clue to the exact change, words explained in place, a check, and success feedback; a "make it your own" step offers choices, each with its own check. `ExperimentPage` runs any experiment using the Code Lab's CodeMirror editor, its sandboxed iframe runner and its error explanations. Checks run inside the sandbox after the page loads; they return true or throw an error whose message is the feedback.
+
+**Why:** New experiments need only a new data file. Reusing the Code Lab keeps one sandbox and one editor to secure and test. Checks that inspect the rendered page (computed colors, clicking the button) accept any correct edit, and can explain specific mistakes, like putting the color in the wrong rule.
+
+**Choices:** Run Code is explicit (no live preview while typing) so beginners connect the action with the result. Reset step restores the code as it was when the step started. Progress is stored separately from Code Lab exercises (`academy:experiments`) and included in backups. Completing an experiment doesn't count toward mastery, because the steps give the answer away in their hints; the lesson's practice and the Code Lab exercises do.

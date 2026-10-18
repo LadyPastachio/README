@@ -10,6 +10,8 @@ import { saveWorkspace } from '@/core/lab/workspaceStore';
 import { RequestDiagram } from './RequestDiagram';
 import { ExplainTask } from './Activities';
 import { experimentFiles } from './experiment';
+import { experimentsForLesson } from '@/content/experiments';
+import { ExperimentCard } from '@/features/experiments/ExperimentCard';
 import type { ActivityContext } from './useActivity';
 
 const ICONS: Record<HelpKind, typeof Feather> = {
@@ -170,7 +172,8 @@ function Experiment({ lesson }: { lesson: Lesson }) {
   };
   return (
     <div className="help__stack">
-      <p className="muted">Open any example from this lesson in the Code Lab playground, change it, and see what happens. Your lesson stays here when you come back.</p>
+      {experimentsForLesson(lesson.id).map((x) => <ExperimentCard key={x.id} x={x} compact />)}
+      <p className="muted">Or open any example from this lesson in the Code Lab playground, change it, and see what happens. Your lesson stays here when you come back.</p>
       <ul className="help__experiments">
         {examples.map((e) => (
           <li key={e.label}><span>{e.label}</span><Button size="sm" onClick={() => go(e.code)}><FlaskConical size={14} aria-hidden="true" /> Open in Code Lab</Button></li>

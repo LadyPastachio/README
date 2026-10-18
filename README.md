@@ -6,6 +6,7 @@ A personal, project-based academy for learning software engineering and AI syste
 
 ## What works today
 
+- **Guided experiments**: step-by-step coding labs for beginners. The first, "Build Your First Interactive Webpage", has you change real HTML, CSS and JavaScript, run it in a live preview, and check each step, with progressive hints, plain-language errors and resets
 - **Optional accounts** on the academy server you run: save your progress to your account and restore it on another device (each step shows what will change first), download your account data, delete your account
 - **Private learning circles**: create a circle, invite friends with a one-time code, share your progress summary, Code Lab code or a note on purpose, and comment on each other's work. Members see names, never emails; only the owner can invite or remove people
 - **AI Workshop**: a mentor with five modes (guide me, explain, review code, debug with me, quiz me), a prompt coach, a request and cost inspector with a temperature demo, a structured-output lab with an evaluation table, a step-by-step tool-calling walkthrough, and a prompt-injection lab. Everything works with no paid API, clearly labeled **Simulated**

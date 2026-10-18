@@ -1,3 +1,4 @@
+import { experimentsForLesson } from '@/content/experiments';
 import type { Lesson } from '@/content/schema';
 import type { Profile } from '../settings/schema';
 import type { LearningEvent } from './records';
@@ -26,7 +27,7 @@ export function availableHelp(lesson: Lesson): HelpKind[] {
   return HELP_KINDS.filter((k) => {
     if (k === 'diagram') return lesson.sections.some((s) => s.diagram);
     if (k === 'compare') return !!lesson.alternatives.compare;
-    if (k === 'experiment') return lesson.sections.some((s) => s.code) || !!lesson.alternatives.example.code;
+    if (k === 'experiment') return lesson.sections.some((s) => s.code) || !!lesson.alternatives.example.code || experimentsForLesson(lesson.id).length > 0;
     return true;
   });
 }

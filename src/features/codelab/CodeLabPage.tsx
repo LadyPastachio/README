@@ -10,6 +10,8 @@ import { labResult } from '@/core/learning/mastery';
 import { NotFoundPage } from '@/app/NotFoundPage';
 import { LabWorkspace } from './LabWorkspace';
 import { SqlWorkspace } from './SqlWorkspace';
+import { EXPERIMENTS } from '@/content/experiments';
+import { ExperimentCard } from '@/features/experiments/ExperimentCard';
 import './codelab.css';
 
 const KIND = {
@@ -53,8 +55,13 @@ function LabHome() {
         <p className="small"><strong>Safe to experiment.</strong> <span className="muted">Your code runs in an isolated sandbox: it can't read your saved data, the rest of the app or the internet, and loops that never end are stopped after a second. Your code is saved in this browser as you type.</span></p>
       </div>
 
-      {groups.map((g, gi) => (
-        <section key={g.id} className={gi === 0 ? 'section section--first' : 'section'} aria-labelledby={`ex-h-${g.id}`}>
+      <section className="section section--first" aria-labelledby="xp-h">
+        <div className="section__head"><h2 id="xp-h">Guided experiments</h2><p className="muted">New to code? Start here: step-by-step instructions, a live preview, and a check at every step.</p></div>
+        <div className="xp-list">{EXPERIMENTS.map((x) => <ExperimentCard key={x.id} x={x} />)}</div>
+      </section>
+
+      {groups.map((g) => (
+        <section key={g.id} className="section" aria-labelledby={`ex-h-${g.id}`}>
           <div className="section__head"><h2 id={`ex-h-${g.id}`}>{g.title}</h2><p className="muted">{g.note}</p></div>
           <div className="lab-list">
             {g.items.map((x) => {

@@ -223,6 +223,19 @@ The academy is built in phases. Each phase ends runnable, tested and documented.
 
 ---
 
+## After 1.0: Guided experiments ✅
+
+- [x] Experiments are lesson-linked data (`src/content/experiments/`): title, objective, starter files, ordered steps with the file to edit, task, expected result, progressive hints, words explained in place, a deterministic check and success feedback ([D33](DECISIONS.md))
+- [x] One screen runs any experiment, reusing the Code Lab's editor, sandboxed preview and plain-language errors: instructions, editor and live preview side by side (stacked on tablets; tabs on phones, with the current task kept visible above the code and the preview)
+- [x] "Build Your First Interactive Webpage": five steps through HTML, CSS and JavaScript, ending with a change of the learner's choosing; a completion screen explains what was practiced
+- [x] Checks are real: each runs inside the sandbox against the rendered page (text content, computed colors, clicking the button) and says what's wrong ("You changed the button's color instead…")
+- [x] Run Code, Check My Work, hints one at a time, Reset step and Reset experiment (both confirmed), View starter code and restore one file; code and progress saved as you go and included in backups
+- [x] Offered from the linked lessons ("Try it for real" and the Experiment control) and at the top of the Code Lab
+
+**Tests:** 6 new unit tests (data validation, check code parses, starter files match the brief, damaged saved progress) and 21 browser checks (7 tests × desktop, tablet, phone) covering the ten acceptance criteria: starter files working together, HTML/CSS/JS edits changing the preview, the button's behavior, every step's check failing and passing, hints, retries, both resets, tab switching keeping edits, error messages, phone layout, and no network requests to any AI provider.
+
+**Not done:** finishing an experiment isn't counted toward mastery yet (it's guided practice); only one experiment exists so far.
+
 ## After 1.0: ideas
 
 - Remaining milestones: React and TypeScript for the website, a real database behind the finance tracker, chess check/checkmate and a computer opponent

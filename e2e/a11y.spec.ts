@@ -4,7 +4,7 @@ import AxeBuilder from '@axe-core/playwright';
 /** Automated accessibility audit (axe-core, WCAG 2.1 A and AA rules) on every main screen, in light and dark themes. */
 const PAGES = [
   '#/', '#/learn', '#/learn/path/web', '#/learn/lesson/functions', '#/learn/lesson/structured-outputs', '#/learn/glossary', '#/review',
-  '#/projects', '#/lab', '#/lab/counter-button', '#/lab/sql-new-leads', '#/ai', '#/ai/mentor', '#/ai/coach', '#/ai/request', '#/ai/structured',
+  '#/projects', '#/lab', '#/lab/counter-button', '#/lab/sql-new-leads', '#/lab/experiment/first-webpage', '#/ai', '#/ai/mentor', '#/ai/coach', '#/ai/request', '#/ai/structured',
   '#/ai/tools', '#/ai/injection', '#/progress', '#/progress/certifications', '#/circles', '#/settings', '#/welcome',
 ];
 
@@ -12,6 +12,7 @@ for (const theme of ['light', 'dark'] as const) {
   for (const hash of PAGES) {
     test(`${hash} has no detectable accessibility violations (${theme})`, async ({ page }, info) => {
       test.skip(info.project.name === 'tablet', 'Desktop and phone layouts cover the tablet rules');
+      test.setTimeout(60_000); // axe on the largest pages (Settings) can take a while on slow machines
       await page.addInitScript((t) => localStorage.setItem('academy:settings', JSON.stringify({ appearance: { theme: t } })), theme);
       await page.goto(`/${hash}`);
       await expect(page.locator('h1').first()).toBeVisible();

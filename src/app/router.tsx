@@ -27,6 +27,7 @@ export const routes: RouteObject[] = [
       { path: '/review', element: <ReviewPage /> },
       { path: '/projects', element: <ProjectsPage /> },
       { path: '/lab', lazy: () => import('@/features/codelab/CodeLabPage').then((m) => ({ Component: m.CodeLabPage })) },
+      { path: '/lab/experiment/:experimentId', lazy: () => import('@/features/experiments/ExperimentPage').then((m) => ({ Component: m.ExperimentPage })) },
       { path: '/lab/:exerciseId', lazy: () => import('@/features/codelab/CodeLabPage').then((m) => ({ Component: m.CodeLabPage })) },
       { path: '/ai', lazy: () => import('@/features/ai-workshop/AIWorkshopPage').then((m) => ({ Component: m.AIWorkshopPage })) },
       { path: '/ai/:tool', lazy: () => import('@/features/ai-workshop/AIWorkshopPage').then((m) => ({ Component: m.AIWorkshopPage })) },

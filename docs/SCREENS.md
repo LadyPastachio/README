@@ -49,12 +49,20 @@ Each screen's purpose, main actions, layout at each size, and important states. 
 ## Code Lab
 
 - **Purpose:** Write, run and debug real code safely.
-- **Exercise list:** safety note; exercise cards (type or SQL, skill, time, number of checks, status) grouped into shared exercises and one section per path, your path first; playground.
+- **Exercise list:** safety note; guided experiments first; exercise cards (type or SQL, skill, time, number of checks, status) grouped into shared exercises and one section per path, your path first; playground.
 - **Workspace (desktop):** collapsible task panel (instructions, prediction box, acceptance criteria with live pass/fail, hints, solution, comparison after passing, certification prompt) | editor with file tabs, Run and Reset, and a footer showing how files connect and a Live preview toggle | resizable divider | preview above console.
 - **Workspace (phone and tablet under 900px):** Task / Code / Preview / Console switcher, one panel at a time.
 - **SQL workspace:** task panel (instructions, tables and columns, acceptance criteria, hints, solution) | query editor with Run and Reset above a results table (row count, timing). Phone and tablet: Task / Query / Results switcher. States: results; no rows; error with a tip; query stopped after 2 seconds.
 - **Code review:** "Review my code" in the task panel lists findings by severity with links to the line; "Ask the model too" appears only when live.
 - **States:** live preview; running checks; all passed (wording depends on hints or solution used); runtime error with explanation and line link; syntax error before running; unlinked file notice; loop stopped; checks timed out; reset confirmation.
+
+## Guided experiment (/lab/experiment/:id)
+
+- **Purpose:** A beginner's first hands-on coding, one small change at a time.
+- **Desktop (1280px+):** three columns. Instructions (title, objective, progress bar, numbered steps with the current one highlighted, then the current step: concept, "File to edit", task, "You should see", words explained, Run Code, Check My Work, feedback, Next step, hints, common mistakes, Reset step, View starter code, Reset experiment) | editor with index.html / style.css / script.js tabs (the file for this step marked "Edit") and Run Code | live preview framed like a browser window, with Messages for errors below.
+- **Tablet (900–1279px):** instructions on the left; editor above the preview on the right.
+- **Phone:** Steps / Code / Preview switcher; the current step's task and file stay visible above the code and the preview. Run Code switches to the preview.
+- **States:** not checked; check failed (specific, encouraging reason); passed (Next step); code error (explained in Messages and mentioned in the feedback); reset confirmations; starter code dialog; completion screen (what you practiced, where to go next, keep experimenting, start over).
 
 ## Certifications (under My Progress)
 
