@@ -1,4 +1,5 @@
 import type { Alternatives } from '../schema';
+import { AI_ALTERNATIVES } from './aiAlternatives';
 
 /**
  * Alternative explanations for every lesson, shown by the lesson controls.
@@ -502,4 +503,5 @@ export const ALTERNATIVES: Record<string, Alternatives> = {
       lookFor: ['Message text is treated as data, never as instructions', 'The workflow only has permission for the actions it needs (no bulk customer access)', 'Replies come only from approved knowledge; suspicious messages can be flagged for a person'],
     },
   },
+  ...AI_ALTERNATIVES,
 };

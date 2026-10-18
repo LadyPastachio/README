@@ -24,6 +24,12 @@ const HUE: Record<string, Hue> = {
   'filter-map-reduce': 'finance',
   'http-and-apis': 'automation',
   'validating-input': 'automation',
+  'prompts-as-specs': 'web',
+  'calling-a-model-api': 'finance',
+  'structured-outputs': 'chess',
+  'prompt-injection': 'automation',
+  'tool-calling-loop': 'automation',
+  'evaluating-ai': 'finance',
 };
 
 export function lessonHue(id: string): Hue {
@@ -287,6 +293,86 @@ export function LessonArt({ lessonId, className = '' }: { lessonId: string; clas
             <path d="M0 -26 L 22 -18 V 2 C 22 16, 10 24, 0 28 C -10 24, -22 16, -22 2 V -18 Z" fill={c} />
             <path d="M-9 0l6 6 12-13" fill="none" stroke="var(--surface)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
           </g>
+        </g>
+      )}
+      {lessonId === 'prompts-as-specs' && (
+        <g>
+          {card(30, 14, 100, 72, 8)}
+          {[['Task', 1], ['Context', 0.8], ['Rules', 0.7], ['Format', 0.6], ['Example', 0.5]].map(([t, w], i) => (
+            <g key={t as string} transform={`translate(40 ${24 + i * 12})`}>
+              <path d="M0 3l2.5 2.5 4.5-5" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              <text x="12" y="6" className="art-text art-text--xs" fill="var(--ink-2)">{t as string}</text>
+              <rect x="44" y="1" width={36 * (w as number)} height="5" rx="2.5" fill="var(--line)" />
+            </g>
+          ))}
+        </g>
+      )}
+      {lessonId === 'calling-a-model-api' && (
+        <g>
+          {card(10, 28, 40, 44, 6)}
+          <text x="30" y="54" textAnchor="middle" className="art-mono art-mono--xs" fill="var(--ink-2)">app</text>
+          <g transform="translate(64 30)">
+            <rect width="32" height="40" rx="6" fill={c} />
+            <path d="M10 18v-4a6 6 0 0 1 12 0v4" fill="none" stroke="var(--surface)" strokeWidth="2" />
+            <rect x="8" y="18" width="16" height="12" rx="2" fill="var(--surface)" />
+          </g>
+          {card(110, 28, 40, 44, 6)}
+          <circle cx="130" cy="46" r="6" fill="none" stroke={c} strokeWidth="2" /><circle cx="130" cy="46" r="2" fill={c} />
+          <text x="130" y="64" textAnchor="middle" className="art-mono art-mono--xs" fill="var(--ink-2)">model</text>
+          <path d="M52 50h10M98 50h10" stroke="var(--line-strong)" strokeWidth="2" strokeLinecap="round" />
+          <text x="80" y="86" textAnchor="middle" className="art-mono art-mono--xs" fill={c}>key stays here</text>
+        </g>
+      )}
+      {lessonId === 'structured-outputs' && (
+        <g>
+          {card(10, 22, 58, 56, 6)}
+          <text x="18" y="38" className="art-mono art-mono--xs" fill="var(--ink-3)">```json</text>
+          <text x="18" y="50" className="art-mono art-mono--xs" fill="var(--ink-2)">{'{"intent"'}</text>
+          <text x="18" y="62" className="art-mono art-mono--xs" fill="var(--ink-2)">{' : "hours"}'}</text>
+          <path d="M74 50h14" stroke={c} strokeWidth="2.4" strokeLinecap="round" /><path d="M84 45l5 5-5 5" fill="none" stroke={c} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+          {card(96, 22, 54, 56, 6)}
+          {[0, 1, 2, 3].map((i) => (
+            <g key={i} transform={`translate(104 ${32 + i * 11})`}>
+              <rect width="26" height="6" rx="2" fill="var(--line)" />
+              <path d="M32 3l2.5 2.5 4.5-5" fill="none" stroke="var(--ok)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            </g>
+          ))}
+        </g>
+      )}
+      {lessonId === 'prompt-injection' && (
+        <g>
+          {card(10, 26, 64, 48, 6)}
+          <rect x="18" y="36" width="44" height="4" rx="2" fill="var(--line)" />
+          <rect x="18" y="46" width="48" height="8" rx="2" fill="var(--danger-soft)" />
+          <text x="20" y="52.5" className="art-mono art-mono--xs" fill="var(--danger)">ignore rules</text>
+          <rect x="18" y="60" width="30" height="4" rx="2" fill="var(--line)" />
+          {[0, 1, 2].map((i) => <rect key={i} x={92 + i * 12} y={24 + i * 4} width="6" height={52 - i * 8} rx="3" fill={c} opacity={1 - i * 0.25} />)}
+          <path d="M76 50h12" stroke="var(--danger)" strokeWidth="2" strokeDasharray="3 3" />
+          <path d="M136 46l4 4 8-9" fill="none" stroke="var(--ok)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+        </g>
+      )}
+      {lessonId === 'tool-calling-loop' && (
+        <g>
+          <circle cx="80" cy="50" r="28" fill="none" stroke="var(--line-strong)" strokeWidth="2" strokeDasharray="5 4" />
+          {[['model', 80, 22], ['check', 108, 50], ['run', 80, 78], ['result', 52, 50]].map(([t, x, y], i) => (
+            <g key={t as string} transform={`translate(${(x as number) - 17} ${(y as number) - 8})`}>
+              <rect width="34" height="16" rx="8" fill={i === 0 ? c : 'var(--surface)'} stroke={c} strokeWidth="1.5" />
+              <text x="17" y="11" textAnchor="middle" className="art-text art-text--xs" fill={i === 0 ? 'var(--surface)' : 'var(--ink-2)'}>{t as string}</text>
+            </g>
+          ))}
+          <g transform="translate(130 16)"><circle r="9" fill="var(--surface)" stroke={c} strokeWidth="1.5" /><circle cy="-2" r="3" fill={c} /><path d="M-5 5a5 4 0 0 1 10 0" fill={c} /></g>
+        </g>
+      )}
+      {lessonId === 'evaluating-ai' && (
+        <g>
+          {card(22, 14, 116, 72, 8)}
+          {[true, true, false, true, true].map((ok, i) => (
+            <g key={i} transform={`translate(34 ${24 + i * 11})`}>
+              <rect width="62" height="6" rx="2" fill="var(--line)" />
+              {ok ? <path d="M72 3l2.5 2.5 4.5-5" fill="none" stroke="var(--ok)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /> : <path d="M72 0l6 6M78 0l-6 6" stroke="var(--danger)" strokeWidth="1.8" strokeLinecap="round" />}
+            </g>
+          ))}
+          <text x="124" y="80" textAnchor="end" className="art-mono art-mono--sm" fill={c}>4/5</text>
         </g>
       )}
       {!HUE[lessonId] && card(40, 20, 80, 60, 8)}

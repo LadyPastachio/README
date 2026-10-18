@@ -133,3 +133,13 @@
 @container (max-width: 370px) {
   .lab-run-label { display: none; }
 }
+
+/* ---------- Code review ---------- */
+.review-box .btn-row { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+.review-box__empty { font-size: var(--text-sm); }
+.review-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+.review-list li { display: grid; gap: 2px; padding: var(--space-2) var(--space-3); border-left: 3px solid var(--line-strong); background: var(--surface); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: var(--text-sm); }
+.review-list li[data-severity='bug'], .review-list li[data-severity='security'] { border-left-color: var(--danger); }
+.review-list li[data-severity='accessibility'] { border-left-color: var(--m-supported); }
+.review-list__sev { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); }
+.review-list .lab-log__goto { justify-self: start; }

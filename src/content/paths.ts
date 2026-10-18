@@ -89,8 +89,18 @@ export const PATHS: LearningPath[] = [
         acceptance: ['Invalid or malformed leads are rejected, never crash the workflow', 'Answers come only from approved knowledge; anything else goes to a person', 'Every step is logged; instructions inside messages change nothing'],
       },
       { id: 'auto-2', title: 'A small service', deliverable: 'A backend that receives webhooks and stores leads', estimate: '6–10 weeks', skills: ['backend', 'sql', 'security'], requires: { lessons: [], labs: [] }, acceptance: [] },
-      { id: 'auto-3', title: 'Model calls with structure', deliverable: 'Validated structured outputs with retries and fallbacks', estimate: '6–10 weeks', skills: ['model-apis', 'structured-outputs', 'prompt-injection'], requires: { lessons: [], labs: [] }, acceptance: [] },
-      { id: 'auto-4', title: 'A controlled agent', deliverable: 'Tool calls, stopping rules, logs and human handoff on synthetic data', estimate: '10–16 weeks', skills: ['tool-calling', 'agent-loops', 'ai-evaluation'], requires: { lessons: [], labs: [] }, acceptance: [] },
+      {
+        id: 'auto-3', title: 'Model calls with structure', deliverable: 'Validated structured outputs with retries and fallbacks', estimate: '6–10 weeks', skills: ['model-apis', 'structured-outputs', 'prompt-injection'],
+        requires: { lessons: ['prompts-as-specs', 'calling-a-model-api', 'structured-outputs', 'prompt-injection'], labs: ['validate-model-output', 'injection-guard'] },
+        project: 'validate-model-output',
+        acceptance: ['Any model output becomes checked data or a clear error, never a crash', 'Unknown fields and values outside the schema are rejected', 'Replies with unapproved links, prices or offers are blocked before sending'],
+      },
+      {
+        id: 'auto-4', title: 'A controlled agent', deliverable: 'Tool calls, stopping rules, logs and human handoff on synthetic data', estimate: '10–16 weeks', skills: ['tool-calling', 'agent-loops', 'ai-evaluation'],
+        requires: { lessons: ['tool-calling-loop', 'evaluating-ai'], labs: ['tool-dispatcher', 'eval-harness'] },
+        project: 'tool-dispatcher',
+        acceptance: ['Only listed tools run, and only with valid arguments', 'Risky actions wait for a person; every call is logged', 'Changes are scored against an evaluation set, and regressions are found case by case'],
+      },
     ],
   },
 ];

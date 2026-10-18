@@ -15,6 +15,7 @@ import { useToast } from '@/app/Toast';
 import { CodeEditor, type FileKind, type CodeEditorHandle } from './CodeEditor';
 import { useLabRunner, type CheckResult } from './useLabRunner';
 import { CertPrompt } from '@/features/certifications/CertPrompt';
+import { ReviewBox } from './ReviewBox';
 
 const FILES: { kind: FileKind; name: string; icon: typeof FileCode2 }[] = [
   { kind: 'html', name: 'index.html', icon: FileCode2 },
@@ -206,6 +207,9 @@ export function LabWorkspace({ exercise }: { exercise: LabExercise }) {
             <Button size="sm" disabled={hintsLocked} onClick={() => setHintsShown((n) => n + 1)}>{hintsLocked ? 'Available after your first check' : hintsShown === 0 ? 'Show a hint' : 'Show another hint'}</Button>
           )}
         </div>
+      )}
+      {exercise.kind !== 'predict' && (
+        <ReviewBox files={files} title={exercise.title} onGoTo={(f) => { setActive(f.file); setTimeout(() => editorHandle.current?.goToLine(f.line), 30); if (narrow) setPane('code'); }} />
       )}
       {canReveal && <Button variant="ghost" onClick={reveal}><Eye size={16} aria-hidden="true" /> Show solution</Button>}
       {revealed && exercise.solution && (

@@ -2,7 +2,7 @@
 
 The academy is built in phases. Each phase ends runnable, tested and documented. Time estimates for learning paths live in the app (Learn → a path); this file tracks building the app itself.
 
-**Current status:** Phases 0–5 complete. Next: Phase 6 (AI Workshop and model integration).
+**Current status:** Phases 0–6 complete. Next: Phase 7 (engineering progression and capstone).
 
 ---
 
@@ -134,13 +134,27 @@ The academy is built in phases. Each phase ends runnable, tested and documented.
 - Alternatives are authored, so there's one of each per lesson. On-demand explanations need a model (Phase 6).
 - "What helps you" needs several uses before it's trusted; early on, stated preferences decide.
 
-## Phase 6: AI Workshop and model integration
+## Phase 6: AI Workshop and model integration ✅
 
-- [ ] Simulated, clearly labeled model responses
-- [ ] Provider-independent model interface
-- [ ] Small local server holding API keys (never in the browser)
-- [ ] Prompt coach, structured-output validation, tool-calling and injection exercises
-- [ ] Usage limits and live/simulated indicators
+- [x] Provider-independent model interface: simulated provider and local-server provider behind one hook ([D21](DECISIONS.md))
+- [x] Simulated responses that are rule-based and say so, labeled **Simulated** everywhere; live ones labeled **Live**
+- [x] Small local server holding the API key (official Anthropic SDK), bound to 127.0.0.1, origin check, input validation, server-side system prompts, daily limit, capped answer length, metadata-only logs ([D22](DECISIONS.md))
+- [x] AI Workshop tools: mentor (5 modes), prompt coach, request and cost inspector with temperature demo, structured-output lab with an evaluation table, tool-calling stepper, prompt-injection lab ([D23](DECISIONS.md))
+- [x] Rule-based code review in the Code Lab and the mentor ([D24](DECISIONS.md))
+- [x] Settings → AI: simulated or local server, default mentor mode, live status and remaining requests
+- [x] 6 AI lessons (prompts as specifications, model APIs, structured outputs, prompt injection, tool-calling loops, evaluation) and 4 AI Code Lab exercises; Automation milestones 3 and 4 now have content
+
+**Tests at end of Phase 6** (all run and passing on 2026-10-18):
+- 195 unit tests, adding the server (no key, key never returned, server-built prompts, rejected input, origin check, daily limit and reset, safe error messages, metadata-only logs), the providers and fallbacks, the simulated mentor, the prompt coach, the code reviewer, the structured-output pipeline, the injection lab, the tool loop and the Workshop screens
+- 194 browser checks across desktop, tablet and phone (43 skipped by design), including simulated mode making no network requests, the real server reached through the proxy, the key never appearing in the page or storage, every new exercise's starter failing and solution passing, and Code Lab review jumping to the line
+
+**Bugs found and fixed:** an oversized request closed the connection before the server could answer (it now drains the body and replies 413); the test setup assumed a browser environment, which broke the server tests.
+
+**Known limitations:**
+- Live mode is tested against a fake model client, never a real paid call. The SDK call itself (`server/anthropic.ts`) was type-checked against SDK 0.135 but not run with a real key here.
+- The simulated mentor only explains glossary terms, and its quiz uses existing review questions.
+- Token counts in the Workshop are estimates (about 4 characters per token). Prices were checked on 2026-10-18.
+- The structured-output, tool-calling and injection labs use authored model outputs, so they show typical failures, not every possible one.
 
 ## Phase 7: Engineering progression and capstone
 

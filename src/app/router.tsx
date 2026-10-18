@@ -30,6 +30,7 @@ export const routes: RouteObject[] = [
       { path: '/lab', element: <CodeLabPage /> },
       { path: '/lab/:exerciseId', element: <CodeLabPage /> },
       { path: '/ai', element: <AIWorkshopPage /> },
+      { path: '/ai/:tool', element: <AIWorkshopPage /> },
       { path: '/progress', element: <ProgressPage /> },
       { path: '/progress/certifications', element: <CertificationsPage /> },
       { path: '/circles', element: <CirclesPage /> },

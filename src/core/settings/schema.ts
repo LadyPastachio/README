@@ -69,12 +69,20 @@ export const profileSchema = z.object({
   observationFeedback: z.array(z.object({ statement: z.string().max(500), agreed: z.boolean(), at: z.string() })).max(50).catch([]),
 });
 
+/** Where AI responses come from. 'simulated' never makes a network request. */
+export const aiSchema = z.object({
+  mode: z.enum(['simulated', 'local-server']).catch('simulated'),
+  /** Default mentor mode in the AI Workshop and Code Lab. */
+  mentorMode: z.enum(['socratic', 'explain', 'review', 'debug', 'quiz']).catch('socratic'),
+});
+
 export const settingsSchema = z.object({
   version: z.literal(1).catch(1),
   appearance: appearanceSchema.catch(appearanceSchema.parse({})),
   accessibility: accessibilitySchema.catch(accessibilitySchema.parse({})),
   learning: learningSchema.catch(learningSchema.parse({})),
   profile: profileSchema.catch(profileSchema.parse({})),
+  ai: aiSchema.catch(aiSchema.parse({})),
 });
 
 export type Settings = z.infer<typeof settingsSchema>;
@@ -82,6 +90,7 @@ export type Appearance = Settings['appearance'];
 export type Accessibility = Settings['accessibility'];
 export type LearningPrefs = Settings['learning'];
 export type Profile = Settings['profile'];
+export type AIPrefs = Settings['ai'];
 
 export const DEFAULT_SETTINGS: Settings = settingsSchema.parse({});
 
@@ -94,6 +103,7 @@ export function normalizeSettings(input: unknown): Settings {
     accessibility: (base as Record<string, unknown>).accessibility ?? {},
     learning: (base as Record<string, unknown>).learning ?? {},
     profile: (base as Record<string, unknown>).profile ?? {},
+    ai: (base as Record<string, unknown>).ai ?? {},
   };
   return settingsSchema.parse(withSections);
 }

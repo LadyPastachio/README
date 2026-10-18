@@ -1,5 +1,6 @@
 import { labExerciseSchema, type LabExercise, type LabExerciseInput } from './schema';
 import { PATH_EXERCISES } from './pathExercises';
+import { AI_EXERCISES } from './aiExercises';
 
 const PAGE = (body: string, title = 'My page') =>
   `<!doctype html>\n<html lang="en">\n<head>\n  <title>${title}</title>\n  <link rel="stylesheet" href="style.css">\n</head>\n<body>\n${body}\n  <script src="script.js"></script>\n</body>\n</html>\n`;
@@ -221,7 +222,7 @@ const RAW: LabExerciseInput[] = [
   },
 ];
 
-export const LAB_EXERCISES: LabExercise[] = [...RAW, ...PATH_EXERCISES].map((x) => {
+export const LAB_EXERCISES: LabExercise[] = [...RAW, ...PATH_EXERCISES, ...AI_EXERCISES].map((x) => {
   const r = labExerciseSchema.safeParse(x);
   if (!r.success) throw new Error(`Lab exercise "${x.id}" is invalid: ${r.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ')}`);
   return r.data;

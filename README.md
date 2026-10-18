@@ -2,16 +2,19 @@
 
 A personal, project-based academy for learning software engineering and AI systems engineering, built as a real application you can use, read and improve.
 
-> **Status: Phase 5 complete (adaptive learning).** See [ROADMAP.md](ROADMAP.md) for what is built, what is planned, and what comes next. "Atelier Academy" is a working name; change it in `src/app/navigation.ts` and `index.html`.
+> **Status: Phase 6 complete (AI Workshop and model integration).** See [ROADMAP.md](ROADMAP.md) for what is built, what is planned, and what comes next. "Atelier Academy" is a working name; change it in `src/app/navigation.ts` and `index.html`.
 
 ## What works today
 
+- **AI Workshop**: a mentor with five modes (guide me, explain, review code, debug with me, quiz me), a prompt coach, a request and cost inspector with a temperature demo, a structured-output lab with an evaluation table, a step-by-step tool-calling walkthrough, and a prompt-injection lab. Everything works with no paid API, clearly labeled **Simulated**
+- **Optional real model**: a small local server holds your API key (never the browser), with a daily limit and capped answer length. Answers from it are labeled **Live**
+- **Code review in the Code Lab**: rule checks for likely bugs, security and accessibility problems, linked to the line
 - **Code Lab**: write real HTML, CSS and JavaScript with a proper editor, live preview, console and plain-language errors that link to the line. Code runs in a sealed sandbox, and runaway loops are stopped automatically. exercises (build, debug, predict, refactor) with automatic checks
 - **Certification recommendations**: 12 certifications (freeCodeCamp, GitHub, Anthropic, AWS, Microsoft, Meta, IAAP, CompTIA) matched to your demonstrated skills, with cost, format, effort, what else to prepare, and sources. You're prompted when you've demonstrated every skill one needs
 - **Four distinct project paths**, each with its own lessons and Code Lab projects and a first milestone that ends in working software: a responsive profile page (Website), a transaction tracker with a monthly summary (Finance), a board where pieces move with clicks (Chess), and a simulated lead workflow that answers only from approved knowledge (Automation)
 - **Milestone tracking** with time estimates at your weekly hours, a "Make this my path" choice, and switching paths without losing anything
-- **18 lessons**: 10 shared foundations plus 2 per path
-- **17 Code Lab exercises** with automatic checks, plus a playground
+- **24 lessons**: 13 shared foundations, 2 per path, and 3 more AI lessons on the Automation path
+- **21 Code Lab exercises** with automatic checks, plus a playground
 - **Skill map**: all 31 skills arranged by what builds on what, colored by your status
 - **Lessons that adapt to you**: "See it another way" controls on every lesson (simpler, analogy, step by step, another example, diagram, compare, experiment in the Code Lab, transfer challenge). What you said helps, or what has actually helped you, opens automatically, with a note saying why. After two misses, a different explanation is offered
 - **A short "how do you learn" check-in** (skippable), and occasional "does this match?" questions about patterns in your learning
@@ -45,6 +48,17 @@ Other commands:
 | `npm run typecheck` | Checks the TypeScript types without running anything |
 | `npm run build` | Builds the production version into `dist/` |
 | `npm run test:e2e` | Runs the browser tests at desktop, tablet and phone sizes. Run `npx playwright install chromium` once first. |
+| `npm run server` | Starts the optional local AI server on port 8787 (see below) |
+
+### Connecting a real model (optional)
+
+The app works fully without this. To get live answers:
+
+1. Copy `.env.example` to `.env.local` and set `ANTHROPIC_API_KEY`. `.env.local` is ignored by git, and the browser never sees it (Vite only exposes variables starting with `VITE_`).
+2. Run `npm run server` in one terminal and `npm run dev` in another.
+3. In the app, open Settings → AI and choose **Local server**.
+
+The server only listens on your own computer (127.0.0.1), refuses other websites, builds the system prompts itself (the browser can only pick a mode), stops after 50 requests a day by default (`AI_DAILY_LIMIT`), caps answers at 1,024 tokens (`AI_MAX_TOKENS`), and logs request sizes but never their content. It uses `claude-opus-5-5` by default; set `AI_MODEL=claude-haiku-5-5` for a much cheaper model. Each request costs money on your Anthropic account.
 
 ## How the code is organized
 
@@ -55,6 +69,7 @@ src/
   content/        Curriculum as plain data: paths, skills, glossary, lessons
   design/         Design tokens (colors, type, spacing) and reusable components
   features/       One folder per destination (home, learn, settings, …)
+server/           The optional local AI server (holds the API key)
 e2e/              Browser tests (Playwright)
 docs/SCREENS.md   Screen inventory: purpose, actions, layout and states of each screen
 ```
@@ -67,10 +82,11 @@ Good files to read first:
 4. `src/content/schema.ts` and `src/content/lessons/functions.ts`: the lesson format, and a complete lesson written in it
 5. `src/core/learning/mastery.ts`: the rules that turn your answers into mastery statuses
 6. `src/core/lab/buildDocument.ts`: how your lab code is run safely
+7. `server/app.ts`: how the AI server keeps the key safe and limits use
 
 ## Privacy
 
-Everything stays in your browser: settings, your learning profile and your learning records. There is no server, account, analytics or AI provider yet. Settings → Privacy and data lists exactly what is stored, and backups include all of it.
+Everything stays in your browser: settings, your learning profile and your learning records. There is no account or analytics. AI is simulated by default; only if you choose Local server does a request leave the browser, and then only to the server on your own computer, which forwards it to the model provider. Settings → Privacy and data lists exactly what is stored, and backups include all of it.
 
 ## Project documents
 

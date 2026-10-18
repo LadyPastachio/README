@@ -1,7 +1,7 @@
 import { useRef, useState, type ReactNode } from 'react';
 import { useScrollToHash } from '@/app/useScrollToHash';
 import { Sun, Moon, Monitor, Download, Upload, Trash2, Copy } from 'lucide-react';
-import { PageHeader, Panel, Segmented, Switch, Range, Button, Notice, Planned, Dialog } from '@/design/components';
+import { PageHeader, Panel, Segmented, Switch, Range, Button, Notice, Dialog } from '@/design/components';
 import { useSettings } from '@/core/settings/SettingsContext';
 import { ACCENTS, EXPLANATION_FORMATS, FORMAT_LABELS } from '@/core/settings/schema';
 import { useLearning } from '@/core/learning/LearningContext';
@@ -16,6 +16,9 @@ import { SETTINGS_KEY } from '@/core/settings/store';
 import { useToast } from '@/app/Toast';
 import { downloadText, copyText, dateStamp } from './fileHelpers';
 import { buildDiagnostics } from './diagnostics';
+import { useAI } from '@/core/ai/useAI';
+import { MENTOR_MODES, MODE_INFO, type MentorMode } from '@/core/ai/types';
+import { StatusBanner } from '@/features/ai-workshop/shared';
 
 const SECTIONS = [
   { id: 'appearance', label: 'Appearance' },
@@ -37,7 +40,8 @@ const KEY_NAMES: Record<string, string> = {
 };
 
 export function SettingsPage() {
-  const { settings, saveState, updateAppearance, updateAccessibility, updateLearning, updateProfile, resetProfile, resetToDefaults, reload, storage } = useSettings();
+  const { settings, saveState, updateAppearance, updateAccessibility, updateLearning, updateProfile, updateAI, resetProfile, resetToDefaults, reload, storage } = useSettings();
+  const ai = useAI();
   const learning = useLearning();
   const l = settings.learning;
   const pr = settings.profile;
@@ -283,19 +287,34 @@ export function SettingsPage() {
           </Panel>
 
           <Panel title="AI" id="ai">
-            <div className="mode-banner">
-              <span className="mode-dot" aria-hidden="true" />
-              <div><strong>Simulated only.</strong> <span className="muted">No AI provider is connected, and nothing you write leaves this device.</span></div>
-            </div>
-            <div style={{ marginTop: 'var(--space-3)' }}>
-              <Planned phase={6}>Mentor mode, provider choice, usage estimates and data-handling details, once a provider can be configured.</Planned>
+            <StatusBanner mode={ai.mode} status={ai.status} checking={ai.checking} onRefresh={() => void ai.refresh()} />
+            <Row label="Where responses come from" hint="Simulated answers come from rules and the academy's content and never use the network. Local server sends requests to the AI server on your own computer (npm run server), which holds the API key.">
+              <Segmented
+                label="AI responses"
+                value={settings.ai.mode}
+                onChange={(mode) => updateAI({ mode })}
+                options={[
+                  { value: 'simulated', label: 'Simulated' },
+                  { value: 'local-server', label: 'Local server' },
+                ]}
+              />
+            </Row>
+            <Row label="Default mentor mode" hint="How the mentor helps when you open it. Guide me asks questions instead of giving answers.">
+              <select className="select" aria-label="Default mentor mode" value={settings.ai.mentorMode} onChange={(e) => updateAI({ mentorMode: e.target.value as MentorMode })}>
+                {MENTOR_MODES.map((m) => <option key={m} value={m}>{MODE_INFO[m].label}</option>)}
+              </select>
+            </Row>
+            <div className="data-facts">
+              <div><span className="eyebrow">API keys</span><p>Never stored in the browser. The key lives in .env.local on your computer and only the local server reads it.</p></div>
+              <div><span className="eyebrow">What is sent</span><p>Only in Local server mode, and only when you press Ask, Try it or Review: your message and, for reviews, your code. The server logs request sizes, never their content.</p></div>
+              <div><span className="eyebrow">Limits</span><p>The server refuses requests after its daily limit (50 by default) and caps answer length, so a mistake can't run up a bill.</p></div>
             </div>
           </Panel>
 
           <Panel title="Privacy and data" id="data">
             <div className="data-facts">
               <div><span className="eyebrow">Stored on this device</span><p>Settings, your learning profile, learning records (answers, explanations, hints, reviews), your Code Lab code and project notes.</p></div>
-              <div><span className="eyebrow">Sent to a server</span><p>Nothing. There is no server or account yet.</p></div>
+              <div><span className="eyebrow">Sent to a server</span><p>Nothing, unless you switch AI to Local server: then your AI requests go to the server on your own computer, which forwards them to the model provider.</p></div>
               <div><span className="eyebrow">Shared with circles</span><p>Nothing. Circles don't exist yet.</p></div>
             </div>
             <div className="data-actions">

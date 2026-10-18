@@ -52,6 +52,7 @@ Each screen's purpose, main actions, layout at each size, and important states. 
 - **Exercise list:** safety note; exercise cards (type, skill, time, number of checks, status); playground.
 - **Workspace (desktop):** collapsible task panel (instructions, prediction box, acceptance criteria with live pass/fail, hints, solution, comparison after passing, certification prompt) | editor with file tabs, Run and Reset, and a footer showing how files connect and a Live preview toggle | resizable divider | preview above console.
 - **Workspace (phone and tablet under 900px):** Task / Code / Preview / Console switcher, one panel at a time.
+- **Code review:** "Review my code" in the task panel lists findings by severity with links to the line; "Ask the model too" appears only when live.
 - **States:** live preview; running checks; all passed (wording depends on hints or solution used); runtime error with explanation and line link; syntax error before running; unlinked file notice; loop stopped; checks timed out; reset confirmation.
 
 ## Certifications (under My Progress)
@@ -62,9 +63,17 @@ Each screen's purpose, main actions, layout at each size, and important states. 
 
 ## AI Workshop
 
-- **Purpose:** Learn AI engineering hands-on.
-- **Now:** Connection status (no provider; simulated only) and the six stages.
-- **Planned (Phase 6):** Prompt coach, request/response experiments, structured outputs, tool calling, injection challenges. Every response labeled Simulated or Live.
+- **Purpose:** Learn AI engineering hands-on: a workbench, not a chat box.
+- **Overview:** connection status (Simulated / Live / server unavailable, with a link to Settings), six tool cards, six stages each linked to a lesson.
+- **Tools (each at /ai/<tool>, with breadcrumbs and the status banner):**
+  - **Mentor:** mode switch (Guide me, Explain, Review code, Debug with me, Quiz me), message box with character count, labeled response card; quiz answers lock after one choice and explain why.
+  - **Prompt coach:** prompt editor beside an 8-part checklist that updates as you type; "Add missing parts" and "Try it".
+  - **Requests, tokens and cost:** system prompt, message, model and max_tokens → live request JSON, token and cost estimates (with sources and date); temperature slider reshaping illustrative word probabilities.
+  - **Structured outputs:** schema and six pipeline switches beside an evaluation table (correct / handed off / wrong / crashed) and expandable cases showing each step.
+  - **Tool calling:** scenario switch, approval switch, numbered steps colored by actor, one step at a time with its message JSON, Back/Next.
+  - **Prompt injection:** five defense switches (marked "in the prompt" or "enforced in code") beside six synthetic messages and their outcomes.
+- **Phone:** every two-column tool stacks; switches and steps wrap.
+- **States:** simulated (default); local server unavailable (reason shown, "Check again"); live (model and requests left today); fallback notice on a response when live failed.
 
 ## My Progress
 
@@ -87,7 +96,7 @@ Each screen's purpose, main actions, layout at each size, and important states. 
 ## Settings
 
 - **Purpose:** Control appearance, accessibility and your data. Every control shown works.
-- **Sections:** Appearance, Accessibility, Learning (daily load, lesson order, hints, solutions, confidence), Learning profile (stated vs. observed; copy, download, reset), AI (status; planned, Phase 6), Privacy and data, About.
+- **Sections:** Appearance, Accessibility, Learning (daily load, lesson order, hints, solutions, confidence), Learning profile (stated vs. observed; copy, download, reset), AI (simulated or local server, default mentor mode, live status, what is sent), Privacy and data, About.
 - **Layout:** Section links on the left (desktop) or a scrolling chip row (phone/tablet); one panel per section.
 - **States:** "All changes saved" / "Not saved: this browser is blocking storage"; restore preview dialog listing what will be replaced; invalid backup error; delete confirmation dialog; toasts for completed actions.
 

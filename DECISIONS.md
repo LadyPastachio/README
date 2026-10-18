@@ -165,3 +165,29 @@ Short records of decisions that shape the project. Each says what was decided, w
 **Decision:** The settings store applies each update to the most recent settings (kept in a ref), not to the value captured when a component rendered.
 
 **Why:** Two updates in the same event (such as saving the profile and then learning preferences at the end of the check-in) would otherwise overwrite each other. The same class of bug appeared in Phase 1's reset; this fixes it at the root, with a test.
+
+## D21. One AI interface; simulated by default
+
+**Decision:** Screens use AI only through `useAI()` (`src/core/ai/useAI.ts`), which picks a provider: the simulated provider (rules plus the academy's own content) or the local-server provider. Simulated is the default and makes no network requests at all; the server's status is only checked after you choose Local server. If the server is missing, has no key, or fails, the answer falls back to simulated with a note explaining why. Every response carries its source and the screen labels it **Simulated** or **Live**.
+
+**Why:** The master plan requires the app to work without paid APIs and never to pretend. A single interface means adding another provider is one file on the server (`ModelClient`), with no screen changes.
+
+## D22. API keys live only in a local server, which owns the prompts and the limits
+
+**Decision:** `server/` is a small Node service (no framework) using the official Anthropic SDK. It reads `ANTHROPIC_API_KEY` from the environment (`.env.local`, ignored by git), listens on 127.0.0.1 only, refuses requests from unknown browser origins and non-JSON bodies, validates input with Zod (`task`, `mode`, `input`, `context`, nothing else, size-limited), builds the system prompt itself from the chosen mode, wraps learner text in tags as data, enforces a daily request limit and an answer-length cap, and logs only metadata. The default model is `claude-opus-5-5` at low effort; `AI_MODEL` can switch to a cheaper one.
+
+**Why:** Anything in the browser can be read, so a key there would be exposed. Keeping prompts on the server stops the browser (or another website) using it as a general-purpose proxy. Limits make a bug or a loop cost cents, not a surprise bill.
+
+**Tests:** the model client is injected, so the server tests use a fake and never spend money.
+
+## D23. Workshop labs are real code around authored model behavior
+
+**Decision:** The structured-output, tool-calling and injection labs use authored examples of what models return. The code that handles them (parsing, Zod validation, argument checks, defense rules) is real and tested. Each lab says this on screen. The injection lab marks prompt-level defenses as "less likely, not stopped" and only code-enforced defenses as "stopped".
+
+**Why:** Repeatable failures teach better than random ones, and the lessons are about the code around a model, which is where safety lives. Presenting instructions in a prompt as a guarantee would teach a dangerous habit.
+
+## D24. Code review is rule-based and doesn't count as a hint
+
+**Decision:** `src/core/ai/codeReview.ts` parses JavaScript with acorn and checks HTML and CSS for a fixed set of problems (loose equality, innerHTML built from data, empty catch, eval, var and never-reassigned let, missing labels, alt text, language, title, heading order, removed focus outlines, wide fixed widths). Findings link to the line. Using it is not recorded as a hint, because it points to problems without supplying the solution.
+
+**Why:** Free, instant, offline feedback on the habits that matter most (security and accessibility first). It says plainly that finding nothing doesn't mean the code is correct.

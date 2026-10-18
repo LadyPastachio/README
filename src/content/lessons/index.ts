@@ -18,6 +18,12 @@ import { lesson as moneyMath } from './money-math';
 import { lesson as filterMapReduce } from './filter-map-reduce';
 import { lesson as httpAndApis } from './http-and-apis';
 import { lesson as validatingInput } from './validating-input';
+import { lesson as promptsAsSpecs } from './prompts-as-specs';
+import { lesson as callingAModelApi } from './calling-a-model-api';
+import { lesson as structuredOutputs } from './structured-outputs';
+import { lesson as promptInjection } from './prompt-injection';
+import { lesson as toolCallingLoop } from './tool-calling-loop';
+import { lesson as evaluatingAi } from './evaluating-ai';
 
 /** Lessons in suggested order: foundations first, then each path's lessons. Add new lesson files here. */
 const BASE: Omit<LessonInput, 'alternatives'>[] = [
@@ -39,6 +45,12 @@ const BASE: Omit<LessonInput, 'alternatives'>[] = [
   filterMapReduce,
   httpAndApis,
   validatingInput,
+  promptsAsSpecs,
+  callingAModelApi,
+  structuredOutputs,
+  promptInjection,
+  toolCallingLoop,
+  evaluatingAi,
 ];
 
 /** Each lesson joined with its alternative explanations (kept in alternatives.ts). */

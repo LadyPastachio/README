@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { StorageAdapter } from '../persistence/storage';
-import { type Settings, type Appearance, type Accessibility, type LearningPrefs, type Profile, normalizeSettings, DEFAULT_SETTINGS } from './schema';
+import { type Settings, type Appearance, type Accessibility, type LearningPrefs, type Profile, type AIPrefs, normalizeSettings, DEFAULT_SETTINGS } from './schema';
 import { loadSettings, saveSettings } from './store';
 
 type SaveState = 'saved' | 'failed';
@@ -12,6 +12,7 @@ interface SettingsContextValue {
   updateAccessibility: (patch: Partial<Accessibility>) => void;
   updateLearning: (patch: Partial<LearningPrefs>) => void;
   updateProfile: (patch: Partial<Profile>) => void;
+  updateAI: (patch: Partial<AIPrefs>) => void;
   resetProfile: () => void;
   resetToDefaults: () => void;
   /** Re-reads settings from storage (after an import or reset). */
@@ -41,6 +42,7 @@ export function SettingsProvider({ storage, children }: { storage: StorageAdapte
   const updateAccessibility = useCallback((patch: Partial<Accessibility>) => commit((c) => ({ ...c, accessibility: { ...c.accessibility, ...patch } })), [commit]);
   const updateLearning = useCallback((patch: Partial<LearningPrefs>) => commit((c) => ({ ...c, learning: { ...c.learning, ...patch } })), [commit]);
   const updateProfile = useCallback((patch: Partial<Profile>) => commit((c) => ({ ...c, profile: { ...c.profile, ...patch } })), [commit]);
+  const updateAI = useCallback((patch: Partial<AIPrefs>) => commit((c) => ({ ...c, ai: { ...c.ai, ...patch } })), [commit]);
   const resetProfile = useCallback(() => commit((c) => ({ ...c, profile: DEFAULT_SETTINGS.profile })), [commit]);
   /** Resets display and learning preferences. The learning profile is kept; it has its own reset. */
   const resetToDefaults = useCallback(() => commit((c) => ({ ...DEFAULT_SETTINGS, profile: c.profile })), [commit]);
@@ -53,8 +55,8 @@ export function SettingsProvider({ storage, children }: { storage: StorageAdapte
   useApplySettingsToDocument(settings);
 
   const value = useMemo(
-    () => ({ settings, saveState, updateAppearance, updateAccessibility, updateLearning, updateProfile, resetProfile, resetToDefaults, reload, storage }),
-    [settings, saveState, updateAppearance, updateAccessibility, updateLearning, updateProfile, resetProfile, resetToDefaults, reload, storage],
+    () => ({ settings, saveState, updateAppearance, updateAccessibility, updateLearning, updateProfile, updateAI, resetProfile, resetToDefaults, reload, storage }),
+    [settings, saveState, updateAppearance, updateAccessibility, updateLearning, updateProfile, updateAI, resetProfile, resetToDefaults, reload, storage],
   );
   return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;
 }

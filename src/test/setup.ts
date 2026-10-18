@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom/vitest';
 
 // jsdom doesn't implement matchMedia; provide a simple stand-in.
-if (!window.matchMedia) {
+if (typeof window !== 'undefined' && !window.matchMedia) {
   window.matchMedia = (query: string) =>
     ({
       matches: false,
@@ -16,4 +16,4 @@ if (!window.matchMedia) {
 }
 
 // jsdom doesn't implement scrolling; the app only uses it for convenience.
-window.scrollTo = () => {};
+if (typeof window !== 'undefined') window.scrollTo = () => {};
