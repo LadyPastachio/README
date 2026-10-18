@@ -7,9 +7,11 @@ import { closeBrackets, closeBracketsKeymap } from '@codemirror/autocomplete';
 import { html } from '@codemirror/lang-html';
 import { css } from '@codemirror/lang-css';
 import { javascript } from '@codemirror/lang-javascript';
+import { sql, SQLite } from '@codemirror/lang-sql';
 import { tags as t } from '@lezer/highlight';
 
 export type FileKind = 'html' | 'css' | 'js';
+export type EditorLang = FileKind | 'sql';
 
 /** Colors come from the app's code tokens, so the editor follows light/dark themes. */
 const highlight = HighlightStyle.define([
@@ -38,7 +40,7 @@ const theme = EditorView.theme({
   '.cm-line.cm-error-line': { backgroundColor: 'var(--danger-soft)' },
 });
 
-const LANGS: Record<FileKind, () => ReturnType<typeof html>> = { html: () => html(), css: () => css(), js: () => javascript() };
+const LANGS: Record<EditorLang, () => ReturnType<typeof html>> = { html: () => html(), css: () => css(), js: () => javascript(), sql: () => sql({ dialect: SQLite, upperCaseKeywords: true }) };
 
 export interface CodeEditorHandle {
   goToLine: (line: number) => void;
@@ -51,7 +53,7 @@ export interface CodeEditorHandle {
 export function CodeEditor({
   file, value, onChange, onRun, label, handleRef,
 }: {
-  file: FileKind;
+  file: EditorLang;
   value: string;
   onChange: (v: string) => void;
   onRun: () => void;

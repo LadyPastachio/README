@@ -2,7 +2,7 @@
 
 A personal, project-based academy for learning software engineering and AI systems engineering, built as a real application you can use, read and improve.
 
-> **Status: Phase 6 complete (AI Workshop and model integration).** See [ROADMAP.md](ROADMAP.md) for what is built, what is planned, and what comes next. "Atelier Academy" is a working name; change it in `src/app/navigation.ts` and `index.html`.
+> **Status: Phase 7 complete (engineering progression and capstone).** See [ROADMAP.md](ROADMAP.md) for what is built, what is planned, and what comes next. "Atelier Academy" is a working name; change it in `src/app/navigation.ts` and `index.html`.
 
 ## What works today
 
@@ -11,10 +11,13 @@ A personal, project-based academy for learning software engineering and AI syste
 - **Code review in the Code Lab**: rule checks for likely bugs, security and accessibility problems, linked to the line
 - **Code Lab**: write real HTML, CSS and JavaScript with a proper editor, live preview, console and plain-language errors that link to the line. Code runs in a sealed sandbox, and runaway loops are stopped automatically. exercises (build, debug, predict, refactor) with automatic checks
 - **Certification recommendations**: 12 certifications (freeCodeCamp, GitHub, Anthropic, AWS, Microsoft, Meta, IAAP, CompTIA) matched to your demonstrated skills, with cost, format, effort, what else to prepare, and sources. You're prompted when you've demonstrated every skill one needs
-- **Four distinct project paths**, each with its own lessons and Code Lab projects and a first milestone that ends in working software: a responsive profile page (Website), a transaction tracker with a monthly summary (Finance), a board where pieces move with clicks (Chess), and a simulated lead workflow that answers only from approved knowledge (Automation)
+- **Four distinct project paths**, each with its own lessons and Code Lab projects and milestones that end in working software. First milestones: a responsive profile page (Website), a transaction tracker with a monthly summary (Finance), a board where pieces move with clicks (Chess), and a simulated lead workflow that answers only from approved knowledge (Automation)
 - **Milestone tracking** with time estimates at your weekly hours, a "Make this my path" choice, and switching paths without losing anything
-- **24 lessons**: 13 shared foundations, 2 per path, and 3 more AI lessons on the Automation path
-- **21 Code Lab exercises** with automatic checks, plus a playground
+- **32 lessons**: 15 shared foundations (including testing and SQL), plus path lessons: Website 4, Finance 3, Chess 3, Automation 7
+- **32 Code Lab exercises** with automatic checks, plus a playground, grouped by path
+- **SQL in the Code Lab**: real SQLite (compiled to WebAssembly) in a background worker; every run uses a fresh copy of the practice data, and runaway queries are stopped after 2 seconds
+- **Tests that are tested**: some exercises run your tests against deliberately broken versions of the code (mutation testing)
+- **Second milestones for every path** and an Automation capstone: a white-label follow-up agent with approved knowledge only, human handoff, idempotency, tenant isolation and logs, on synthetic data
 - **Skill map**: all 31 skills arranged by what builds on what, colored by your status
 - **Lessons that adapt to you**: "See it another way" controls on every lesson (simpler, analogy, step by step, another example, diagram, compare, experiment in the Code Lab, transfer challenge). What you said helps, or what has actually helped you, opens automatically, with a note saying why. After two misses, a different explanation is offered
 - **A short "how do you learn" check-in** (skippable), and occasional "does this match?" questions about patterns in your learning

@@ -15,7 +15,7 @@ const chess = getPath('chess')!;
 
 describe('milestones', () => {
   it('later milestones without content are "planned"', () => {
-    expect(milestoneStatus([], chess.milestones[1]!, LESSONS, LAB_EXERCISES).state).toBe('planned');
+    expect(milestoneStatus([], chess.milestones[2]!, LESSONS, LAB_EXERCISES).state).toBe('planned');
   });
 
   it('tracks a milestone from not started to complete', () => {

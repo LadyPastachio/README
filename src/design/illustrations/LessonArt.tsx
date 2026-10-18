@@ -30,6 +30,14 @@ const HUE: Record<string, Hue> = {
   'prompt-injection': 'automation',
   'tool-calling-loop': 'automation',
   'evaluating-ai': 'finance',
+  'writing-tests': 'finance',
+  'sql-basics': 'automation',
+  'dom-events': 'web',
+  'accessible-forms': 'web',
+  'chess-move-rules': 'chess',
+  'budget-rules': 'finance',
+  'backend-basics': 'automation',
+  'secrets-and-least-privilege': 'automation',
 };
 
 export function lessonHue(id: string): Hue {
@@ -373,6 +381,85 @@ export function LessonArt({ lessonId, className = '' }: { lessonId: string; clas
             </g>
           ))}
           <text x="124" y="80" textAnchor="end" className="art-mono art-mono--sm" fill={c}>4/5</text>
+        </g>
+      )}
+      {lessonId === 'writing-tests' && (
+        <g>
+          {card(14, 18, 62, 64, 6)}
+          {[0, 1, 2, 3].map((i) => (
+            <g key={i} transform={`translate(22 ${28 + i * 13})`}>
+              <circle cx="4" cy="4" r="4" fill={i === 2 ? 'var(--danger)' : 'var(--ok)'} />
+              <rect x="12" y="1.5" width="34" height="5" rx="2.5" fill="var(--line)" />
+            </g>
+          ))}
+          <g transform="translate(96 26)">
+            <rect width="48" height="48" rx="8" fill={c} />
+            <path d="M14 25l7 7 14-15" fill="none" stroke="var(--surface)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+          </g>
+        </g>
+      )}
+      {lessonId === 'sql-basics' && (
+        <g>
+          <ellipse cx="34" cy="28" rx="20" ry="7" fill={c} />
+          <path d="M14 28v36c0 4 9 7 20 7s20-3 20-7V28" fill={c} opacity=".75" />
+          <ellipse cx="34" cy="46" rx="20" ry="7" fill="none" stroke="var(--surface)" strokeWidth="1.5" opacity=".6" />
+          {card(70, 20, 80, 60, 6)}
+          <rect x="70" y="20" width="80" height="12" rx="6" fill="var(--surface-2)" />
+          {[0, 1, 2].map((i) => <g key={i}><rect x="78" y={40 + i * 12} width="24" height="5" rx="2" fill="var(--line)" /><rect x="110" y={40 + i * 12} width="30" height="5" rx="2" fill={i === 1 ? c : 'var(--line)'} /></g>)}
+        </g>
+      )}
+      {lessonId === 'dom-events' && (
+        <g>
+          {card(18, 22, 72, 56, 6)}
+          <rect x="30" y="42" width="48" height="16" rx="8" fill={c} />
+          <text x="54" y="53" textAnchor="middle" className="art-text art-text--xs" fill="var(--surface)">Menu</text>
+          <path d="M70 60l10 16 3-7 7-2z" fill="var(--ink)" stroke="var(--surface)" strokeWidth="1.5" strokeLinejoin="round" />
+          {card(106, 30, 40, 40, 6)}
+          {[40, 50, 60].map((y) => <rect key={y} x="114" y={y} width="24" height="4" rx="2" fill="var(--line)" />)}
+        </g>
+      )}
+      {lessonId === 'accessible-forms' && (
+        <g>
+          {card(30, 14, 100, 72, 8)}
+          <text x="42" y="30" className="art-text art-text--xs" fill="var(--ink-2)">Email</text>
+          <rect x="42" y="34" width="76" height="12" rx="3" fill="var(--surface)" stroke="var(--danger)" strokeWidth="1.5" />
+          <text x="42" y="57" className="art-text art-text--xs" fill="var(--danger)">Enter an email like…</text>
+          <rect x="42" y="64" width="34" height="12" rx="6" fill={c} />
+        </g>
+      )}
+      {lessonId === 'chess-move-rules' && (
+        <g>
+          {Array.from({ length: 25 }, (_, i) => <rect key={i} x={40 + (i % 5) * 16} y={10 + Math.floor(i / 5) * 16} width="16" height="16" fill={(Math.floor(i / 5) + (i % 5)) % 2 ? soft : 'var(--surface)'} />)}
+          <rect x="40" y="10" width="80" height="80" fill="none" stroke="var(--line-strong)" />
+          {([[2, 0], [2, 1], [2, 3], [2, 4], [0, 2], [1, 2], [3, 2], [4, 2]] as const).map(([r, col], i) => <circle key={i} cx={48 + col * 16} cy={18 + r * 16} r="3.5" fill={c} opacity=".7" />)}
+          <text x="80" y="55" textAnchor="middle" className="art-text art-text--strong" fill={c} style={{ fontSize: 14 }}>♖</text>
+        </g>
+      )}
+      {lessonId === 'budget-rules' && (
+        <g>
+          {card(18, 18, 124, 64, 8)}
+          {[['Food', 0.62, 'var(--ok)'], ['Rent', 1, 'var(--warn)'], ['Fun', 1, 'var(--danger)']].map(([t, w, col], i) => (
+            <g key={t as string} transform={`translate(28 ${30 + i * 16})`}>
+              <text y="7" className="art-text art-text--xs" fill="var(--ink-2)">{t as string}</text>
+              <rect x="28" width="74" height="8" rx="4" fill="var(--line)" />
+              <rect x="28" width={74 * (w as number)} height="8" rx="4" fill={col as string} />
+            </g>
+          ))}
+        </g>
+      )}
+      {lessonId === 'backend-basics' && (
+        <g>
+          {[0, 1].map((i) => <g key={i} transform={`translate(10 ${26 + i * 26})`}>{card(0, 0, 40, 18, 4)}<text x="20" y="12" textAnchor="middle" className="art-mono art-mono--xs" fill="var(--ink-2)">evt_42</text></g>)}
+          <path d="M54 35h24M54 61h24" stroke="var(--line-strong)" strokeWidth="2" />
+          <g transform="translate(82 26)"><rect width="34" height="44" rx="6" fill={c} />{[10, 20, 30].map((y) => <rect key={y} x="8" y={y} width="18" height="4" rx="2" fill="var(--surface)" opacity=".8" />)}</g>
+          <text x="140" y="40" textAnchor="middle" className="art-mono art-mono--sm" fill="var(--ok)">201</text>
+          <text x="140" y="64" textAnchor="middle" className="art-mono art-mono--sm" fill="var(--ink-3)">200</text>
+        </g>
+      )}
+      {lessonId === 'secrets-and-least-privilege' && (
+        <g>
+          {[0, 1, 2].map((i) => <g key={i}>{card(16 + i * 46, 26, 38, 48, 6)}<rect x={16 + i * 46} y="26" width="38" height="8" rx="4" fill={i === 1 ? c : 'var(--surface-2)'} /><rect x={24 + i * 46} y="44" width="22" height="4" rx="2" fill="var(--line)" /><rect x={24 + i * 46} y="54" width="16" height="4" rx="2" fill="var(--line)" /></g>)}
+          <g transform="translate(80 84)"><circle r="7" fill="var(--surface)" stroke={c} strokeWidth="2" /><path d="M7 0h12M15 0v4" stroke={c} strokeWidth="2" strokeLinecap="round" /></g>
         </g>
       )}
       {!HUE[lessonId] && card(40, 20, 80, 60, 8)}

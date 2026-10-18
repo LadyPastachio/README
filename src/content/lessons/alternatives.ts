@@ -1,5 +1,6 @@
 import type { Alternatives } from '../schema';
 import { AI_ALTERNATIVES } from './aiAlternatives';
+import { PHASE7_ALTERNATIVES } from './phase7Alternatives';
 
 /**
  * Alternative explanations for every lesson, shown by the lesson controls.
@@ -504,4 +505,5 @@ export const ALTERNATIVES: Record<string, Alternatives> = {
     },
   },
   ...AI_ALTERNATIVES,
+  ...PHASE7_ALTERNATIVES,
 };

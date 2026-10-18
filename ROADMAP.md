@@ -2,7 +2,7 @@
 
 The academy is built in phases. Each phase ends runnable, tested and documented. Time estimates for learning paths live in the app (Learn → a path); this file tracks building the app itself.
 
-**Current status:** Phases 0–6 complete. Next: Phase 7 (engineering progression and capstone).
+**Current status:** Phases 0–7 complete. Next: Phase 8 (online readiness and collaboration).
 
 ---
 
@@ -156,13 +156,30 @@ The academy is built in phases. Each phase ends runnable, tested and documented.
 - Token counts in the Workshop are estimates (about 4 characters per token). Prices were checked on 2026-10-18.
 - The structured-output, tool-calling and injection labs use authored model outputs, so they show typical failures, not every possible one.
 
-## Phase 7: Engineering progression and capstone
+## Phase 7: Engineering progression and capstone ✅
 
-- [ ] Second milestones for each path (chess rules and tests, budgets with tests, interactivity and components, a small backend service)
+- [x] Second milestones with content for every path:
+  - Website: events and the DOM, accessible forms → accessible tabs, **accessible sign-up form**
+  - Finance: writing tests, budget rules → **budget rules with tests**, budget alerts
+  - Chess: move rules as functions → knight and rook moves, **pawn moves with tests**
+  - Automation: SQL, a small service, secrets and least privilege → **idempotent webhook handler**, SQL for new leads and overdue follow-ups
+- [x] Testing strand: a foundation lesson, and exercises that run your tests against deliberately broken versions ([D26](DECISIONS.md))
+- [x] SQL strand: a foundation lesson and three SQL exercises running real SQLite in a worker, graded against reference queries ([D25](DECISIONS.md))
+- [x] Backend and security strands: webhook signatures, status codes, idempotency, secrets, least privilege, tenant isolation
+- [x] Capstone milestone (Automation 5): a white-label follow-up agent serving two synthetic businesses, with approved knowledge only, handoff for bookings and unknown questions, duplicate and cross-tenant refusal, injection resistance and logs
+- [x] Code Lab grouped by path (your path first)
 
-- [ ] Backend, SQL, testing and security strands
-- [ ] Business automation project on synthetic data
-- [ ] Toward the white-label follow-up agent: approved knowledge only, verified tool results, human handoff, logging, idempotency
+**Tests at end of Phase 7** (all run and passing on 2026-10-18):
+- 204 unit tests, adding SQL grading (column, row and order comparisons, comments ignored, empty results) and every SQL exercise's solution passing while its starter fails, run against real SQLite
+- 232 browser checks across desktop, tablet and phone (65 skipped by design), including every new exercise's starter failing and solution passing, a runaway recursive SQL query being stopped, SQL errors explained, and practice data staying fresh between runs
+
+**Bugs found by these tests and fixed:** one exercise check expected the wrong total ($251.00 instead of $200.00); a webhook check depended on an earlier check's state, so it was made self-contained; a phone-only test typed too fast for the editor under load and now inserts text in one step.
+
+**Known limitations:**
+- The webhook handler and agent run in the browser sandbox as functions; a real server, database and accounts arrive in Phase 8.
+- The webhook "signature" is a teaching stand-in and says so; real providers use HMAC-SHA256.
+- Later milestones (Website 3–4, Finance 3–4, Chess 3–4) are still planned. Chess check and checkmate are not covered yet.
+- SQL exercises use SQLite; other databases differ in details.
 
 ## Phase 8: Online readiness and collaboration
 

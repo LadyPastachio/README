@@ -191,3 +191,17 @@ Short records of decisions that shape the project. Each says what was decided, w
 **Decision:** `src/core/ai/codeReview.ts` parses JavaScript with acorn and checks HTML and CSS for a fixed set of problems (loose equality, innerHTML built from data, empty catch, eval, var and never-reassigned let, missing labels, alt text, language, title, heading order, removed focus outlines, wide fixed widths). Findings link to the line. Using it is not recorded as a hint, because it points to problems without supplying the solution.
 
 **Why:** Free, instant, offline feedback on the habits that matter most (security and accessibility first). It says plainly that finding nothing doesn't mean the code is correct.
+
+## D25. SQL runs as real SQLite in a Web Worker, on fresh data every time
+
+**Decision:** SQL exercises use sql.js (SQLite compiled to WebAssembly) inside a Web Worker built from a blob. Each run creates a new in-memory database from the exercise's setup script, runs the query, and closes it. A query that takes longer than 2 seconds is stopped by terminating the worker, which is then recreated. Answers are graded by running the reference query on the same data and comparing columns, rows (any order) and, where asked, order; some checks also require a construct such as JOIN (comments are ignored).
+
+**Why:** Learners should write real SQL against a real engine, not a simplified imitation. The worker keeps the page responsive and has no access to the app's data. Fresh data means a stray DELETE can't break the exercise, and comparing results (not query text) accepts every correct query.
+
+**Cost:** the engine adds about 0.7 MB, loaded only by SQL exercises (inlined in the single-file preview).
+
+## D26. Testing exercises grade your tests with broken versions of the code
+
+**Decision:** "Write tests" exercises include a tiny test runner (expect, toBe, toEqual). Checks run the learner's tests against their own code (must pass) and against several deliberately broken versions (each must be caught by at least one failing test).
+
+**Why:** A test that can't fail protects nothing. This is mutation testing, a real technique for measuring test quality, and it turns "write some tests" into a checkable goal.

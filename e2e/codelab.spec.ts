@@ -89,14 +89,16 @@ test.describe('exercises', () => {
         await expect(page.locator('.lab-criteria li[data-state="idle"]')).toHaveCount(0);
       };
       const prediction = ex.predict ? ex.predict.answer : undefined;
-      await seed(page, ex.id, ex.starter, prediction);
+      const starter = ex.language === 'sql' ? { js: ex.sql!.starter } : ex.starter;
+      const solution = ex.language === 'sql' ? { js: ex.sql!.solution } : { ...ex.starter, ...ex.solution };
+      await seed(page, ex.id, starter, prediction);
       await page.goto(`/#/lab/${ex.id}`);
       await check();
       expect(await page.locator('.lab-criteria li[data-state="fail"]').count(), 'starter should fail at least one check').toBeGreaterThan(0);
 
       const ctx = await page.context().browser()!.newContext();
       const p2 = await ctx.newPage();
-      await seed(p2, ex.id, { ...ex.starter, ...ex.solution }, prediction);
+      await seed(p2, ex.id, solution, prediction);
       await p2.goto(`${info.project.use.baseURL}/#/lab/${ex.id}`);
       await p2.getByRole('button', { name: 'Check my work' }).click();
       await expect(p2.locator('.lab-criteria li[data-state="running"]')).toHaveCount(0, { timeout: 8000 });

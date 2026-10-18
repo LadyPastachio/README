@@ -24,6 +24,14 @@ import { lesson as structuredOutputs } from './structured-outputs';
 import { lesson as promptInjection } from './prompt-injection';
 import { lesson as toolCallingLoop } from './tool-calling-loop';
 import { lesson as evaluatingAi } from './evaluating-ai';
+import { lesson as writingTests } from './writing-tests';
+import { lesson as sqlBasics } from './sql-basics';
+import { lesson as domEvents } from './dom-events';
+import { lesson as accessibleForms } from './accessible-forms';
+import { lesson as chessMoveRules } from './chess-move-rules';
+import { lesson as budgetRules } from './budget-rules';
+import { lesson as backendBasics } from './backend-basics';
+import { lesson as secretsAndLeastPrivilege } from './secrets-and-least-privilege';
 
 /** Lessons in suggested order: foundations first, then each path's lessons. Add new lesson files here. */
 const BASE: Omit<LessonInput, 'alternatives'>[] = [
@@ -51,6 +59,14 @@ const BASE: Omit<LessonInput, 'alternatives'>[] = [
   promptInjection,
   toolCallingLoop,
   evaluatingAi,
+  writingTests,
+  sqlBasics,
+  domEvents,
+  accessibleForms,
+  chessMoveRules,
+  budgetRules,
+  backendBasics,
+  secretsAndLeastPrivilege,
 ];
 
 /** Each lesson joined with its alternative explanations (kept in alternatives.ts). */

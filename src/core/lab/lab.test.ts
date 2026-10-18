@@ -118,13 +118,13 @@ describe('lab exercises', () => {
   });
   it('have starter pages that link both files, and checks with unique ids', () => {
     for (const x of LAB_EXERCISES) {
-      expect(findLinks(x.starter.html), x.id).toEqual({ css: true, js: true });
+      if (x.language === 'web') expect(findLinks(x.starter.html), x.id).toEqual({ css: true, js: true });
       const ids = x.checks.map((c) => c.id);
       expect(new Set(ids).size, x.id).toBe(ids.length);
-      if (x.kind !== 'playground') expect(x.solution, `${x.id} needs a solution`).toBeDefined();
+      if (x.kind !== 'playground') expect(x.solution ?? x.sql?.solution, `${x.id} needs a solution`).toBeDefined();
     }
   });
   it('have check code that at least parses as a function body', () => {
-    for (const x of LAB_EXERCISES) for (const c of x.checks) expect(() => new Function('doc', 'logs', 'source', c.test), `${x.id}/${c.id}`).not.toThrow();
+    for (const x of LAB_EXERCISES.filter((e) => e.language === 'web')) for (const c of x.checks) expect(() => new Function('doc', 'logs', 'source', c.test), `${x.id}/${c.id}`).not.toThrow();
   });
 });

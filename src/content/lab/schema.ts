@@ -13,6 +13,15 @@ export const labExerciseSchema = z.object({
   /** Set for path project exercises. */
   path: z.enum(['web', 'finance', 'chess', 'automation']).optional(),
   minutes: z.number().int().min(3).max(90),
+  /** 'web' runs HTML/CSS/JS in the sandbox; 'sql' runs SQLite queries in a worker. */
+  language: z.enum(['web', 'sql']).default('web'),
+  /** SQL exercises: the schema and data every query runs against, the starting query and the reference answer. */
+  sql: z.object({
+    setup: z.string().min(1),
+    tables: z.array(z.object({ name: z.string(), columns: z.string() })).min(1),
+    starter: z.string(),
+    solution: z.string().min(1),
+  }).optional(),
   summary: z.string().min(1),
   instructions: z.array(z.string().min(1)).min(1),
   /** Plain-language acceptance criteria, one per check, in the same order. */
@@ -28,6 +37,7 @@ export const labExerciseSchema = z.object({
   compare: z.object({ title: z.string(), code: z.string(), points: z.array(z.string()).min(1) }).optional(),
 }).superRefine((x, ctx) => {
   if (x.kind !== 'playground' && x.checks.length === 0) ctx.addIssue({ code: 'custom', message: 'exercises need at least one check' });
+  if (x.language === 'sql' && !x.sql) ctx.addIssue({ code: 'custom', message: 'SQL exercises need a sql section' });
   if (x.kind === 'predict' && !x.predict) ctx.addIssue({ code: 'custom', message: 'predict exercises need a prediction question' });
 });
 
