@@ -2,6 +2,7 @@ import { createServer, type IncomingMessage, type Server, type ServerResponse } 
 import { z } from 'zod';
 import { MODES, TASKS, systemPrompt, userContent } from './prompts.ts';
 import type { Academy } from './academy.ts';
+import { serveStatic } from './static.ts';
 
 /**
  * A tiny local server for real model calls. It exists so the API key stays
@@ -34,6 +35,8 @@ export interface ServerOptions {
   log?: (line: string) => void;
   /** Accounts, sync and circles. Optional so the AI routes can run on their own. */
   academy?: Academy;
+  /** Folder with the built app to serve (dist). Optional: in development Vite serves it. */
+  staticDir?: string;
 }
 
 export const requestSchema = z
@@ -114,7 +117,7 @@ export function createApp(opts: ServerOptions) {
     const url = new URL(req.url ?? '/', 'http://localhost');
     const origin = req.headers.origin;
     // Other websites open in your browser could otherwise call this server. No CORS headers are sent, and unknown origins are refused.
-    if (origin && !opts.allowedOrigins.includes(origin)) return send(res, 403, { error: 'Origin not allowed.' });
+    if (origin && url.pathname.startsWith('/api/') && !opts.allowedOrigins.includes(origin)) return send(res, 403, { error: 'Origin not allowed.' });
     if (opts.academy && (await opts.academy.handle(req, res, url, (max) => readBody(req, max)))) return;
 
     if (req.method === 'GET' && url.pathname === '/api/ai/status') {
@@ -161,6 +164,7 @@ export function createApp(opts: ServerOptions) {
       }
     }
 
+    if (opts.staticDir && !url.pathname.startsWith('/api/') && (await serveStatic(req, res, url, opts.staticDir))) return;
     return send(res, 404, { error: 'Not found.' });
   }
 

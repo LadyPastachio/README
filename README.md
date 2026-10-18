@@ -2,7 +2,7 @@
 
 A personal, project-based academy for learning software engineering and AI systems engineering, built as a real application you can use, read and improve.
 
-> **Status: Phase 8 complete (accounts, sync and learning circles).** See [ROADMAP.md](ROADMAP.md) for what is built, what is planned, and what comes next. "Atelier Academy" is a working name; change it in `src/app/navigation.ts` and `index.html`.
+> **Status: 1.0. All nine phases complete.** See [ROADMAP.md](ROADMAP.md) for what is built, what is planned, and what comes next. "Atelier Academy" is a working name; change it in `src/app/navigation.ts` and `index.html`.
 
 ## What works today
 
@@ -31,7 +31,8 @@ A personal, project-based academy for learning software engineering and AI syste
 - **Learning Evidence export** (Markdown or JSON) and a prompt to get quizzed by a separate, independent AI
 - **Learning profile**: what you say helps, kept separate from what your activity shows
 - **Learning settings**: daily load, lesson order (explain first or try first), when hints and solutions appear, confidence check
-- **Illustrated, responsive design**: a drawn scene for each project and a concept picture for each lesson, highlighted code panels, light and dark themes
+- **Illustrated, responsive design**: a drawn scene for each project and a concept picture for each lesson, highlighted code panels; warm off-white and deep teal, with a teal-black dark mode
+- **Accessible**: automated WCAG 2.1 AA audit of 23 screens in both themes with no violations, keyboard support throughout, screen-reader labels and announcements
 - Search, glossary (26 terms), project notes (design, known issues, improvements), appearance and accessibility settings, backup and restore, delete local data
 
 Anything not built yet is marked with a **Phase N** label in the app. Nothing pretends to work.
@@ -54,6 +55,8 @@ Other commands:
 | `npm run build` | Builds the production version into `dist/` |
 | `npm run test:e2e` | Runs the browser tests at desktop, tablet and phone sizes. Run `npx playwright install chromium` once first. |
 | `npm run server` | Starts the optional academy server on port 8787: accounts, sync, circles and live AI (see below) |
+| `npm start` | After `npm run build`: the whole academy (app and server) on http://localhost:8787 |
+| `npm run build:preview` | Builds a single script, for the one-file shareable preview |
 
 ### The academy server (optional)
 
@@ -102,3 +105,5 @@ Everything stays in your browser by default: settings, your learning profile and
 - [ROADMAP.md](ROADMAP.md): phases, current status and next steps
 - [DECISIONS.md](DECISIONS.md): architecture decisions and why they were made
 - [docs/SCREENS.md](docs/SCREENS.md): screen inventory
+- [DEPLOY.md](DEPLOY.md): running it as static files, on your computer, or in a container behind HTTPS
+- [SECURITY.md](SECURITY.md): threat model, defenses, the 1.0 review and open items

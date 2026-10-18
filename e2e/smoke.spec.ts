@@ -155,3 +155,13 @@ test('completing a lesson updates mastery, Home and Progress', async ({ page }) 
   await page.reload();
   await expect(page.getByRole('heading', { level: 1, name: 'Today’s plan' })).toBeVisible();
 });
+
+test('the app is served with security headers', async ({ request }) => {
+  const res = await request.get('/');
+  const csp = res.headers()['content-security-policy'] ?? '';
+  expect(csp).toContain("frame-ancestors 'none'");
+  expect(csp).toContain("object-src 'none'");
+  expect(csp).not.toContain("'unsafe-eval'");
+  expect(res.headers()['x-content-type-options']).toBe('nosniff');
+  expect(res.headers()['referrer-policy']).toBe('no-referrer');
+});

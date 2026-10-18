@@ -20,20 +20,13 @@ export default defineConfig({
     { name: 'tablet', use: { ...devices['Desktop Chrome'], viewport: { width: 820, height: 1100 }, hasTouch: true } },
     { name: 'mobile', use: { ...devices['Pixel 7'] } },
   ],
-  webServer: [
-    {
-      command: 'npm run build && npx vite preview --port 4173 --strictPort',
-      url: 'http://localhost:4173',
-      reuseExistingServer: !process.env.CI,
-      timeout: 120_000,
-    },
-    {
-      // The local AI server with no key: tests check the real proxy and status path, and never spend money.
-      command: 'node server/index.ts',
-      url: 'http://127.0.0.1:8787/api/ai/status',
-      env: { ANTHROPIC_API_KEY: '', PORT: '8787', DATABASE_PATH: ':memory:', SIGNUPS_PER_HOUR: '1000' },
-      reuseExistingServer: !process.env.CI,
-      timeout: 30_000,
-    },
-  ],
+  // Production setup: the academy server serves the built app with its security headers (CSP and others)
+  // plus the API, exactly as in deployment. No AI key and a throwaway database, so tests never spend money or keep data.
+  webServer: {
+    command: 'npm run build && node server/index.ts',
+    url: 'http://localhost:4173',
+    env: { ANTHROPIC_API_KEY: '', PORT: '4173', STATIC_DIR: 'dist', DATABASE_PATH: ':memory:', SIGNUPS_PER_HOUR: '1000' },
+    reuseExistingServer: !process.env.CI,
+    timeout: 120_000,
+  },
 });

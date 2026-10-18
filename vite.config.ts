@@ -7,6 +7,9 @@ export default defineConfig({
   // Relative asset paths so the built app works from any folder or static host.
   base: './',
   plugins: [react()],
+  // SINGLE_FILE=1 builds one script (no lazy chunks) for the single-file shareable preview.
+  // The Code Lab chunk (editor, parser, SQL engine) is large by nature and only loads when the Lab is opened.
+  build: process.env.SINGLE_FILE ? { rolldownOptions: { output: { codeSplitting: false } }, chunkSizeWarningLimit: 2500 } : { chunkSizeWarningLimit: 800 },
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },

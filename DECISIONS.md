@@ -225,3 +225,21 @@ Short records of decisions that shape the project. Each says what was decided, w
 **Decision:** Progress isn't synced automatically. "Save this device's progress" uploads the same validated backup the Backup feature makes; "Restore to this device" downloads it and runs it through the existing import plan, which lists what will be replaced and asks before writing.
 
 **Why:** Automatic merging of learning records across devices can silently overwrite work, and the master plan requires that nothing is overwritten without confirmation. Reusing the backup format means one validated path for every import. Automatic sync can be built on top later.
+
+## D30. Heavy screens load on demand; the preview stays one file
+
+**Decision:** The Code Lab (editor, parser, SQL engine), AI Workshop, Progress, Certifications, Circles, Settings and Welcome screens are loaded with React Router's `lazy` routes. Home, Learn, lessons, Review and Projects stay in the first download. `npm run build:preview` (`SINGLE_FILE=1`) turns code splitting off for the one-file preview.
+
+**Why:** The first download halved (about 560 KB to 286 KB compressed). Lessons stay eager because they power search and recommendations on every page.
+
+## D31. The server hosts the app with a security policy, and tests run against that setup
+
+**Decision:** The academy server serves `dist/` with a Content-Security-Policy (`default-src 'self'`, no third-party origins, no `unsafe-eval`, `object-src 'none'`, `frame-ancestors 'none'`) and `nosniff`, `no-referrer`, `DENY` framing, `same-origin` opener and a restrictive permissions policy. The browser tests run against this exact setup rather than a development server.
+
+**Trade-off:** Inline scripts stay allowed, because the Code Lab's sandboxed `srcdoc` preview inherits the page's policy and learner code is inline. The sandbox's opaque origin and its own stricter policy protect the app; a separate preview origin would allow removing this (listed in SECURITY.md).
+
+## D32. Color theme: warm off-white, deep teal, antique-gold whisper
+
+**Decision (requested by the learner):** Background #FAF9F6; primary #0F4C5C for all buttons and active states; antique gold #B98A2F only for tiny decorative marks (the logo's crossbar, the thin bar beside the current page, a short rule before page labels); text #1E2A28 and #4A5A56. Dark mode: background #101817 with #6FB5A8 buttons (dark text on them).
+
+**Why gold is never text:** it measures about 3:1 against the background, below the 4.5:1 that WCAG AA requires for text. All other pairs were measured: deep teal buttons 9.5:1, dark-mode buttons 7.3:1, secondary text 6.9:1. The accessibility audit runs on the final theme.

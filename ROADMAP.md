@@ -2,7 +2,7 @@
 
 The academy is built in phases. Each phase ends runnable, tested and documented. Time estimates for learning paths live in the app (Learn → a path); this file tracks building the app itself.
 
-**Current status:** Phases 0–8 complete. Next: Phase 9 (hardening and release).
+**Current status:** All phases (0–9) complete: version 1.0. Ideas for after 1.0 are at the end.
 
 ---
 
@@ -203,7 +203,30 @@ The academy is built in phases. Each phase ends runnable, tested and documented.
 - Sync is manual (save/restore), not automatic, and keeps one copy per account.
 - Node's built-in SQLite prints an "experimental" warning on start; it works, and the database code is small enough to move to another driver.
 
-## Phase 9: Hardening and release
+## Phase 9: Hardening and release ✅
 
-- [ ] Accessibility and responsive review, security review, performance
-- [ ] Deployment instructions and hosting path
+- [x] **New color theme** (requested): warm off-white #FAF9F6, deep teal #0F4C5C for every button and active state, antique gold #B98A2F as a decorative whisper only (never text or buttons, since it has 3:1 contrast), slate text #1E2A28 and #4A5A56; dark mode #101817 with #6FB5A8 buttons ([D32](DECISIONS.md))
+- [x] Accessibility review: axe-core (WCAG 2.1 A and AA) on 23 screens, light and dark, desktop and phone, all five accents. Fixed low-contrast colors, the search button's accessible name, the editor divider's ARIA values, an unlabeled file input and the skill map's role. Now part of the test suite
+- [x] Responsive review: every page checked at desktop, tablet and phone sizes for sideways scrolling (existing tests) and visually
+- [x] Security review ([SECURITY.md](SECURITY.md)): threat model, every server route reviewed, 0 known dependency vulnerabilities, no eval or raw HTML injection, no secrets in history; the server now sends a Content-Security-Policy and other security headers ([D31](DECISIONS.md))
+- [x] Performance: heavy screens load on first visit, halving the first download from about 560 KB to about 286 KB compressed ([D30](DECISIONS.md))
+- [x] Deployment ([DEPLOY.md](DEPLOY.md)): static files, the whole academy on one address with `npm start`, and a container image (built and tested here: serves the app with headers, keeps data across restarts, runs unprivileged), behind HTTPS
+- [x] Continuous integration: type check, unit and server tests, browser tests against the production server, and a container build on every push
+
+**Tests at the 1.0 release** (all run and passing on 2026-10-18):
+- 229 unit and server tests
+- 339 browser checks across desktop, tablet and phone (111 skipped by design), all run against the production setup with its security policy, including the accessibility audit and a header check
+
+**Bugs found and fixed:** 1,688 accessibility findings across pages and themes (mostly a few low-contrast color tokens repeated everywhere), now 0. The origin check also applied to the app's own scripts, which would have broken hosting on a public address; it now applies to the API only. Two tests counted elements before a lazily loaded page arrived.
+
+**Known limitations:** see [SECURITY.md](SECURITY.md) (open items) and each phase above. The main ones: no email verification or password reset, manual sync, one server process, and the later milestones for Website, Finance and Chess still planned.
+
+---
+
+## After 1.0: ideas
+
+- Remaining milestones: React and TypeScript for the website, a real database behind the finance tracker, chess check/checkmate and a computer opponent
+- Email (verification, password reset) through a provider the deployer chooses
+- Automatic sync with conflict handling
+- Moving the Code Lab preview to its own origin, so the app's security policy can drop inline scripts
+- Generated explanations and feedback on written answers in live AI mode, always labeled and checked against the lesson's criteria

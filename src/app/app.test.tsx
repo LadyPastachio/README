@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { RouterProvider, createMemoryRouter } from 'react-router-dom';
 import { routes } from './router';
@@ -10,7 +10,7 @@ import { LearningProvider } from '@/core/learning/LearningContext';
 import { RECORDS_KEY, loadRecords } from '@/core/learning/records';
 import { NAV_ITEMS } from './navigation';
 
-function renderApp(path = '/', storage: StorageAdapter = createMemoryAdapter()) {
+async function renderApp(path = '/', storage: StorageAdapter = createMemoryAdapter()) {
   const router = createMemoryRouter(routes, { initialEntries: [path] });
   render(
     <SettingsProvider storage={storage}>
@@ -21,35 +21,38 @@ function renderApp(path = '/', storage: StorageAdapter = createMemoryAdapter()) 
       </LearningProvider>
     </SettingsProvider>,
   );
+  await waitFor(() => expect(router.state.initialized && router.state.navigation.state === 'idle').toBe(true));
+  // Lazily loaded screens: wait until the page itself (every page has an h1) has rendered.
+  await screen.findAllByRole('heading', { level: 1 }, { timeout: 4000 });
   return { router, storage };
 }
 
 describe('app shell', () => {
-  it('shows all eight destinations in the sidebar', () => {
-    renderApp();
+  it('shows all eight destinations in the sidebar', async () => {
+    await renderApp();
     const nav = screen.getAllByRole('complementary', { name: 'Primary' })[0]!;
     for (const item of NAV_ITEMS) expect(within(nav).getByRole('link', { name: item.label })).toBeInTheDocument();
   });
 
   it('navigates between pages', async () => {
     const user = userEvent.setup();
-    const { router } = renderApp();
+    const { router } = await renderApp();
     const nav = screen.getAllByRole('complementary', { name: 'Primary' })[0]!;
     await user.click(within(nav).getByRole('link', { name: 'My Progress' }));
+    expect(await screen.findByRole('heading', { level: 1, name: 'What you can actually do' })).toBeInTheDocument();
     expect(router.state.location.pathname).toBe('/progress');
-    expect(screen.getByRole('heading', { level: 1, name: 'What you can actually do' })).toBeInTheDocument();
   });
 
-  it('renders every destination without crashing', () => {
+  it('renders every destination without crashing', async () => {
     for (const item of NAV_ITEMS) {
-      renderApp(item.path);
+      await renderApp(item.path);
       expect(screen.getAllByRole('heading', { level: 1 }).length).toBeGreaterThan(0);
       document.body.innerHTML = '';
     }
   });
 
-  it('shows a helpful page for unknown addresses', () => {
-    renderApp('/nope');
+  it('shows a helpful page for unknown addresses', async () => {
+    await renderApp('/nope');
     expect(screen.getByRole('heading', { name: 'Page not found' })).toBeInTheDocument();
   });
 });
@@ -57,7 +60,7 @@ describe('app shell', () => {
 describe('settings', () => {
   it('applies and saves the theme and accent immediately', async () => {
     const user = userEvent.setup();
-    const { storage } = renderApp('/settings');
+    const { storage } = await renderApp('/settings');
     await user.click(screen.getByRole('radio', { name: 'Dark' }));
     await user.click(screen.getByRole('radio', { name: 'Plum' }));
     expect(document.documentElement.dataset.theme).toBe('dark');
@@ -68,7 +71,7 @@ describe('settings', () => {
 
   it('turns on high contrast and reduced motion', async () => {
     const user = userEvent.setup();
-    renderApp('/settings');
+    await renderApp('/settings');
     await user.click(screen.getByRole('switch', { name: 'High contrast' }));
     await user.click(screen.getByRole('radio', { name: 'Reduce' }));
     expect(document.documentElement.dataset.contrast).toBe('high');
@@ -78,7 +81,7 @@ describe('settings', () => {
   it('resets to defaults in one step', async () => {
     const user = userEvent.setup();
     const storage = createMemoryAdapter({ [SETTINGS_KEY]: JSON.stringify({ appearance: { theme: 'dark', accent: 'clay' }, accessibility: { highContrast: true } }) });
-    renderApp('/settings', storage);
+    await renderApp('/settings', storage);
     await user.click(screen.getByRole('button', { name: 'Reset settings to defaults' }));
     const saved = JSON.parse(storage.read(SETTINGS_KEY)!);
     expect(saved.appearance.theme).toBe('system');
@@ -88,7 +91,7 @@ describe('settings', () => {
   it('warns when the browser refuses to save', async () => {
     const user = userEvent.setup();
     const broken: StorageAdapter = { ...createMemoryAdapter(), write: () => false };
-    renderApp('/settings', broken);
+    await renderApp('/settings', broken);
     await user.click(screen.getByRole('radio', { name: 'Dark' }));
     expect(screen.getByText(/Not saved/)).toBeInTheDocument();
   });
@@ -99,7 +102,7 @@ describe('lessons record evidence', () => {
 
   it('saves a wrong answer with its misconception and confidence', async () => {
     const user = userEvent.setup();
-    const { storage } = renderApp(L);
+    const { storage } = await renderApp(L);
     const card = screen.getByRole('article', { name: 'Activity 2 of 3' });
     await user.click(within(card).getByRole('radio', { name: 'Certain' }));
     await user.click(within(card).getByRole('radio', { name: 'The internet connection dropped.' }));
@@ -111,7 +114,7 @@ describe('lessons record evidence', () => {
 
   it('records hints shown at the time of an answer', async () => {
     const user = userEvent.setup();
-    const { storage } = renderApp(L);
+    const { storage } = await renderApp(L);
     await user.click(screen.getByRole('button', { name: 'Show a hint' }));
     expect(screen.getByText('1 of 3 used')).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Check order' }));
@@ -120,7 +123,7 @@ describe('lessons record evidence', () => {
 
   it('offers "Show solution" only after two misses by default, and records it', async () => {
     const user = userEvent.setup();
-    const { storage } = renderApp(L);
+    const { storage } = await renderApp(L);
     const check = screen.getByRole('button', { name: 'Check order' });
     await user.click(check);
     expect(screen.queryByRole('button', { name: 'Show solution' })).not.toBeInTheDocument();
@@ -134,7 +137,7 @@ describe('lessons record evidence', () => {
   it('never offers the solution when that setting is off', async () => {
     const user = userEvent.setup();
     const storage = createMemoryAdapter({ [SETTINGS_KEY]: JSON.stringify({ learning: { solutionReveal: 'never' } }) });
-    renderApp(L, storage);
+    await renderApp(L, storage);
     const check = screen.getByRole('button', { name: 'Check order' });
     for (let i = 0; i < 4; i++) await user.click(check);
     expect(screen.queryByRole('button', { name: 'Show solution' })).not.toBeInTheDocument();
@@ -143,7 +146,7 @@ describe('lessons record evidence', () => {
   it('locks hints until the first try when that setting is on', async () => {
     const user = userEvent.setup();
     const storage = createMemoryAdapter({ [SETTINGS_KEY]: JSON.stringify({ learning: { hintTiming: 'after-attempt' } }) });
-    renderApp(L, storage);
+    await renderApp(L, storage);
     expect(screen.getByRole('button', { name: /Available after your first try/ })).toBeDisabled();
     await user.click(screen.getByRole('button', { name: 'Check order' }));
     expect(screen.getByRole('button', { name: 'Show a hint' })).toBeEnabled();
@@ -151,7 +154,7 @@ describe('lessons record evidence', () => {
 
   it('checks fill-the-gap answers and explains common wrong ones', async () => {
     const user = userEvent.setup();
-    const { storage } = renderApp('/learn/lesson/values-and-variables');
+    const { storage } = await renderApp('/learn/lesson/values-and-variables');
     const gap = screen.getByLabelText('Missing code');
     await user.type(gap, 'const');
     await user.click(screen.getByRole('button', { name: 'Check' }));
@@ -163,9 +166,9 @@ describe('lessons record evidence', () => {
     expect(loadRecords(storage).map((e) => e.correct)).toEqual([false, true]);
   });
 
-  it('puts a question first when "try first" is chosen', () => {
+  it('puts a question first when "try first" is chosen', async () => {
     const storage = createMemoryAdapter({ [SETTINGS_KEY]: JSON.stringify({ learning: { lessonOrder: 'try-first' } }) });
-    renderApp(L, storage);
+    await renderApp(L, storage);
     const warm = screen.getByRole('heading', { name: 'Try this first' });
     const firstSection = screen.getByRole('heading', { name: 'Two programs having a conversation' });
     expect(warm.compareDocumentPosition(firstSection) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
@@ -173,7 +176,7 @@ describe('lessons record evidence', () => {
 
   it('shows the lesson summary with evidence export after an answer', async () => {
     const user = userEvent.setup();
-    renderApp(L);
+    await renderApp(L);
     expect(screen.queryByRole('heading', { name: 'Your evidence so far' })).not.toBeInTheDocument();
     await user.click(screen.getByRole('radio', { name: 'The server was reached, but it has nothing at that address.' }));
     await user.click(screen.getByRole('button', { name: 'Check answer' }));
@@ -183,11 +186,11 @@ describe('lessons record evidence', () => {
 
   it('updates Home after progress is recorded', async () => {
     const storage = createMemoryAdapter();
-    renderApp('/', storage);
+    await renderApp('/', storage);
     expect(screen.getByRole('heading', { level: 1, name: /Welcome/ })).toBeInTheDocument();
     document.body.innerHTML = '';
     storage.write(RECORDS_KEY, JSON.stringify({ version: 1, events: [{ id: 'x', at: new Date().toISOString(), type: 'answer', context: 'lesson', sessionId: 's', lessonId: 'how-a-page-reaches-you', activityId: 'order-steps', kind: 'order', correct: true, answer: 'a', hintsShown: 0, confidence: null, misconception: null, lessonOrder: 'explain-first', selfCheck: null }] }));
-    renderApp('/', storage);
+    await renderApp('/', storage);
     expect(screen.getByRole('heading', { level: 1, name: 'Today’s plan' })).toBeInTheDocument();
     expect(screen.getAllByText('Continue').length).toBeGreaterThan(0);
   });
@@ -196,14 +199,14 @@ describe('lessons record evidence', () => {
 describe('learning settings', () => {
   it('changes the daily load shown on Home', async () => {
     const user = userEvent.setup();
-    const { storage } = renderApp('/settings');
+    const { storage } = await renderApp('/settings');
     await user.click(screen.getByRole('radio', { name: '3' }));
     expect(JSON.parse(storage.read(SETTINGS_KEY)!).learning.dailyLoad).toBe(3);
   });
 
   it('saves stated preferences in the learning profile', async () => {
     const user = userEvent.setup();
-    const { storage } = renderApp('/settings');
+    const { storage } = await renderApp('/settings');
     await user.click(within(screen.getByRole('group', { name: 'Explanations I find helpful' })).getByLabelText('Diagrams'));
     await user.type(screen.getByLabelText('Topics I find confusing'), 'return');
     const p = JSON.parse(storage.read(SETTINGS_KEY)!).profile;
@@ -213,8 +216,8 @@ describe('learning settings', () => {
 });
 
 describe('review page', () => {
-  it('explains when nothing is due', () => {
-    renderApp('/review');
+  it('explains when nothing is due', async () => {
+    await renderApp('/review');
     expect(screen.getByRole('heading', { level: 1, name: 'Nothing due right now' })).toBeInTheDocument();
   });
 });
@@ -242,7 +245,7 @@ describe('adaptive lessons', () => {
 
   it('opens another explanation from the lesson controls and records it', async () => {
     const user = userEvent.setup();
-    const { storage } = renderApp(L);
+    const { storage } = await renderApp(L);
     await user.click(screen.getByRole('button', { name: 'Analogy' }));
     expect(screen.getByText(/bouncer with a list of rules/)).toBeInTheDocument();
     expect(loadRecords(storage).at(-1)).toMatchObject({ type: 'help', activityId: 'help:analogy' });
@@ -250,7 +253,7 @@ describe('adaptive lessons', () => {
 
   it('walks through steps one at a time', async () => {
     const user = userEvent.setup();
-    renderApp(L);
+    await renderApp(L);
     await user.click(screen.getByRole('button', { name: 'Step by step' }));
     expect(screen.getByText('score is 75.')).toBeInTheDocument();
     expect(screen.queryByText(/Skip that block/)).not.toBeInTheDocument();
@@ -258,16 +261,16 @@ describe('adaptive lessons', () => {
     expect(screen.getByText(/Skip that block/)).toBeInTheDocument();
   });
 
-  it('opens your stated preference automatically and says why', () => {
+  it('opens your stated preference automatically and says why', async () => {
     const storage = createMemoryAdapter({ [SETTINGS_KEY]: JSON.stringify({ profile: { preferredFormats: ['analogies'] } }) });
-    renderApp(L, storage);
+    await renderApp(L, storage);
     expect(screen.getByText(/bouncer with a list of rules/)).toBeInTheDocument();
     expect(screen.getByText(/Opened for you because of what you said/)).toBeInTheDocument();
   });
 
   it('offers a different explanation after two misses', async () => {
     const user = userEvent.setup();
-    renderApp(L);
+    await renderApp(L);
     const card = screen.getByRole('article', { name: 'Activity 1 of 4' });
     await user.click(within(card).getByRole('radio', { name: 'A' }));
     await user.click(within(card).getByRole('button', { name: 'Check answer' }));
@@ -281,16 +284,16 @@ describe('adaptive lessons', () => {
 
   it('saves a transfer challenge as evidence', async () => {
     const user = userEvent.setup();
-    const { storage } = renderApp(L);
+    const { storage } = await renderApp(L);
     await user.click(screen.getByRole('button', { name: 'Challenge me' }));
     await user.type(screen.getByRole('textbox', { name: /mark a lead/ }), 'Check urgent first in an else-if chain because it matters most.');
     await user.click(within(screen.getByRole('region', { name: 'See it another way' })).getByRole('button', { name: 'Save and compare' }));
     expect(loadRecords(storage).at(-1)).toMatchObject({ activityId: 'transfer', kind: 'explain' });
   });
 
-  it('tucks away background text in brief mode', () => {
+  it('tucks away background text in brief mode', async () => {
     const storage = createMemoryAdapter({ [SETTINGS_KEY]: JSON.stringify({ profile: { detailLevel: 'brief' } }) });
-    renderApp(L, storage);
+    await renderApp(L, storage);
     expect(screen.getByText('Why this matters for your projects').closest('details')).not.toBeNull();
   });
 });
@@ -298,7 +301,7 @@ describe('adaptive lessons', () => {
 describe('welcome check-in', () => {
   it('saves answers and marks the check-in done', async () => {
     const user = userEvent.setup();
-    const { storage } = renderApp('/welcome');
+    const { storage } = await renderApp('/welcome');
     await user.click(within(screen.getAllByRole('group')[0]!).getByRole('checkbox', { name: 'Diagrams' }));
     await user.click(screen.getByRole('button', { name: /Next/ }));
     await user.click(screen.getByRole('radio', { name: 'Try first, then read' }));
@@ -314,7 +317,7 @@ describe('welcome check-in', () => {
 
   it('can be skipped', async () => {
     const user = userEvent.setup();
-    const { storage } = renderApp('/welcome');
+    const { storage } = await renderApp('/welcome');
     await user.click(screen.getByRole('button', { name: 'Skip for now' }));
     expect(JSON.parse(storage.read(SETTINGS_KEY)!).profile.onboarded).toBe(true);
   });

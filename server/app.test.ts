@@ -118,3 +118,35 @@ describe('AI server', () => {
     expect((await fetch(`${base}/api/other`)).status).toBe(404);
   });
 });
+
+describe('serving the built app', () => {
+  it('serves files with security headers and refuses paths outside the folder', async () => {
+    const { mkdtempSync, writeFileSync, mkdirSync } = await import('node:fs');
+    const { join } = await import('node:path');
+    const { tmpdir } = await import('node:os');
+    const dir = mkdtempSync(join(tmpdir(), 'academy-static-'));
+    writeFileSync(join(dir, 'index.html'), '<!doctype html><title>Academy</title>');
+    mkdirSync(join(dir, 'assets'));
+    writeFileSync(join(dir, 'assets', 'app-abc.js'), 'console.log(1)');
+    writeFileSync(join(tmpdir(), 'secret.txt'), 'top secret');
+    const app = createApp({ client: null, model: 'm', dailyLimit: 1, maxTokens: 64, allowedOrigins: [ORIGIN], staticDir: dir });
+    server = await app.listen(0);
+    const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+    const home = await fetch(base + '/');
+    expect(home.status).toBe(200);
+    expect(await home.text()).toContain('<title>Academy</title>');
+    expect(home.headers.get('content-security-policy')).toMatch(/frame-ancestors 'none'/);
+    expect(home.headers.get('content-security-policy')).not.toMatch(/'unsafe-eval'/);
+    expect(home.headers.get('x-content-type-options')).toBe('nosniff');
+    const asset = await fetch(base + '/assets/app-abc.js', { headers: { origin: 'https://academy.example.org' } });
+    expect(asset.status).toBe(200);
+    expect(asset.headers.get('content-type')).toMatch(/javascript/);
+    expect(asset.headers.get('cache-control')).toMatch(/immutable/);
+    for (const evil of ['/../secret.txt', '/%2e%2e/secret.txt', '/assets/../../secret.txt', '/%00']) {
+      const r = await fetch(base + evil);
+      expect(r.status, evil).not.toBe(200);
+      expect(await r.text()).not.toContain('top secret');
+    }
+    expect((await fetch(base + '/api/nope')).status).toBe(404);
+  });
+});

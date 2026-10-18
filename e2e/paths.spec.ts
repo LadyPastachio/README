@@ -33,6 +33,7 @@ test('project notes are saved and survive a reload', async ({ page }) => {
 test('the skill map shows every skill and filters by path', async ({ page }) => {
   await page.goto('/#/progress');
   const nodes = page.locator('.skill-map__node');
+  await expect(nodes.first()).toBeVisible();
   expect(await nodes.count()).toBeGreaterThanOrEqual(30);
   await page.getByRole('radio', { name: 'Chess' }).click();
   expect(await page.locator('.skill-map__node[data-dim]').count()).toBeGreaterThan(0);
