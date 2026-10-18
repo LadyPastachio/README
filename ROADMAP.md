@@ -2,7 +2,7 @@
 
 The academy is built in phases. Each phase ends runnable, tested and documented. Time estimates for learning paths live in the app (Learn → a path); this file tracks building the app itself.
 
-**Current status:** Phases 0–7 complete. Next: Phase 8 (online readiness and collaboration).
+**Current status:** Phases 0–8 complete. Next: Phase 9 (hardening and release).
 
 ---
 
@@ -181,12 +181,27 @@ The academy is built in phases. Each phase ends runnable, tested and documented.
 - Later milestones (Website 3–4, Finance 3–4, Chess 3–4) are still planned. Chess check and checkmate are not covered yet.
 - SQL exercises use SQLite; other databases differ in details.
 
-## Phase 8: Online readiness and collaboration
+## Phase 8: Online readiness and collaboration ✅
 
-- [ ] Backend + database, accounts, authorization
-- [ ] Server-side storage and migration from local data
-- [ ] Private learning circles with permission-based sharing
-- [ ] Data deletion, backup and recovery; isolation tests between users
+- [x] Backend and database: the academy server now stores accounts, saved progress and circles in SQLite (Node's built-in driver) ([D27](DECISIONS.md))
+- [x] Accounts: sign up, sign in, sign out; scrypt password hashes; HttpOnly SameSite=Strict session cookies stored only as hashes; 30-day expiry; login and sign-up rate limits; same message for wrong password and unknown email
+- [x] Authorization in one place, with the rules written at the top of `server/academy.ts`; outsiders get "not found" for anything in a circle ([D28](DECISIONS.md))
+- [x] Server-side storage and migration from local data: save this device's progress to your account and restore it elsewhere, both explicit and both showing what will change ([D29](DECISIONS.md))
+- [x] Private learning circles: create, invite with expiring one-time codes, join, leave, remove members, delete; share a progress summary, Code Lab code or a note; comments; members see names, never emails
+- [x] Data export and deletion: download everything on your account; deleting an account (password required) removes it and everything it owns
+- [x] Isolation tests between users
+
+**Tests at end of Phase 8** (all run and passing on 2026-10-18):
+- 228 unit tests, adding 19 server tests for accounts, sessions, sync, circles and deletion (hashes only in the database, rate limits, expiry, origin and JSON checks, outsiders blocked from every circle route, owner-only actions, invite expiry and use limits, cascading deletion), and the client's progress summary and error handling
+- 244 browser checks across desktop, tablet and phone (65 skipped by design), including two people creating a circle, inviting, sharing and commenting; an outsider opening a circle's address; saving progress and restoring it in a second browser; and deleting an account
+
+**Bugs found and fixed:** results that depended on insertion order when two rows had the same timestamp; three Code Lab checks that relied on browser focus, which isn't reliable when the preview frame isn't the focused window (they now check that the code asked for focus on the right element).
+
+**Known limitations:**
+- The server runs on your own computer. Friends can only join circles once it's hosted somewhere they can reach (Phase 9).
+- No email verification or password reset yet: both need an email service. An owner who forgets their password can't recover the account.
+- Sync is manual (save/restore), not automatic, and keeps one copy per account.
+- Node's built-in SQLite prints an "experimental" warning on start; it works, and the database code is small enough to move to another driver.
 
 ## Phase 9: Hardening and release
 

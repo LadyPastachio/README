@@ -205,3 +205,23 @@ Short records of decisions that shape the project. Each says what was decided, w
 **Decision:** "Write tests" exercises include a tiny test runner (expect, toBe, toEqual). Checks run the learner's tests against their own code (must pass) and against several deliberately broken versions (each must be caught by at least one failing test).
 
 **Why:** A test that can't fail protects nothing. This is mutation testing, a real technique for measuring test quality, and it turns "write some tests" into a checkable goal.
+
+## D27. One academy server, SQLite, and cookies for sessions
+
+**Decision:** The Phase 6 AI server grows into the academy server: the same process now serves accounts, sync and circles (`server/academy.ts`), storing data in SQLite through Node's built-in `node:sqlite`. Passwords are hashed with scrypt and a per-password salt. Sessions are random 256-bit tokens in an HttpOnly, SameSite=Strict cookie scoped to `/api`; the database stores only their SHA-256 hash. State-changing requests must carry an allowed Origin and a JSON body.
+
+**Why:** One small process is easy to run and later to host. SQLite needs no separate service and suits a small group. HttpOnly cookies keep the session out of reach of page scripts (unlike tokens in localStorage), and SameSite=Strict plus the origin check block cross-site requests.
+
+**Cost to change:** Low to medium. The queries are plain SQL in one file; moving to PostgreSQL for a larger deployment means swapping the driver and a few SQL details.
+
+## D28. Authorization rules live in one file, and outsiders see "not found"
+
+**Decision:** Every circle route checks membership first. Non-members get 404, the same as a circle that doesn't exist, so ids can't be probed. Only owners invite, remove members and delete circles; shares can be removed by their author or the owner; comments only by their author. Members see each other's display names, never emails. Invite codes are 10 characters from a 31-character alphabet, stored hashed, valid for 7 days and 5 uses.
+
+**Why:** Keeping the rules together makes them reviewable, and each rule has a test that tries to break it as a different user.
+
+## D29. Moving progress between device and account is explicit
+
+**Decision:** Progress isn't synced automatically. "Save this device's progress" uploads the same validated backup the Backup feature makes; "Restore to this device" downloads it and runs it through the existing import plan, which lists what will be replaced and asks before writing.
+
+**Why:** Automatic merging of learning records across devices can silently overwrite work, and the master plan requires that nothing is overwritten without confirmation. Reusing the backup format means one validated path for every import. Automatic sync can be built on top later.

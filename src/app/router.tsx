@@ -11,6 +11,7 @@ import { CodeLabPage } from '@/features/codelab/CodeLabPage';
 import { AIWorkshopPage } from '@/features/ai-workshop/AIWorkshopPage';
 import { ProgressPage } from '@/features/progress/ProgressPage';
 import { CirclesPage } from '@/features/circles/CirclesPage';
+import { CirclePage } from '@/features/circles/CirclePage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
 import { NotFoundPage } from './NotFoundPage';
 import { CertificationsPage } from '@/features/certifications/CertificationsPage';
@@ -34,6 +35,7 @@ export const routes: RouteObject[] = [
       { path: '/progress', element: <ProgressPage /> },
       { path: '/progress/certifications', element: <CertificationsPage /> },
       { path: '/circles', element: <CirclesPage /> },
+      { path: '/circles/:circleId', element: <CirclePage /> },
       { path: '/settings', element: <SettingsPage /> },
       { path: '/welcome', element: <WelcomePage /> },
       { path: '*', element: <NotFoundPage /> },

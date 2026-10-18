@@ -5,20 +5,19 @@ import { PageHeader, Panel, Segmented, Switch, Range, Button, Notice, Dialog } f
 import { useSettings } from '@/core/settings/SettingsContext';
 import { ACCENTS, EXPLANATION_FORMATS, FORMAT_LABELS } from '@/core/settings/schema';
 import { useLearning } from '@/core/learning/LearningContext';
-import { RECORDS_KEY } from '@/core/learning/records';
 import { observe } from '@/core/learning/observations';
 import { helpEffects, HELP_LABELS } from '@/core/learning/help';
 import { Link } from 'react-router-dom';
 import { LESSONS } from '@/content/lessons';
 import { PATHS } from '@/content/paths';
-import { createBackup, planImport, applyImport, clearAllLocalData, type ImportPlan } from '@/core/backup/backup';
-import { SETTINGS_KEY } from '@/core/settings/store';
+import { createBackup, planImport, applyImport, clearAllLocalData, BACKUP_KEY_NAMES, type ImportPlan } from '@/core/backup/backup';
 import { useToast } from '@/app/Toast';
 import { downloadText, copyText, dateStamp } from './fileHelpers';
 import { buildDiagnostics } from './diagnostics';
 import { useAI } from '@/core/ai/useAI';
 import { MENTOR_MODES, MODE_INFO, type MentorMode } from '@/core/ai/types';
 import { StatusBanner } from '@/features/ai-workshop/shared';
+import { AccountPanel } from '@/features/account/AccountPanel';
 
 const SECTIONS = [
   { id: 'appearance', label: 'Appearance' },
@@ -26,18 +25,14 @@ const SECTIONS = [
   { id: 'learning', label: 'Learning' },
   { id: 'profile', label: 'Learning profile' },
   { id: 'ai', label: 'AI' },
+  { id: 'account', label: 'Account' },
   { id: 'data', label: 'Privacy and data' },
   { id: 'about', label: 'About' },
 ];
 
 const ACCENT_LABELS: Record<(typeof ACCENTS)[number], string> = { teal: 'Teal', clay: 'Clay', indigo: 'Indigo', moss: 'Moss', plum: 'Plum' };
 const ACCENT_SWATCH: Record<(typeof ACCENTS)[number], string> = { teal: '#1d6b64', clay: '#a9492f', indigo: '#4650a8', moss: '#44702f', plum: '#84417a' };
-const KEY_NAMES: Record<string, string> = {
-  [SETTINGS_KEY]: 'Settings and learning profile',
-  [RECORDS_KEY]: 'Learning records (answers, hints, reviews)',
-  'academy:lab': 'Your Code Lab code',
-  'academy:projects': 'Your project notes',
-};
+const KEY_NAMES = BACKUP_KEY_NAMES;
 
 export function SettingsPage() {
   const { settings, saveState, updateAppearance, updateAccessibility, updateLearning, updateProfile, updateAI, resetProfile, resetToDefaults, reload, storage } = useSettings();
@@ -311,11 +306,15 @@ export function SettingsPage() {
             </div>
           </Panel>
 
+          <Panel title="Account and sync" id="account">
+            <AccountPanel />
+          </Panel>
+
           <Panel title="Privacy and data" id="data">
             <div className="data-facts">
               <div><span className="eyebrow">Stored on this device</span><p>Settings, your learning profile, learning records (answers, explanations, hints, reviews), your Code Lab code and project notes.</p></div>
-              <div><span className="eyebrow">Sent to a server</span><p>Nothing, unless you switch AI to Local server: then your AI requests go to the server on your own computer, which forwards them to the model provider.</p></div>
-              <div><span className="eyebrow">Shared with circles</span><p>Nothing. Circles don't exist yet.</p></div>
+              <div><span className="eyebrow">Sent to a server</span><p>Nothing unless you choose to. AI requests go to the academy server only in Local server mode. Your progress goes to your account only when you press Save, and only what you share reaches a circle.</p></div>
+              <div><span className="eyebrow">Shared with circles</span><p>Only items you share yourself, visible only to that circle's members. You can delete them any time.</p></div>
             </div>
             <div className="data-actions">
               <div className="data-action">

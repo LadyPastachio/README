@@ -1,6 +1,7 @@
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
 import { z } from 'zod';
 import { MODES, TASKS, systemPrompt, userContent } from './prompts.ts';
+import type { Academy } from './academy.ts';
 
 /**
  * A tiny local server for real model calls. It exists so the API key stays
@@ -31,6 +32,8 @@ export interface ServerOptions {
   allowedOrigins: string[];
   now?: () => Date;
   log?: (line: string) => void;
+  /** Accounts, sync and circles. Optional so the AI routes can run on their own. */
+  academy?: Academy;
 }
 
 export const requestSchema = z
@@ -77,14 +80,14 @@ function send(res: ServerResponse, status: number, body: unknown) {
   res.end(JSON.stringify(body));
 }
 
-function readBody(req: IncomingMessage): Promise<string | null> {
+function readBody(req: IncomingMessage, max = MAX_BODY): Promise<string | null> {
   return new Promise((resolve, reject) => {
     let size = 0;
     let tooLarge = false;
     const chunks: Buffer[] = [];
     req.on('data', (c: Buffer) => {
       size += c.length;
-      if (size > MAX_BODY) tooLarge = true; // keep draining so the reply still reaches the caller
+      if (size > max) tooLarge = true; // keep draining so the reply still reaches the caller
       else chunks.push(c);
     });
     req.on('end', () => resolve(tooLarge ? null : Buffer.concat(chunks).toString('utf8')));
@@ -112,6 +115,7 @@ export function createApp(opts: ServerOptions) {
     const origin = req.headers.origin;
     // Other websites open in your browser could otherwise call this server. No CORS headers are sent, and unknown origins are refused.
     if (origin && !opts.allowedOrigins.includes(origin)) return send(res, 403, { error: 'Origin not allowed.' });
+    if (opts.academy && (await opts.academy.handle(req, res, url, (max) => readBody(req, max)))) return;
 
     if (req.method === 'GET' && url.pathname === '/api/ai/status') {
       return send(res, 200, {

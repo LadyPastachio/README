@@ -14,6 +14,14 @@ import { PROJECTS_KEY, normalizeProjects } from '../projects/notesStore';
  */
 
 export const BACKUP_FORMAT = 'atelier-academy-backup';
+
+/** Plain names for each saved item, shown before restoring. */
+export const BACKUP_KEY_NAMES: Record<string, string> = {
+  [SETTINGS_KEY]: 'Settings and learning profile',
+  [RECORDS_KEY]: 'Learning records (answers, hints, reviews)',
+  [LAB_KEY]: 'Your Code Lab code',
+  [PROJECTS_KEY]: 'Your project notes',
+};
 export const BACKUP_VERSION = 1;
 
 /** Keys we know how to back up, with a validator for each. Grows as features are added. */

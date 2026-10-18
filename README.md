@@ -2,10 +2,12 @@
 
 A personal, project-based academy for learning software engineering and AI systems engineering, built as a real application you can use, read and improve.
 
-> **Status: Phase 7 complete (engineering progression and capstone).** See [ROADMAP.md](ROADMAP.md) for what is built, what is planned, and what comes next. "Atelier Academy" is a working name; change it in `src/app/navigation.ts` and `index.html`.
+> **Status: Phase 8 complete (accounts, sync and learning circles).** See [ROADMAP.md](ROADMAP.md) for what is built, what is planned, and what comes next. "Atelier Academy" is a working name; change it in `src/app/navigation.ts` and `index.html`.
 
 ## What works today
 
+- **Optional accounts** on the academy server you run: save your progress to your account and restore it on another device (each step shows what will change first), download your account data, delete your account
+- **Private learning circles**: create a circle, invite friends with a one-time code, share your progress summary, Code Lab code or a note on purpose, and comment on each other's work. Members see names, never emails; only the owner can invite or remove people
 - **AI Workshop**: a mentor with five modes (guide me, explain, review code, debug with me, quiz me), a prompt coach, a request and cost inspector with a temperature demo, a structured-output lab with an evaluation table, a step-by-step tool-calling walkthrough, and a prompt-injection lab. Everything works with no paid API, clearly labeled **Simulated**
 - **Optional real model**: a small local server holds your API key (never the browser), with a daily limit and capped answer length. Answers from it are labeled **Live**
 - **Code review in the Code Lab**: rule checks for likely bugs, security and accessibility problems, linked to the line
@@ -51,7 +53,11 @@ Other commands:
 | `npm run typecheck` | Checks the TypeScript types without running anything |
 | `npm run build` | Builds the production version into `dist/` |
 | `npm run test:e2e` | Runs the browser tests at desktop, tablet and phone sizes. Run `npx playwright install chromium` once first. |
-| `npm run server` | Starts the optional local AI server on port 8787 (see below) |
+| `npm run server` | Starts the optional academy server on port 8787: accounts, sync, circles and live AI (see below) |
+
+### The academy server (optional)
+
+`npm run server` starts one small server for everything that can't live in the browser alone: accounts, saved progress, learning circles and live AI. Its data is a SQLite file in `server/data/` (ignored by git), using Node's built-in SQLite, so there is nothing else to install. Passwords are hashed with scrypt; sessions use HttpOnly, SameSite=Strict cookies; requests from other websites are refused. To share circles with friends, the server has to be reachable by them (see Phase 9 for hosting).
 
 ### Connecting a real model (optional)
 
@@ -89,7 +95,7 @@ Good files to read first:
 
 ## Privacy
 
-Everything stays in your browser: settings, your learning profile and your learning records. There is no account or analytics. AI is simulated by default; only if you choose Local server does a request leave the browser, and then only to the server on your own computer, which forwards it to the model provider. Settings → Privacy and data lists exactly what is stored, and backups include all of it.
+Everything stays in your browser by default: settings, your learning profile and your learning records. There is no analytics. Data leaves the browser only when you choose: AI requests in Local server mode, saving progress to your account, and items you share with a circle. Settings → Privacy and data lists exactly what goes where, and you can delete your account and everything on it. Settings → Privacy and data lists exactly what is stored, and backups include all of it.
 
 ## Project documents
 

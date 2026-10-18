@@ -85,9 +85,10 @@ Each screen's purpose, main actions, layout at each size, and important states. 
 
 ## Learning Circles
 
-- **Purpose:** Optional learning with friends.
-- **Now:** The privacy principles that will govern circles.
-- **Planned (Phase 8):** Private circles, invitations, shared projects, code review comments, optional challenges. Nothing shared unless chosen.
+- **Purpose:** Optional learning with friends, private by default.
+- **Circles list:** four privacy principles; then, depending on state: "needs the academy server" (with Check again), "sign in to use circles" (link to Settings → Account), or your circles beside "Start a circle" and "Join with a code" (two columns, stacked under 900px).
+- **Circle page (/circles/:id):** feed of shares (kind, title, author, date, remove for author or owner) with comments and a comment box; "Share something" composer (My progress / Code / A note) with a preview of exactly what members will see. Side: members (owner can remove), invite code (owner), Leave or Delete with confirmation.
+- **States:** loading; not found (also shown to non-members); errors in an alert.
 
 ## Welcome check-in
 
@@ -97,7 +98,7 @@ Each screen's purpose, main actions, layout at each size, and important states. 
 ## Settings
 
 - **Purpose:** Control appearance, accessibility and your data. Every control shown works.
-- **Sections:** Appearance, Accessibility, Learning (daily load, lesson order, hints, solutions, confidence), Learning profile (stated vs. observed; copy, download, reset), AI (simulated or local server, default mentor mode, live status, what is sent), Privacy and data, About.
+- **Sections:** Appearance, Accessibility, Learning (daily load, lesson order, hints, solutions, confidence), Learning profile (stated vs. observed; copy, download, reset), AI (simulated or local server, default mentor mode, live status, what is sent), Account and sync (needs the server; sign in or create account; save to account and restore to device, each confirmed; download account data; sign out; delete account with password), Privacy and data, About.
 - **Layout:** Section links on the left (desktop) or a scrolling chip row (phone/tablet); one panel per section.
 - **States:** "All changes saved" / "Not saved: this browser is blocking storage"; restore preview dialog listing what will be replaced; invalid backup error; delete confirmation dialog; toasts for completed actions.
 

@@ -31,7 +31,7 @@ export default defineConfig({
       // The local AI server with no key: tests check the real proxy and status path, and never spend money.
       command: 'node server/index.ts',
       url: 'http://127.0.0.1:8787/api/ai/status',
-      env: { ANTHROPIC_API_KEY: '', PORT: '8787' },
+      env: { ANTHROPIC_API_KEY: '', PORT: '8787', DATABASE_PATH: ':memory:', SIGNUPS_PER_HOUR: '1000' },
       reuseExistingServer: !process.env.CI,
       timeout: 30_000,
     },
