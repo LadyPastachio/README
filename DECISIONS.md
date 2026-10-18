@@ -151,3 +151,17 @@ Short records of decisions that shape the project. Each says what was decided, w
 **Decision:** Remaining time for a milestone = remaining lesson and exercise minutes × 2.5 (practice, mistakes, review) ÷ your weekly hours, shown as a range from 0.75× to 1.5×. The provisional path timelines from the master plan stay alongside as the longer view.
 
 **Why:** People vary a lot; a single number would read as a promise. The factor is deliberately generous and should be tuned once real timing data exists.
+
+## D19. Adaptive teaching uses authored alternatives, chosen by evidence first
+
+**Decision:** Every lesson has authored alternative explanations (simpler, analogy, steps, another example, a transfer challenge, and a comparison where useful). The schema requires them, so every control always works without an AI provider. When a lesson opens, the app picks one to show automatically: first a kind of help you've used at least 3 times with first-try accuracy 15+ points above your no-help baseline; otherwise the first format you said helps (never one you said frustrates you); otherwise, for "detailed" learners, the step-by-step walkthrough. It always says why it opened. After two wrong answers on an activity, it offers simpler/analogy/steps.
+
+**Why:** The master plan asks for personalization based on preferences, performance and feedback, not fixed learning styles, and says enjoying a format isn't the same as learning from it. Evidence therefore outranks stated preference, thresholds are deliberately cautious, and observations are presented as questions the learner can confirm or reject.
+
+**Limits:** Small samples make the evidence noisy; thresholds should be revisited with more data. Generated, on-demand explanations come with model integration (Phase 6).
+
+## D20. Settings updates always build on the latest state
+
+**Decision:** The settings store applies each update to the most recent settings (kept in a ref), not to the value captured when a component rendered.
+
+**Why:** Two updates in the same event (such as saving the profile and then learning preferences at the end of the check-in) would otherwise overwrite each other. The same class of bug appeared in Phase 1's reset; this fixes it at the root, with a test.

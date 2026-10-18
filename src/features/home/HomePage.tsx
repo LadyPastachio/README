@@ -15,6 +15,8 @@ import { recommend, type Recommendation } from '@/core/learning/recommend';
 import { dueReviews, upcomingReviews } from '@/core/learning/schedule';
 import { skillResult } from '@/core/learning/mastery';
 import { observe } from '@/core/learning/observations';
+import { lessonResult } from '@/core/learning/mastery';
+import { MessageCircleQuestion, Sparkles as Spark } from 'lucide-react';
 
 const KIND = {
   lab: { label: 'Code Lab project', icon: SquareTerminal },
@@ -42,7 +44,7 @@ function description(r: Recommendation): string | undefined {
 
 export function HomePage() {
   const { events } = useLearning();
-  const { settings, updateLearning } = useSettings();
+  const { settings, updateLearning, updateProfile } = useSettings();
   const now = new Date();
   const recs = recommend(events, LESSONS, settings.learning.dailyLoad, { labs: LAB_EXERCISES, paths: PATHS, currentPath: settings.learning.currentPath, now });
   const due = dueReviews(events, LESSONS, now);
@@ -52,6 +54,13 @@ export function HomePage() {
   const obs = observe(events, LESSONS);
   const isNew = events.length === 0;
   const readyCerts = certificationStatus(events, LESSONS, LAB_EXERCISES).filter((c) => c.readiness === 'ready');
+  const answered = new Set(settings.profile.observationFeedback.map((f) => f.statement));
+  const askAbout = obs.statements.find((s) => !answered.has(s));
+  const respond = (statement: string, agreed: boolean) =>
+    updateProfile({ observationFeedback: [...settings.profile.observationFeedback, { statement, agreed, at: new Date().toISOString() }].slice(-50) });
+  const independentLessons = LESSONS.filter((l) => lessonResult(events, l).status === 'independent').length;
+  const SUGGEST = 'suggest:try-first';
+  const suggestTryFirst = independentLessons >= 5 && settings.learning.lessonOrder === 'explain-first' && !answered.has(SUGGEST);
   const fmt = (d: Date) => d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
 
   return (
@@ -130,6 +139,49 @@ export function HomePage() {
               </ul>
             )}
           </Panel>
+
+          {!settings.profile.onboarded && (
+            <div className="nudge">
+              <Spark size={18} aria-hidden="true" className="nudge__icon" />
+              <div>
+                <strong>How do you learn best?</strong>
+                <p className="small muted">Four quick questions, all skippable. Lessons start from your answers and adjust to what actually works for you.</p>
+                <div className="btn-row">
+                  <ButtonLink to="/welcome" variant="primary">Start (2 min)</ButtonLink>
+                  <button type="button" className="btn btn--ghost btn--sm" onClick={() => updateProfile({ onboarded: true })}>Not now</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {askAbout && (
+            <div className="nudge nudge--ask">
+              <MessageCircleQuestion size={18} aria-hidden="true" className="nudge__icon" />
+              <div>
+                <strong>Something we noticed</strong>
+                <p className="small">{askAbout}</p>
+                <p className="small muted">Does that match your experience?</p>
+                <div className="btn-row">
+                  <button type="button" className="btn btn--secondary btn--sm" onClick={() => respond(askAbout, true)}>Yes, that's right</button>
+                  <button type="button" className="btn btn--ghost btn--sm" onClick={() => respond(askAbout, false)}>Not really</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {suggestTryFirst && (
+            <div className="nudge">
+              <Spark size={18} aria-hidden="true" className="nudge__icon" />
+              <div>
+                <strong>Ready for more challenge?</strong>
+                <p className="small muted">You've finished {independentLessons} lessons on your own. Trying a question before reading the explanation can make ideas stick better. Want lessons to start with a question?</p>
+                <div className="btn-row">
+                  <button type="button" className="btn btn--secondary btn--sm" onClick={() => { updateLearning({ lessonOrder: 'try-first' }); respond(SUGGEST, true); }}>Yes, try first</button>
+                  <button type="button" className="btn btn--ghost btn--sm" onClick={() => respond(SUGGEST, false)}>Keep it as is</button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {!settings.learning.currentPath && (
             <div className="choose-path">

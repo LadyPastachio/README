@@ -1,6 +1,8 @@
 import type { LessonInput } from '../schema';
 
-export const lesson: LessonInput = {
+type LessonFile = Omit<LessonInput, 'alternatives'>;
+
+export const lesson: LessonFile = {
   id: 'game-state',
   title: 'Game state: one source of truth',
   skill: 'state',

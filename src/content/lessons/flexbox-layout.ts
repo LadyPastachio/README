@@ -1,6 +1,8 @@
 import type { LessonInput } from '../schema';
 
-export const lesson: LessonInput = {
+type LessonFile = Omit<LessonInput, 'alternatives'>;
+
+export const lesson: LessonFile = {
   id: 'flexbox-layout',
   title: 'Layout with flexbox',
   skill: 'css-layout',

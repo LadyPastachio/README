@@ -30,6 +30,7 @@ Each screen's purpose, main actions, layout at each size, and important states. 
 - **Layout:** Path list with timelines (timelines move under the text on narrow screens); foundations and shared skills side by side, stacked on phone.
 - **Sub-screens:**
   - **Path:** pitch, AI feature, three-stage timeline, milestones with skills, where to begin.
+  - **Lesson help panel ("See it another way"):** controls row; one explanation shown at a time; note when something was opened automatically and why; stuck offer inside activities after two misses.
   - **Lesson:** illustrated header with objective and status; "why this matters" callout; sections with highlighted code and diagrams; optional "Try this first" warm-up; Practice with hints box and activity cards (type icon, confidence check, feedback, Show solution per settings, "Last time" result); misconceptions; summary with evidence export and next lesson. Sticky guide on desktop (mastery requirement, progress dots, review plan), placed after the lesson on narrow screens.
   - **Glossary:** filterable list; search results scroll to and highlight the term.
 - **States:** Unknown path or lesson shows the not-found page.
@@ -77,6 +78,11 @@ Each screen's purpose, main actions, layout at each size, and important states. 
 - **Purpose:** Optional learning with friends.
 - **Now:** The privacy principles that will govern circles.
 - **Planned (Phase 8):** Private circles, invitations, shared projects, code review comments, optional challenges. Nothing shared unless chosen.
+
+## Welcome check-in
+
+- **Purpose:** Learn stated preferences in four short, skippable steps. Reached from a Home prompt or Settings → Learning profile.
+- **Steps:** helpful and frustrating formats; example-first or try-first and detail level; what got in the way before; first project and weekly hours.
 
 ## Settings
 

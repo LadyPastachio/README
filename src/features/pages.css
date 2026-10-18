@@ -531,3 +531,55 @@
 .choose-path__opt { display: grid; gap: 4px; padding: 6px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface); cursor: pointer; font-size: var(--text-xs); font-weight: 600; color: var(--ink); text-align: left; }
 .choose-path__opt:hover { border-color: var(--accent); }
 .choose-path__art { height: 52px; border-radius: var(--radius-sm); overflow: hidden; }
+
+/* ---------- Lesson help ---------- */
+.help { display: grid; gap: var(--space-3); padding: var(--space-5); border-radius: var(--radius-lg); background: var(--surface-2); scroll-margin-top: 80px; }
+.help__head { display: grid; gap: 2px; }
+.help__head h2 { font-size: var(--text-lg); }
+.help__controls { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.help__btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink-2); font-size: var(--text-sm); font-weight: 560; cursor: pointer; }
+.help__btn:hover { border-color: var(--accent); color: var(--ink); }
+.help__btn[aria-pressed='true'] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.help__card { display: grid; gap: var(--space-3); padding: var(--space-4) var(--space-5); border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-card); animation: result-in 220ms var(--ease); min-width: 0; }
+.help__card-head { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); }
+.help__auto { font-size: var(--text-xs); color: var(--accent-soft-ink); background: var(--accent-soft); padding: 6px 10px; border-radius: var(--radius-sm); }
+.help__analogy { margin: 0; padding: var(--space-3) var(--space-4); border-left: 3px solid var(--warn); background: var(--warn-soft); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: var(--text-md); line-height: 1.65; color: var(--ink); }
+.help__stack { display: grid; gap: var(--space-3); min-width: 0; }
+.help__stack ul { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; font-size: var(--text-sm); color: var(--ink-2); }
+.help__compare { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+@media (max-width: 700px) { .help__compare { grid-template-columns: minmax(0, 1fr); } }
+.help__steps ol { margin: 0 0 var(--space-3); padding-left: 1.4em; display: grid; gap: var(--space-2); font-size: var(--text-md); }
+.help__steps li.is-new { animation: result-in 260ms var(--ease); }
+.help__experiments { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+.help__experiments li { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); background: var(--surface-2); font-size: var(--text-sm); flex-wrap: wrap; }
+.stuck { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; padding: var(--space-2) var(--space-3); border-radius: var(--radius); background: var(--info-soft); font-size: var(--text-sm); color: var(--ink-2); }
+.stuck__btn { border: 1px solid var(--m-supported); background: var(--surface); color: var(--ink); border-radius: var(--radius-pill); padding: 3px 10px; font-size: var(--text-xs); font-weight: 600; cursor: pointer; }
+.why-callout--brief summary { cursor: pointer; }
+.why-callout--brief[open] p { margin-top: var(--space-2); }
+
+/* ---------- Welcome check-in ---------- */
+.welcome { max-width: 720px; display: grid; gap: var(--space-6); }
+.welcome__top { display: grid; gap: var(--space-2); }
+.welcome__dots { display: flex; gap: 6px; }
+.welcome__dots span { flex: 1; height: 4px; border-radius: 2px; background: var(--surface-sunken); }
+.welcome__dots span[data-on] { background: var(--accent); }
+.welcome__step { display: grid; gap: var(--space-4); justify-items: start; }
+.welcome__step h1 { font-size: clamp(1.5rem, 3vw, 2rem); }
+.welcome__step .field { width: 100%; }
+.welcome__sub { font-size: var(--text-md); margin-top: var(--space-3); }
+.welcome__choices { border: 0; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.welcome__choice { display: inline-flex; align-items: center; gap: 6px; padding: 9px 14px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); font-size: var(--text-sm); cursor: pointer; }
+.welcome__choice[aria-checked='true'] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-soft-ink); font-weight: 600; }
+.welcome__choices--neg .welcome__choice[aria-checked='true'] { background: var(--warn-soft); border-color: var(--warn); color: var(--ink); }
+.welcome__paths { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); width: 100%; }
+@media (max-width: 560px) { .welcome__paths { grid-template-columns: minmax(0, 1fr); } }
+.welcome__path { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: var(--space-3); align-items: center; padding: var(--space-2); text-align: left; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface); color: inherit; cursor: pointer; }
+.welcome__path > span { display: grid; gap: 2px; font-size: var(--text-sm); }
+.welcome__path[aria-checked='true'] { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.welcome__path-art { height: 56px; border-radius: var(--radius-sm); overflow: hidden; }
+.welcome__nav { display: flex; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; padding-top: var(--space-4); border-top: 1px solid var(--line); }
+.nudge { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-3); padding: var(--space-4); border-radius: var(--radius-lg); background: var(--surface); border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line)); box-shadow: var(--shadow-card); }
+.nudge > div { display: grid; gap: var(--space-2); justify-items: start; }
+.nudge__icon { color: var(--accent); margin-top: 2px; }
+.nudge--ask { border-color: color-mix(in srgb, var(--m-supported) 45%, var(--line)); }
+.nudge--ask .nudge__icon { color: var(--m-supported); }

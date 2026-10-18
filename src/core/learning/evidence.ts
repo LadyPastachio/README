@@ -42,7 +42,7 @@ export interface LessonEvidence {
   strengths: string[];
   toWorkOn: string[];
   followUp: string[];
-  learnerProfile: { preferredFormats: string[]; confusingTopics: string; lessonOrder: string | null };
+  learnerProfile: { preferredFormats: string[]; confusingTopics: string; lessonOrder: string | null; helpUsed: string[] };
   codeReview: string;
 }
 
@@ -79,6 +79,16 @@ export function buildEvidence(events: LearningEvent[], lesson: Lesson, lessons: 
       };
     })
     .filter((x) => x.text);
+  const transfer = mine.filter((e) => e.activityId === 'transfer' && e.type === 'answer').at(-1);
+  if (transfer) {
+    explanations.push({
+      prompt: `Transfer challenge: ${lesson.alternatives.challenge.prompt}`,
+      text: transfer.answer,
+      selfCheck: transfer.selfCheck ? `Learner says they covered ${transfer.selfCheck.covered} of ${transfer.selfCheck.of} key points (self-assessed)` : null,
+      lookFor: lesson.alternatives.challenge.lookFor,
+    });
+  }
+  const helpUsed = [...new Set(mine.filter((e) => e.type === 'help').map((e) => e.answer))];
 
   const misconceptions = [...new Set(mine.map((e) => e.misconception).filter((m): m is string => !!m))];
   const strengths = graded.filter((a) => result.activities.find((r) => r.activityId === a.id)?.outcome === 'first-try').map((a) => `Solved first time: ${a.prompt}`);
@@ -114,6 +124,7 @@ export function buildEvidence(events: LearningEvent[], lesson: Lesson, lessons: 
       preferredFormats: profile.preferredFormats.map((f) => FORMAT_LABELS[f]),
       confusingTopics: profile.confusingTopics,
       lessonOrder: mine.at(-1)?.lessonOrder ?? null,
+      helpUsed,
     },
     codeReview: 'No code was submitted in this lesson. Code review findings appear once Code Lab exercises are available.',
   };
@@ -155,7 +166,7 @@ export function evidenceToMarkdown(ev: LessonEvidence): string {
   lines.push('## To work on', ...list(ev.toWorkOn, 'Nothing outstanding in this lesson.'), '');
   lines.push('## Recommended follow-up', ...list(ev.followUp), '');
   lines.push('## Code review', `- ${ev.codeReview}`, '');
-  lines.push('## Learning approach', `- Lesson order used: ${ev.learnerProfile.lessonOrder ?? 'not recorded'}`, `- Learner says these help: ${ev.learnerProfile.preferredFormats.join(', ') || 'not stated'}`);
+  lines.push('## Learning approach', `- Lesson order used: ${ev.learnerProfile.lessonOrder ?? 'not recorded'}`, `- Learner says these help: ${ev.learnerProfile.preferredFormats.join(', ') || 'not stated'}`, `- Other explanations opened: ${ev.learnerProfile.helpUsed.join('; ') || 'none'}`);
   if (ev.learnerProfile.confusingTopics) lines.push(`- Learner finds confusing: ${ev.learnerProfile.confusingTopics}`);
   return lines.join('\n') + '\n';
 }

@@ -1,5 +1,6 @@
 import type { Lesson } from '@/content/schema';
 import type { LearningEvent } from './records';
+import { helpEffects, HELP_LABELS } from './help';
 
 /**
  * What the records show about how you learn. These are observations from
@@ -100,6 +101,12 @@ export function observe(events: LearningEvent[], lessons: Lesson[]): Observation
     if (ef && tf && ef.lessons >= 2 && tf.lessons >= 2 && Math.abs(ef.firstTryRate - tf.firstTryRate) >= 15) {
       const better = ef.firstTryRate > tf.firstTryRate ? 'reading the explanation first' : 'trying a question before reading';
       statements.push(`Your first-try accuracy has been higher when ${better}. That's a small sample, so treat it as a hint, not a rule.`);
+    }
+  }
+
+  for (const h of helpEffects(events)) {
+    if (h.uses >= 3 && h.after - h.baseline >= 15) {
+      statements.push(`You've tended to get more questions right first time after using “${HELP_LABELS[h.kind]}” (${h.after}% versus ${h.baseline}%). It will open automatically in new lessons; you can change that in Settings.`);
     }
   }
 

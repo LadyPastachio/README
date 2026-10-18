@@ -7,6 +7,8 @@ import { ACCENTS, EXPLANATION_FORMATS, FORMAT_LABELS } from '@/core/settings/sch
 import { useLearning } from '@/core/learning/LearningContext';
 import { RECORDS_KEY } from '@/core/learning/records';
 import { observe } from '@/core/learning/observations';
+import { helpEffects, HELP_LABELS } from '@/core/learning/help';
+import { Link } from 'react-router-dom';
 import { LESSONS } from '@/content/lessons';
 import { PATHS } from '@/content/paths';
 import { createBackup, planImport, applyImport, clearAllLocalData, type ImportPlan } from '@/core/backup/backup';
@@ -40,6 +42,7 @@ export function SettingsPage() {
   const l = settings.learning;
   const pr = settings.profile;
   const obs = observe(learning.events, LESSONS);
+  const helpFx = helpEffects(learning.events);
   const [confirmProfileReset, setConfirmProfileReset] = useState(false);
   const toast = useToast();
   const a = settings.appearance;
@@ -197,6 +200,20 @@ export function SettingsPage() {
                     </label>
                   ))}
                 </fieldset>
+                <fieldset className="format-picks">
+                  <legend className="field__label">Explanations I find frustrating</legend>
+                  {EXPLANATION_FORMATS.map((f) => (
+                    <label key={f} className="check">
+                      <input type="checkbox" checked={pr.frustratingFormats.includes(f)} onChange={() => updateProfile({ frustratingFormats: pr.frustratingFormats.includes(f) ? pr.frustratingFormats.filter((x) => x !== f) : [...pr.frustratingFormats, f], preferredFormats: pr.preferredFormats.filter((x) => x !== f) })} />
+                      <span>{FORMAT_LABELS[f]}</span>
+                    </label>
+                  ))}
+                </fieldset>
+                <div className="field">
+                  <span className="field__label">Detail before trying something</span>
+                  <Segmented label="Detail level" value={pr.detailLevel} onChange={(detailLevel) => updateProfile({ detailLevel })} options={[{ value: 'brief', label: 'Brief' }, { value: 'standard', label: 'Standard' }, { value: 'detailed', label: 'Detailed' }]} />
+                  <span className="field__hint">Brief tucks away background text. Detailed opens step-by-step walkthroughs automatically.</span>
+                </div>
                 <div className="field">
                   <label htmlFor="confusing" className="field__label">Topics I find confusing</label>
                   <textarea id="confusing" className="input textarea textarea--sm" maxLength={1000} value={pr.confusingTopics} onChange={(e) => updateProfile({ confusingTopics: e.target.value })} placeholder="e.g. when to use return, or what JSON.parse does" />
@@ -205,7 +222,7 @@ export function SettingsPage() {
                   <label htmlFor="notes" className="field__label">Anything else about how you learn</label>
                   <textarea id="notes" className="input textarea textarea--sm" maxLength={1000} value={pr.notes} onChange={(e) => updateProfile({ notes: e.target.value })} placeholder="e.g. I like to see a working example before I try" />
                 </div>
-                <p className="subtle small">Included in your Learning Evidence and assessor prompts today. Phase 5 uses it to pick alternative explanations.</p>
+                <p className="subtle small">Used to choose which explanation opens first in a lesson, and included in your Learning Evidence and assessor prompts. <Link to="/welcome">Redo the check-in</Link></p>
               </div>
               <div className="profile-col profile-col--observed">
                 <h3 className="profile-h">What your activity shows</h3>
@@ -230,6 +247,20 @@ export function SettingsPage() {
                           </li>
                         ))}
                       </ul>
+                    )}
+                    {helpFx.length > 0 && (
+                      <ul className="format-bars" aria-label="How often each kind of help was used, and first-try accuracy afterwards">
+                        {helpFx.map((h) => (
+                          <li key={h.kind}>
+                            <span className="format-bars__label">After “{HELP_LABELS[h.kind]}” <span className="subtle tabular">({h.uses}×)</span></span>
+                            <span className="format-bars__track"><span style={{ width: `${h.after}%` }} /></span>
+                            <span className="tabular small">{h.after}%</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {pr.observationFeedback.filter((f) => !f.statement.startsWith('suggest:')).length > 0 && (
+                      <p className="subtle small">You've confirmed {pr.observationFeedback.filter((f) => f.agreed && !f.statement.startsWith('suggest:')).length} and disagreed with {pr.observationFeedback.filter((f) => !f.agreed && !f.statement.startsWith('suggest:')).length} observations.</p>
                     )}
                     {obs.statements.length > 0 ? (
                       <ul className="obs-statements">{obs.statements.map((t) => <li key={t}>{t}</li>)}</ul>

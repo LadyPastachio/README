@@ -2,7 +2,7 @@
 
 The academy is built in phases. Each phase ends runnable, tested and documented. Time estimates for learning paths live in the app (Learn → a path); this file tracks building the app itself.
 
-**Current status:** Phases 0–4 complete. Next: Phase 5 (adaptive learning and review).
+**Current status:** Phases 0–5 complete. Next: Phase 6 (AI Workshop and model integration).
 
 ---
 
@@ -112,12 +112,27 @@ The academy is built in phases. Each phase ends runnable, tested and documented.
 - Only each path's first milestone has content. Later milestones show as planned.
 - Time estimates use a fixed practice factor, not your real pace yet.
 
-## Phase 5: Adaptive learning and review
+## Phase 5: Adaptive learning and review ✅
 
-- [ ] Onboarding learning-preferences check-in (a few questions at a time, skippable)
-- [ ] Personalized learning profile: stated preferences vs. observed evidence; view, edit, reset, export
-- [ ] Lesson controls: diagram, simpler, step-by-step, example, experiment, challenge, compare
-- [ ] Alternative explanations when you're stuck; spaced review and transfer challenges
+- [x] "How do you learn" check-in: helpful and frustrating formats, example-first or try-first, detail level, what got in the way before, first project and weekly hours; every question skippable, redo any time
+- [x] Learning profile: stated preferences (including frustrating formats and detail level) kept separate from observed evidence, with help-effect bars; view, edit, reset, copy, download
+- [x] Lesson controls on every lesson: simpler, analogy, step-by-step walkthrough, another example, diagram and compare (where available), experiment in the Code Lab, transfer challenge ([D19](DECISIONS.md))
+- [x] Adaptive opening: evidence first, then stated preference, with a visible reason and a link to change it
+- [x] Stuck detection: after two misses, offer a different explanation
+- [x] Brief mode tucks away background text; detailed mode opens walkthroughs
+- [x] Transfer challenges saved as evidence; help used is included in Learning Evidence
+- [x] Observations about what helps, asked as "does this match?" and recorded; suggestion to try harder settings after five independent lessons
+- [x] Spaced review and confidence tracking (from Phase 2) continue to feed observations
+
+**Tests at end of Phase 5** (all run and passing on 2026-10-18):
+- 137 unit and UI tests, adding help selection (stated, frustrating, evidence thresholds), experiments, recording help, stuck offers, transfer evidence, brief mode, the check-in, and sequential settings updates
+- 145 browser checks across desktop, tablet and phone (35 skipped by design), including completing the check-in and seeing the chosen explanation open, opening lesson code in the Code Lab, and every lesson control working without sideways scroll
+
+**Bugs found and fixed:** a stale-state overwrite when saving two settings in a row ([D20](DECISIONS.md)); one wrong number in a written explanation (caught by running the code it described).
+
+**Known limitations:**
+- Alternatives are authored, so there's one of each per lesson. On-demand explanations need a model (Phase 6).
+- "What helps you" needs several uses before it's trusted; early on, stated preferences decide.
 
 ## Phase 6: AI Workshop and model integration
 

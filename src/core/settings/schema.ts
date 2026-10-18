@@ -57,8 +57,16 @@ export const FORMAT_LABELS: Record<(typeof EXPLANATION_FORMATS)[number], string>
 /** What the learner says about how they learn. Observed evidence is calculated separately. */
 export const profileSchema = z.object({
   preferredFormats: z.array(z.enum(EXPLANATION_FORMATS)).catch([]),
+  /** Formats you find frustrating. Never auto-opened. */
+  frustratingFormats: z.array(z.enum(EXPLANATION_FORMATS)).catch([]),
   confusingTopics: z.string().max(1000).catch(''),
   notes: z.string().max(1000).catch(''),
+  /** How much explanation before trying something. */
+  detailLevel: z.enum(['brief', 'standard', 'detailed']).catch('standard'),
+  /** Whether the short "how do you learn" check-in has been done or skipped. */
+  onboarded: z.boolean().catch(false),
+  /** Your answers when asked whether an observation about your learning is accurate. */
+  observationFeedback: z.array(z.object({ statement: z.string().max(500), agreed: z.boolean(), at: z.string() })).max(50).catch([]),
 });
 
 export const settingsSchema = z.object({

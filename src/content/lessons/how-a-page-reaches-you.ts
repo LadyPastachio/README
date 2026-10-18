@@ -1,6 +1,8 @@
 import type { LessonInput } from '../schema';
 
-export const lesson: LessonInput = {
+type LessonFile = Omit<LessonInput, 'alternatives'>;
+
+export const lesson: LessonFile = {
   id: 'how-a-page-reaches-you',
   title: 'How a web page reaches your screen',
   skill: 'how-web-works',

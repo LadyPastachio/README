@@ -1,6 +1,8 @@
 import type { LessonInput } from '../schema';
 
-export const lesson: LessonInput = {
+type LessonFile = Omit<LessonInput, 'alternatives'>;
+
+export const lesson: LessonFile = {
   id: 'money-math',
   title: 'Money math you can trust',
   skill: 'js-basics',

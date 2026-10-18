@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { StorageAdapter } from '../persistence/storage';
 import { type Settings, type Appearance, type Accessibility, type LearningPrefs, type Profile, normalizeSettings, DEFAULT_SETTINGS } from './schema';
 import { loadSettings, saveSettings } from './store';
@@ -24,36 +24,31 @@ const SettingsContext = createContext<SettingsContextValue | null>(null);
 export function SettingsProvider({ storage, children }: { storage: StorageAdapter; children: ReactNode }) {
   const [settings, setSettings] = useState<Settings>(() => loadSettings(storage));
   const [saveState, setSaveState] = useState<SaveState>('saved');
+  // Always build updates on the latest settings, so two updates in a row never overwrite each other.
+  const latest = useRef(settings);
 
   const commit = useCallback(
-    (next: Settings) => {
+    (make: (current: Settings) => Settings) => {
+      const next = normalizeSettings(make(latest.current));
+      latest.current = next;
       setSettings(next);
       setSaveState(saveSettings(storage, next) ? 'saved' : 'failed');
     },
     [storage],
   );
 
-  const updateAppearance = useCallback(
-    (patch: Partial<Appearance>) => commit(normalizeSettings({ ...settings, appearance: { ...settings.appearance, ...patch } })),
-    [settings, commit],
-  );
-  const updateAccessibility = useCallback(
-    (patch: Partial<Accessibility>) =>
-      commit(normalizeSettings({ ...settings, accessibility: { ...settings.accessibility, ...patch } })),
-    [settings, commit],
-  );
-  const updateLearning = useCallback(
-    (patch: Partial<LearningPrefs>) => commit(normalizeSettings({ ...settings, learning: { ...settings.learning, ...patch } })),
-    [settings, commit],
-  );
-  const updateProfile = useCallback(
-    (patch: Partial<Profile>) => commit(normalizeSettings({ ...settings, profile: { ...settings.profile, ...patch } })),
-    [settings, commit],
-  );
-  const resetProfile = useCallback(() => commit({ ...settings, profile: DEFAULT_SETTINGS.profile }), [settings, commit]);
+  const updateAppearance = useCallback((patch: Partial<Appearance>) => commit((c) => ({ ...c, appearance: { ...c.appearance, ...patch } })), [commit]);
+  const updateAccessibility = useCallback((patch: Partial<Accessibility>) => commit((c) => ({ ...c, accessibility: { ...c.accessibility, ...patch } })), [commit]);
+  const updateLearning = useCallback((patch: Partial<LearningPrefs>) => commit((c) => ({ ...c, learning: { ...c.learning, ...patch } })), [commit]);
+  const updateProfile = useCallback((patch: Partial<Profile>) => commit((c) => ({ ...c, profile: { ...c.profile, ...patch } })), [commit]);
+  const resetProfile = useCallback(() => commit((c) => ({ ...c, profile: DEFAULT_SETTINGS.profile })), [commit]);
   /** Resets display and learning preferences. The learning profile is kept; it has its own reset. */
-  const resetToDefaults = useCallback(() => commit({ ...DEFAULT_SETTINGS, profile: settings.profile }), [settings, commit]);
-  const reload = useCallback(() => setSettings(loadSettings(storage)), [storage]);
+  const resetToDefaults = useCallback(() => commit((c) => ({ ...DEFAULT_SETTINGS, profile: c.profile })), [commit]);
+  const reload = useCallback(() => {
+    const fresh = loadSettings(storage);
+    latest.current = fresh;
+    setSettings(fresh);
+  }, [storage]);
 
   useApplySettingsToDocument(settings);
 

@@ -204,7 +204,7 @@ describe('learning settings', () => {
   it('saves stated preferences in the learning profile', async () => {
     const user = userEvent.setup();
     const { storage } = renderApp('/settings');
-    await user.click(screen.getByLabelText('Diagrams'));
+    await user.click(within(screen.getByRole('group', { name: 'Explanations I find helpful' })).getByLabelText('Diagrams'));
     await user.type(screen.getByLabelText('Topics I find confusing'), 'return');
     const p = JSON.parse(storage.read(SETTINGS_KEY)!).profile;
     expect(p.preferredFormats).toEqual(['diagrams']);
@@ -216,5 +216,106 @@ describe('review page', () => {
   it('explains when nothing is due', () => {
     renderApp('/review');
     expect(screen.getByRole('heading', { level: 1, name: 'Nothing due right now' })).toBeInTheDocument();
+  });
+});
+
+describe('settings updates', () => {
+  it('two updates in a row both survive (no stale overwrite)', async () => {
+    const { useSettings } = await import('@/core/settings/SettingsContext');
+    const storage = createMemoryAdapter();
+    let api: ReturnType<typeof useSettings> | null = null;
+    function Grab() { api = useSettings(); return null; }
+    render(<SettingsProvider storage={storage}><Grab /></SettingsProvider>);
+    const { act } = await import('@testing-library/react');
+    act(() => {
+      api!.updateProfile({ onboarded: true, detailLevel: 'brief' });
+      api!.updateLearning({ currentPath: 'chess', weeklyHours: 9 });
+    });
+    const saved = JSON.parse(storage.read(SETTINGS_KEY)!);
+    expect(saved.profile).toMatchObject({ onboarded: true, detailLevel: 'brief' });
+    expect(saved.learning).toMatchObject({ currentPath: 'chess', weeklyHours: 9 });
+  });
+});
+
+describe('adaptive lessons', () => {
+  const L = '/learn/lesson/conditions';
+
+  it('opens another explanation from the lesson controls and records it', async () => {
+    const user = userEvent.setup();
+    const { storage } = renderApp(L);
+    await user.click(screen.getByRole('button', { name: 'Analogy' }));
+    expect(screen.getByText(/bouncer with a list of rules/)).toBeInTheDocument();
+    expect(loadRecords(storage).at(-1)).toMatchObject({ type: 'help', activityId: 'help:analogy' });
+  });
+
+  it('walks through steps one at a time', async () => {
+    const user = userEvent.setup();
+    renderApp(L);
+    await user.click(screen.getByRole('button', { name: 'Step by step' }));
+    expect(screen.getByText('score is 75.')).toBeInTheDocument();
+    expect(screen.queryByText(/Skip that block/)).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /Next step/ }));
+    expect(screen.getByText(/Skip that block/)).toBeInTheDocument();
+  });
+
+  it('opens your stated preference automatically and says why', () => {
+    const storage = createMemoryAdapter({ [SETTINGS_KEY]: JSON.stringify({ profile: { preferredFormats: ['analogies'] } }) });
+    renderApp(L, storage);
+    expect(screen.getByText(/bouncer with a list of rules/)).toBeInTheDocument();
+    expect(screen.getByText(/Opened for you because of what you said/)).toBeInTheDocument();
+  });
+
+  it('offers a different explanation after two misses', async () => {
+    const user = userEvent.setup();
+    renderApp(L);
+    const card = screen.getByRole('article', { name: 'Activity 1 of 4' });
+    await user.click(within(card).getByRole('radio', { name: 'A' }));
+    await user.click(within(card).getByRole('button', { name: 'Check answer' }));
+    expect(within(card).queryByText(/Stuck\?/)).not.toBeInTheDocument();
+    await user.click(within(card).getByRole('radio', { name: 'C' }));
+    await user.click(within(card).getByRole('button', { name: 'Check answer' }));
+    expect(within(card).getByText(/Stuck\?/)).toBeInTheDocument();
+    await user.click(within(card).getByRole('button', { name: 'Explain it more simply' }));
+    expect(within(screen.getByRole('region', { name: 'See it another way' })).getByText(/runs only the first one that/)).toBeInTheDocument();
+  });
+
+  it('saves a transfer challenge as evidence', async () => {
+    const user = userEvent.setup();
+    const { storage } = renderApp(L);
+    await user.click(screen.getByRole('button', { name: 'Challenge me' }));
+    await user.type(screen.getByRole('textbox', { name: /mark a lead/ }), 'Check urgent first in an else-if chain because it matters most.');
+    await user.click(within(screen.getByRole('region', { name: 'See it another way' })).getByRole('button', { name: 'Save and compare' }));
+    expect(loadRecords(storage).at(-1)).toMatchObject({ activityId: 'transfer', kind: 'explain' });
+  });
+
+  it('tucks away background text in brief mode', () => {
+    const storage = createMemoryAdapter({ [SETTINGS_KEY]: JSON.stringify({ profile: { detailLevel: 'brief' } }) });
+    renderApp(L, storage);
+    expect(screen.getByText('Why this matters for your projects').closest('details')).not.toBeNull();
+  });
+});
+
+describe('welcome check-in', () => {
+  it('saves answers and marks the check-in done', async () => {
+    const user = userEvent.setup();
+    const { storage } = renderApp('/welcome');
+    await user.click(within(screen.getAllByRole('group')[0]!).getByRole('checkbox', { name: 'Diagrams' }));
+    await user.click(screen.getByRole('button', { name: /Next/ }));
+    await user.click(screen.getByRole('radio', { name: 'Try first, then read' }));
+    await user.click(screen.getByRole('radio', { name: 'Brief' }));
+    await user.click(screen.getByRole('button', { name: /Next/ }));
+    await user.click(screen.getByRole('button', { name: /Next/ }));
+    await user.click(screen.getByRole('radio', { name: /Chess game/ }));
+    await user.click(screen.getByRole('button', { name: /Finish/ }));
+    const saved = JSON.parse(storage.read(SETTINGS_KEY)!);
+    expect(saved.profile).toMatchObject({ onboarded: true, preferredFormats: ['diagrams'], detailLevel: 'brief' });
+    expect(saved.learning).toMatchObject({ lessonOrder: 'try-first', currentPath: 'chess' });
+  });
+
+  it('can be skipped', async () => {
+    const user = userEvent.setup();
+    const { storage } = renderApp('/welcome');
+    await user.click(screen.getByRole('button', { name: 'Skip for now' }));
+    expect(JSON.parse(storage.read(SETTINGS_KEY)!).profile.onboarded).toBe(true);
   });
 });

@@ -1,6 +1,8 @@
 import type { LessonInput } from '../schema';
 
-export const lesson: LessonInput = {
+type LessonFile = Omit<LessonInput, 'alternatives'>;
+
+export const lesson: LessonFile = {
   id: 'arrays-and-objects',
   title: 'Lists and records: arrays and objects',
   skill: 'data-structures',

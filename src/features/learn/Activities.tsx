@@ -5,6 +5,8 @@ import type { Confidence } from '@/core/learning/records';
 import { Button, Notice, CodeBlock } from '@/design/components';
 import { stableShuffle, moveItem, countInPlace, checkFill } from './activityLogic';
 import { useActivity, type ActivityContext } from './useActivity';
+import { useLessonHelp } from './LessonHelp';
+import type { HelpKind } from '@/core/learning/help';
 
 /* Shared pieces ------------------------------------------------------- */
 
@@ -27,6 +29,26 @@ function ConfidencePicker({ value, onChange, id }: { value: Confidence | null; o
   );
 }
 
+const STUCK_OPTIONS: { kind: HelpKind; label: string }[] = [
+  { kind: 'simpler', label: 'Explain it more simply' },
+  { kind: 'analogy', label: 'Give me an analogy' },
+  { kind: 'steps', label: 'Step by step' },
+];
+
+/** After two misses, offer a different explanation instead of repeating the same one. */
+function StuckOffer({ act }: { act: ReturnType<typeof useActivity> }) {
+  const help = useLessonHelp();
+  if (!help || act.wrong < 2 || act.done) return null;
+  return (
+    <div className="stuck" role="status">
+      <span>Stuck? See it another way:</span>
+      {STUCK_OPTIONS.filter((o) => help.offered.includes(o.kind)).map((o) => (
+        <button key={o.kind} type="button" className="stuck__btn" onClick={() => help.open(o.kind, 'stuck')}>{o.label}</button>
+      ))}
+    </div>
+  );
+}
+
 function Actions({ children, act, id }: { children: ReactNode; act: ReturnType<typeof useActivity>; id: string }) {
   return (
     <div className="activity__footer">
@@ -40,6 +62,7 @@ function Actions({ children, act, id }: { children: ReactNode; act: ReturnType<t
         )}
         {act.wrong > 0 && !act.done && <span className="subtle activity__attempts">{act.wrong} wrong so far. Take your time.</span>}
       </div>
+      <StuckOffer act={act} />
     </div>
   );
 }

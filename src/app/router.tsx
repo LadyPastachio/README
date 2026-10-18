@@ -14,6 +14,7 @@ import { CirclesPage } from '@/features/circles/CirclesPage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
 import { NotFoundPage } from './NotFoundPage';
 import { CertificationsPage } from '@/features/certifications/CertificationsPage';
+import { WelcomePage } from '@/features/welcome/WelcomePage';
 
 export const routes: RouteObject[] = [
   {
@@ -33,6 +34,7 @@ export const routes: RouteObject[] = [
       { path: '/progress/certifications', element: <CertificationsPage /> },
       { path: '/circles', element: <CirclesPage /> },
       { path: '/settings', element: <SettingsPage /> },
+      { path: '/welcome', element: <WelcomePage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

@@ -1,4 +1,5 @@
 import { lessonSchema, type Lesson, type LessonInput } from '../schema';
+import { ALTERNATIVES } from './alternatives';
 import { lesson as howAPageReachesYou } from './how-a-page-reaches-you';
 import { lesson as valuesAndVariables } from './values-and-variables';
 import { lesson as conditions } from './conditions';
@@ -19,7 +20,7 @@ import { lesson as httpAndApis } from './http-and-apis';
 import { lesson as validatingInput } from './validating-input';
 
 /** Lessons in suggested order: foundations first, then each path's lessons. Add new lesson files here. */
-const RAW: LessonInput[] = [
+const BASE: Omit<LessonInput, 'alternatives'>[] = [
   howAPageReachesYou,
   valuesAndVariables,
   whatAModelDoes,
@@ -39,6 +40,9 @@ const RAW: LessonInput[] = [
   httpAndApis,
   validatingInput,
 ];
+
+/** Each lesson joined with its alternative explanations (kept in alternatives.ts). */
+const RAW: LessonInput[] = BASE.map((l) => ({ ...l, alternatives: ALTERNATIVES[l.id]! }));
 
 /** Validates every lesson. A broken lesson fails loudly with its id and the problem. */
 export function parseLessons(raw: LessonInput[]): Lesson[] {

@@ -18,8 +18,8 @@ export type Confidence = z.infer<typeof confidenceSchema>;
 export const learningEventSchema = z.object({
   id: z.string(),
   at: z.string(), // ISO time
-  /** answer = the learner submitted something; reveal = they asked to see the solution. */
-  type: z.enum(['answer', 'reveal']),
+  /** answer = the learner submitted something; reveal = they asked to see the solution; help = they opened another explanation. */
+  type: z.enum(['answer', 'reveal', 'help']),
   context: z.enum(['lesson', 'review', 'lab']),
   /** One visit to a lesson, or one review. Groups attempts together. */
   sessionId: z.string(),

@@ -14,6 +14,7 @@ import { NotFoundPage } from '@/app/NotFoundPage';
 import { OrderTask, ChoiceTask, FillTask, ExplainTask } from './Activities';
 import { RequestDiagram } from './RequestDiagram';
 import { LessonSummary } from './LessonSummary';
+import { LessonHelpProvider, LessonHelpPanel } from './LessonHelp';
 import type { ActivityContext } from './useActivity';
 
 const PREVIOUS: Partial<Record<ActivityOutcome, string>> = {
@@ -69,8 +70,9 @@ function LessonView({ lessonId }: { lessonId: string }) {
     );
   };
 
+  const brief = settings.profile.detailLevel === 'brief';
   return (
-    <>
+    <LessonHelpProvider lesson={lesson} ctx={ctx}>
       <div className="lesson-hero">
         <LessonArt lessonId={lesson.id} className="lesson-hero__art" />
         <div className="lesson-hero__text">
@@ -93,11 +95,18 @@ function LessonView({ lessonId }: { lessonId: string }) {
 
       <div className="lesson-layout">
         <div className="lesson-main">
-          <section className="why-callout" aria-labelledby="why-h">
-            <h2 id="why-h" className="eyebrow">Why this matters for your projects</h2>
-            <p>{lesson.whyItMatters}</p>
-            <div className="why-callout__paths">{lesson.paths.map((p) => <PathTag key={p} path={p} />)}</div>
-          </section>
+          {brief ? (
+            <details className="why-callout why-callout--brief">
+              <summary className="eyebrow">Why this matters for your projects</summary>
+              <p>{lesson.whyItMatters}</p>
+            </details>
+          ) : (
+            <section className="why-callout" aria-labelledby="why-h">
+              <h2 id="why-h" className="eyebrow">Why this matters for your projects</h2>
+              <p>{lesson.whyItMatters}</p>
+              <div className="why-callout__paths">{lesson.paths.map((p) => <PathTag key={p} path={p} />)}</div>
+            </section>
+          )}
 
           {warmup && (
             <section className="lesson-section" aria-labelledby="warmup-h">
@@ -115,6 +124,8 @@ function LessonView({ lessonId }: { lessonId: string }) {
               {s.diagram === 'request-response' && <RequestDiagram />}
             </section>
           ))}
+
+          <LessonHelpPanel />
 
           <section className="lesson-section" aria-labelledby="practice-h">
             <div className="practice-head">
@@ -141,6 +152,7 @@ function LessonView({ lessonId }: { lessonId: string }) {
 
           <section className="lesson-section" aria-labelledby="myths-h">
             <h2 id="myths-h">Common misconceptions</h2>
+            {brief && <p className="subtle small">Shown in brief mode too: these are the mistakes most worth avoiding.</p>}
             <dl className="myths">
               {lesson.misconceptions.map((m) => (
                 <div key={m.myth} className="myth">
@@ -177,6 +189,6 @@ function LessonView({ lessonId }: { lessonId: string }) {
           </Panel>
         </aside>
       </div>
-    </>
+    </LessonHelpProvider>
   );
 }

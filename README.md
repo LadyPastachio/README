@@ -2,7 +2,7 @@
 
 A personal, project-based academy for learning software engineering and AI systems engineering, built as a real application you can use, read and improve.
 
-> **Status: Phase 4 complete (four distinct paths with milestones).** See [ROADMAP.md](ROADMAP.md) for what is built, what is planned, and what comes next. "Atelier Academy" is a working name; change it in `src/app/navigation.ts` and `index.html`.
+> **Status: Phase 5 complete (adaptive learning).** See [ROADMAP.md](ROADMAP.md) for what is built, what is planned, and what comes next. "Atelier Academy" is a working name; change it in `src/app/navigation.ts` and `index.html`.
 
 ## What works today
 
@@ -13,6 +13,8 @@ A personal, project-based academy for learning software engineering and AI syste
 - **18 lessons**: 10 shared foundations plus 2 per path
 - **17 Code Lab exercises** with automatic checks, plus a playground
 - **Skill map**: all 31 skills arranged by what builds on what, colored by your status
+- **Lessons that adapt to you**: "See it another way" controls on every lesson (simpler, analogy, step by step, another example, diagram, compare, experiment in the Code Lab, transfer challenge). What you said helps, or what has actually helped you, opens automatically, with a note saying why. After two misses, a different explanation is offered
+- **A short "how do you learn" check-in** (skippable), and occasional "does this match?" questions about patterns in your learning
 - **Six activity types**: predict the output, find the bug, fill the gap, put steps in order, check your understanding, explain it yourself
 - **Everything you do is saved**: answers, hints used, confidence, solutions shown, your explanations
 - **Mastery calculated from evidence**: five statuses from "Not introduced" to "Retained over time", each with a plain-language reason

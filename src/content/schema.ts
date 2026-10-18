@@ -70,6 +70,22 @@ export const activitySchema = z.discriminatedUnion('kind', [
   explainActivitySchema,
 ]);
 
+/**
+ * Other ways to explain the same lesson, behind the lesson controls
+ * ("Explain it more simply", "Give me an analogy", …). Authored, not
+ * generated, so they work without an AI provider.
+ */
+export const alternativesSchema = z.object({
+  simpler: z.array(text).min(1),
+  analogy: text,
+  steps: z.array(text).min(2),
+  example: z.object({ intro: text, code: z.string().optional(), explanation: text }),
+  compare: z.object({ title: text, a: z.object({ label: text, code: text }), b: z.object({ label: text, code: text }), points: z.array(text).min(1) }).optional(),
+  /** A transfer task: apply the idea somewhere new, with no answer shown first. */
+  challenge: z.object({ prompt: text, lookFor: z.array(text).min(1) }),
+});
+export type Alternatives = z.infer<typeof alternativesSchema>;
+
 export const lessonSchema = z
   .object({
     id,
@@ -101,6 +117,7 @@ export const lessonSchema = z
     misconceptions: z.array(z.object({ myth: text, reality: text })).min(1),
     hints: z.array(text).min(1),
     masteryRequirement: text,
+    alternatives: alternativesSchema,
   })
   .superRefine((lesson, ctx) => {
     const ids = [...lesson.activities, ...lesson.review].map((a) => a.id);
