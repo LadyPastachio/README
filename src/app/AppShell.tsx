@@ -47,10 +47,10 @@ export function AppShell() {
           <Mark />
           <span className="sidebar__name">{APP_NAME}</span>
         </div>
-        <button type="button" className="sidebar__search" onClick={() => setSearchOpen(true)} aria-label="Search lessons, skills and terms">
+        <button type="button" className="sidebar__search" onClick={() => setSearchOpen(true)}>
           <Search size={16} aria-hidden="true" />
-          <span className="sidebar__label">Search</span>
-          <kbd className="sidebar__kbd">Ctrl K</kbd>
+          <span className="sidebar__label">Search<span className="visually-hidden"> lessons, skills and terms</span></span>
+          <kbd className="sidebar__kbd" aria-hidden="true">Ctrl K</kbd>
         </button>
         <nav className="sidebar__nav">
           {(['Learn', 'Build', 'You'] as const).map((group) => (
@@ -129,7 +129,7 @@ function Mark() {
     <svg className="mark" width="28" height="28" viewBox="0 0 32 32" aria-hidden="true">
       <rect width="32" height="32" rx="8" fill="var(--accent)" />
       <path d="M9 22 16 9l7 13" fill="none" stroke="var(--accent-ink)" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M11.8 17h8.4" stroke="var(--accent-ink)" strokeOpacity="0.6" strokeWidth="2.6" strokeLinecap="round" />
+      <path d="M11.8 17h8.4" stroke="var(--gold)" strokeWidth="2.6" strokeLinecap="round" />
     </svg>
   );
 }

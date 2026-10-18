@@ -30,8 +30,8 @@ const SECTIONS = [
   { id: 'about', label: 'About' },
 ];
 
-const ACCENT_LABELS: Record<(typeof ACCENTS)[number], string> = { teal: 'Teal', clay: 'Clay', indigo: 'Indigo', moss: 'Moss', plum: 'Plum' };
-const ACCENT_SWATCH: Record<(typeof ACCENTS)[number], string> = { teal: '#1d6b64', clay: '#a9492f', indigo: '#4650a8', moss: '#44702f', plum: '#84417a' };
+const ACCENT_LABELS: Record<(typeof ACCENTS)[number], string> = { teal: 'Deep teal', clay: 'Clay', indigo: 'Indigo', moss: 'Moss', plum: 'Plum' };
+const ACCENT_SWATCH: Record<(typeof ACCENTS)[number], string> = { teal: '#0f4c5c', clay: '#a9492f', indigo: '#4650a8', moss: '#44702f', plum: '#84417a' };
 const KEY_NAMES = BACKUP_KEY_NAMES;
 
 export function SettingsPage() {
@@ -327,7 +327,7 @@ export function SettingsPage() {
               <div className="data-action">
                 <div><strong>Restore</strong><p className="subtle">The file is checked first, and you'll see what will be replaced before anything changes.</p></div>
                 <div className="btn-row">
-                  <input ref={fileRef} id="import-file" type="file" accept="application/json,.json" className="visually-hidden" onChange={(e) => onFile(e.target.files?.[0])} />
+                  <input ref={fileRef} id="import-file" type="file" aria-label="Backup file to restore" tabIndex={-1} accept="application/json,.json" className="visually-hidden" onChange={(e) => onFile(e.target.files?.[0])} />
                   <Button onClick={() => fileRef.current?.click()}><Upload size={16} aria-hidden="true" /> Choose backup file</Button>
                 </div>
               </div>

@@ -327,6 +327,7 @@ export function LabWorkspace({ exercise }: { exercise: LabExercise }) {
         <div className="lab-work" ref={gridRef}>
           <div className="lab-col lab-col--editor">{editor}</div>
           <div className="lab-split" role="separator" aria-orientation="vertical" aria-label="Resize editor and preview" tabIndex={0}
+            aria-valuenow={Math.round(split * 100)} aria-valuemin={25} aria-valuemax={75} aria-valuetext={`Editor ${Math.round(split * 100)}% wide`}
             onPointerDown={startDrag}
             onKeyDown={(e) => { if (e.key === 'ArrowLeft') setSplit((s) => Math.max(0.25, s - 0.05)); if (e.key === 'ArrowRight') setSplit((s) => Math.min(0.75, s + 0.05)); }} />
           <div className="lab-col lab-col--output">{preview}{consolePanel}</div>

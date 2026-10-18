@@ -28,7 +28,7 @@
   transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
 }
 .nav-link:hover { background: var(--surface-2); color: var(--ink); }
-.nav-link.active { background: var(--accent-soft); color: var(--accent-soft-ink); font-weight: 600; }
+.nav-link.active { background: var(--accent-soft); color: var(--accent-soft-ink); font-weight: 600; box-shadow: inset 3px 0 0 var(--gold); }
 .sidebar__foot { margin-top: auto; padding: 0 var(--space-3); font-size: var(--text-xs); }
 
 .main { margin-left: var(--sidebar-w); outline: none; min-width: 0; }

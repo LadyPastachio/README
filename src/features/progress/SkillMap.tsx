@@ -24,7 +24,7 @@ export function SkillMap({ statusOf }: { statusOf: (skillId: string) => MasteryS
         <span className="subtle small">Left to right: each skill builds on the ones it connects from.</span>
       </div>
       <div className="skill-map__scroll" tabIndex={0} role="region" aria-label="Skill map, scrolls sideways">
-        <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} role="img" aria-labelledby="skill-map-title">
+        <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} role="group" aria-labelledby="skill-map-title">
           <title id="skill-map-title">Map of {SKILLS.length} skills and their prerequisites, colored by your mastery status</title>
           <g className="skill-map__edges">
             {edges.map(({ from, to }) => {

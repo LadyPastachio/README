@@ -502,7 +502,7 @@
 .project-notes { display: grid; gap: var(--space-3); padding: var(--space-4); border-radius: var(--radius-lg); background: var(--surface); border: 1px solid var(--line); }
 .project-notes__head { display: flex; justify-content: space-between; align-items: baseline; }
 .project-notes__head .lab-h { margin: 0; }
-.select { width: auto; min-width: 200px; padding-right: var(--space-6); }
+.select { width: auto; min-width: 200px; padding-right: var(--space-6); background-color: var(--surface); color: var(--ink); }
 .lab-h { font-size: var(--text-sm); font-family: var(--font-body); font-weight: 700; margin-bottom: var(--space-2); }
 
 /* ---------- Skill map ---------- */

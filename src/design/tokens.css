@@ -3,21 +3,21 @@
  * Components read these variables instead of hard-coding values,
  * so themes, accents, density and contrast are changed in one place.
  *
- * Layout concept: a quiet workbench. Neutral surfaces with a slight
- * green-slate bias, one accent for actions, and four path colors that
- * only appear where a learning path is being identified.
+ * Layout concept: a quiet workbench. Warm off-white surfaces, deep teal
+ * for every action, an antique-gold whisper for tiny decorative marks,
+ * and four path colors that only appear where a path is being identified.
  */
 :root {
   /* Neutrals (light) */
-  --bg: #f3f5f3;
+  --bg: #faf9f6;
   --surface: #ffffff;
-  --surface-2: #eef1ef;
-  --surface-sunken: #e7ebe9;
-  --ink: #17201e;
-  --ink-2: #44514e;
-  --ink-3: #6b7774;
-  --line: #d9dfdc;
-  --line-strong: #bfc8c4;
+  --surface-2: #f3f1ec;
+  --surface-sunken: #ece9e2;
+  --ink: #1e2a28;
+  --ink-2: #4a5a56;
+  --ink-3: #56635f;
+  --line: #e4e0d8;
+  --line-strong: #ccc6bb;
   --overlay: rgb(16 22 21 / 0.42);
   --shadow-1: 0 1px 2px rgb(20 30 28 / 0.06), 0 1px 1px rgb(20 30 28 / 0.04);
   --shadow-2: 0 8px 28px rgb(20 30 28 / 0.12), 0 2px 6px rgb(20 30 28 / 0.06);
@@ -25,44 +25,48 @@
   --art-shadow: rgb(20 30 28 / 0.08);
 
   /* Accent (user-selectable; teal by default) */
-  --accent: #1d6b64;
+  --accent: #0f4c5c;
   --accent-ink: #ffffff;
-  --accent-soft: #dcece9;
-  --accent-soft-ink: #144d48;
+  --accent-soft: #ddeaec;
+  --accent-soft-ink: #0f4c5c;
+
+  /* Whisper accent: antique gold. Decorative only (thin rules, small marks), never text or buttons: 3:1 contrast isn't enough for text. */
+  --gold: #b98a2f;
+  --gold-soft: #f3e9d3;
 
   /* Four learning paths */
-  --path-web: #b8513b;
+  --path-web: #a3462f;
   --path-web-soft: #f6e3dd;
-  --path-finance: #3a7a4b;
+  --path-finance: #2f6b3f;
   --path-finance-soft: #dfeee2;
   --path-chess: #4a54a3;
   --path-chess-soft: #e3e5f5;
-  --path-automation: #9a6a0f;
+  --path-automation: #7e5609;
   --path-automation-soft: #f4ead2;
 
   /* Mastery statuses (semantic, separate from the accent) */
   --m-none: #8a9592;
-  --m-supported: #3f6fb0;
+  --m-supported: #355f9c;
   --m-challenge: #b0720f;
-  --m-independent: #2f7d47;
-  --m-retained: #1d6b64;
+  --m-independent: #276b3c;
+  --m-retained: #0f4c5c;
 
   /* Feedback */
-  --ok: #2f7d47;
+  --ok: #276b3c;
   --ok-soft: #e0efe4;
-  --warn: #9a6a0f;
+  --warn: #7e5609;
   --warn-soft: #f6ecd6;
   --danger: #b03a32;
   --danger-soft: #f7e1df;
   --info-soft: #e2eaf5;
 
   /* Code */
-  --code-bg: #f7f8f6;
+  --code-bg: #f6f5f1;
   --code-ink: #1d2725;
   --code-keyword: #8b3fa0;
-  --code-string: #2f7d47;
+  --code-string: #276b3c;
   --code-number: #b0560f;
-  --code-comment: #7c8885;
+  --code-comment: #5c6865;
 
   /* Type */
   --font-display: 'Bricolage Grotesque Variable', 'Segoe UI', system-ui, sans-serif;
@@ -107,33 +111,33 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg: #0f1413; --surface: #161c1b; --surface-2: #1c2422; --surface-sunken: #121716;
-    --ink: #e5ebe9; --ink-2: #b5c0bd; --ink-3: #8a9693; --line: #29322f; --line-strong: #3a4542;
+    --bg: #101817; --surface: #162120; --surface-2: #1c2928; --surface-sunken: #0c1312;
+    --ink: #e6edeb; --ink-2: #b6c3c0; --ink-3: #9aa8a4; --line: #263533; --line-strong: #384a47;
     --overlay: rgb(0 0 0 / 0.6);
     --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4); --shadow-2: 0 10px 32px rgb(0 0 0 / 0.5), 0 2px 6px rgb(0 0 0 / 0.3);
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 6px 18px -8px rgb(0 0 0 / 0.6); --art-shadow: rgb(0 0 0 / 0.35);
     --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 6px 18px -8px rgb(0 0 0 / 0.6); --art-shadow: rgb(0 0 0 / 0.35);
-    --accent: #5fbfb4; --accent-ink: #062320; --accent-soft: #173431; --accent-soft-ink: #9ee0d7;
+    --accent: #6fb5a8; --accent-ink: #0a1e1b; --accent-soft: #16302c; --accent-soft-ink: #a6d9cf; --gold: #d4a851; --gold-soft: #3a2f17;
     --path-web: #e98a73; --path-web-soft: #3a221c; --path-finance: #7cc58f; --path-finance-soft: #1b3123;
     --path-chess: #9aa3ec; --path-chess-soft: #23264a; --path-automation: #e0b357; --path-automation-soft: #382c12;
-    --m-none: #6f7b78; --m-supported: #7ea8e6; --m-challenge: #e0a94a; --m-independent: #74c48a; --m-retained: #5fbfb4;
+    --m-none: #6f7b78; --m-supported: #7ea8e6; --m-challenge: #e0a94a; --m-independent: #74c48a; --m-retained: #6fb5a8;
     --ok: #74c48a; --ok-soft: #183021; --warn: #e0b357; --warn-soft: #362a10; --danger: #f08b82; --danger-soft: #3d1c1a; --info-soft: #1b2738;
-    --code-bg: #121817; --code-ink: #dce4e2; --code-keyword: #d69ae6; --code-string: #8fd3a0; --code-number: #f0a868; --code-comment: #7d8a87;
+    --code-bg: #0d1413; --code-ink: #dce4e2; --code-keyword: #d69ae6; --code-string: #8fd3a0; --code-number: #f0a868; --code-comment: #8d9a97;
     color-scheme: dark;
   }
 }
 :root[data-theme='dark'] {
-  --bg: #0f1413; --surface: #161c1b; --surface-2: #1c2422; --surface-sunken: #121716;
-  --ink: #e5ebe9; --ink-2: #b5c0bd; --ink-3: #8a9693; --line: #29322f; --line-strong: #3a4542;
+  --bg: #101817; --surface: #162120; --surface-2: #1c2928; --surface-sunken: #0c1312;
+  --ink: #e6edeb; --ink-2: #b6c3c0; --ink-3: #9aa8a4; --line: #263533; --line-strong: #384a47;
   --overlay: rgb(0 0 0 / 0.6);
   --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4); --shadow-2: 0 10px 32px rgb(0 0 0 / 0.5), 0 2px 6px rgb(0 0 0 / 0.3);
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 6px 18px -8px rgb(0 0 0 / 0.6); --art-shadow: rgb(0 0 0 / 0.35);
-  --accent: #5fbfb4; --accent-ink: #062320; --accent-soft: #173431; --accent-soft-ink: #9ee0d7;
+  --accent: #6fb5a8; --accent-ink: #0a1e1b; --accent-soft: #16302c; --accent-soft-ink: #a6d9cf; --gold: #d4a851; --gold-soft: #3a2f17;
   --path-web: #e98a73; --path-web-soft: #3a221c; --path-finance: #7cc58f; --path-finance-soft: #1b3123;
   --path-chess: #9aa3ec; --path-chess-soft: #23264a; --path-automation: #e0b357; --path-automation-soft: #382c12;
-  --m-none: #6f7b78; --m-supported: #7ea8e6; --m-challenge: #e0a94a; --m-independent: #74c48a; --m-retained: #5fbfb4;
+  --m-none: #6f7b78; --m-supported: #7ea8e6; --m-challenge: #e0a94a; --m-independent: #74c48a; --m-retained: #6fb5a8;
   --ok: #74c48a; --ok-soft: #183021; --warn: #e0b357; --warn-soft: #362a10; --danger: #f08b82; --danger-soft: #3d1c1a; --info-soft: #1b2738;
-  --code-bg: #121817; --code-ink: #dce4e2; --code-keyword: #d69ae6; --code-string: #8fd3a0; --code-number: #f0a868; --code-comment: #7d8a87;
+  --code-bg: #0d1413; --code-ink: #dce4e2; --code-keyword: #d69ae6; --code-string: #8fd3a0; --code-number: #f0a868; --code-comment: #8d9a97;
   color-scheme: dark;
 }
 
@@ -154,7 +158,7 @@
 
 /* High contrast: stronger text and borders, in both themes */
 :root[data-contrast='high'] { --ink-2: #1f2a28; --ink-3: #2f3b38; --line: #7b8784; --line-strong: #4a5552; }
-:root[data-theme='dark'][data-contrast='high'] { --ink: #ffffff; --ink-2: #e6ecea; --ink-3: #cdd6d3; --line: #7d8a87; --line-strong: #aab6b3; }
+:root[data-theme='dark'][data-contrast='high'] { --ink: #ffffff; --ink-2: #e6ecea; --ink-3: #cdd6d3; --line: #8d9a97; --line-strong: #aab6b3; }
 
 :root[data-editor-font='system'] { --editor-font: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; }
 

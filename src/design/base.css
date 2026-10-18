@@ -31,3 +31,6 @@ svg { flex-shrink: 0; }
 .subtle { color: var(--ink-3); }
 .prose { max-width: 66ch; display: grid; gap: var(--space-3); }
 .prose p { color: var(--ink-2); }
+
+/* Whisper accent: a short gold rule before page eyebrows (decorative only). */
+.page-header .eyebrow::before { content: ''; display: inline-block; width: 14px; height: 2px; margin-right: 8px; vertical-align: middle; background: var(--gold); border-radius: 1px; }
