@@ -164,17 +164,25 @@ export interface SkillResult {
   reason: string;
 }
 
+/**
+ * Which units decide a skill: its foundation lessons (shared by every path),
+ * plus any path lesson or lab exercise you've started. Path content you
+ * haven't touched never blocks a skill, so learners on different paths can
+ * all demonstrate the same shared skill. If a skill has no foundation lesson,
+ * whatever you've started decides it.
+ */
 export function skillResult(events: LearningEvent[], skillId: string, lessons: Lesson[], labs: LabExercise[] = []): SkillResult {
   const mine = lessons.filter((l) => l.skill === skillId);
   const myLabs = labs.filter((x) => x.skill === skillId);
-  const results = mine.map((l) => lessonResult(events, l));
-  const labResults = myLabs.map((x) => labResult(events, x.id));
+  const allLessonResults = mine.map((l) => ({ lesson: l, r: lessonResult(events, l) }));
+  const allLabResults = myLabs.map((x) => labResult(events, x.id));
+  const results = allLessonResults.filter(({ lesson, r }) => !lesson.path || r.status !== 'none').map(({ r }) => r);
+  const labResults = allLabResults.filter((r) => r.status !== 'none');
   const started = results.filter((r) => r.status !== 'none');
-  const labsStarted = labResults.filter((r) => r.status !== 'none');
-  const out = (status: MasteryStatus, reason: string): SkillResult => ({ skillId, status, lessons: results, labs: labResults, reason });
+  const out = (status: MasteryStatus, reason: string): SkillResult => ({ skillId, status, lessons: allLessonResults.map(({ r }) => r), labs: allLabResults, reason });
 
   if (mine.length === 0 && myLabs.length === 0) return out('none', 'No lessons or exercises for this skill yet.');
-  if (started.length === 0 && labsStarted.length === 0) return out('none', 'Not started yet.');
+  if (started.length === 0 && labResults.length === 0) return out('none', 'Not started yet.');
 
   // A review taken after the lesson was last finished can confirm or overturn it.
   const latestReviewAfterCompletion = (r: LessonResult) =>
@@ -184,12 +192,13 @@ export function skillResult(events: LearningEvent[], skillId: string, lessons: L
     return out('challenge', 'A spaced review was missed. One more practice round will make it stick.');
   }
   if (started.some((r) => r.status === 'challenge')) return out('challenge', 'An activity was not solved yet, or the solution was shown.');
-  if (labsStarted.some((r) => r.status === 'challenge')) return out('challenge', 'The solution was used in a Code Lab exercise. Try it again on your own.');
+  if (labResults.some((r) => r.status === 'challenge')) return out('challenge', 'The solution was used in a Code Lab exercise. Try it again on your own.');
 
   const allIndependent = results.every((r) => r.status === 'independent') && labResults.every((r) => r.status === 'independent');
   if (allIndependent) {
-    // Retention is confirmed by spaced reviews, which lessons have. A skill taught only through lab exercises tops out at independent.
-    const retained = results.length > 0 && results.every((r) => {
+    // Retention is confirmed by spaced reviews, which lessons have. A skill shown only through lab exercises tops out at independent.
+    const reviewed = results.filter((r) => r.complete);
+    const retained = reviewed.length > 0 && reviewed.every((r) => {
       const rv = latestReviewAfterCompletion(r);
       return rv?.passed && Date.parse(rv.at) - Date.parse(r.completedAt!) >= RETENTION_MIN_DAYS * DAY;
     });

@@ -118,8 +118,8 @@ function report(err,msg,file,line,col){var pos=lineOf(err);
 window.addEventListener('error',function(e){report(e.error,e.message,e.filename,e.lineno,e.colno);});
 window.addEventListener('unhandledrejection',function(e){var r=e.reason;report(r instanceof Error?r:{name:'Error',message:'A promise was rejected: '+fmt(r)},null);});
 var t=null;window.__guard=function(){var now=Date.now();if(t===null){t=now;setTimeout(function(){t=null;},0);}else if(now-t>1000){t=null;var e=new Error('This loop ran for more than 1 second, so it was stopped.');e.name='InfiniteLoopError';throw e;}};
-document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('a[href]');if(a&&!/^#/.test(a.getAttribute('href'))){e.preventDefault();send({type:'console',level:'info',text:'Links don\\'t navigate inside the preview (you clicked one to '+a.getAttribute('href')+').'});}},true);
-document.addEventListener('submit',function(e){e.preventDefault();send({type:'console',level:'info',text:'Form submitted. In the preview, forms don\\'t send anything anywhere.'});},true);
+window.addEventListener('click',function(e){if(e.defaultPrevented)return;var a=e.target&&e.target.closest&&e.target.closest('a[href]');if(a&&!/^#/.test(a.getAttribute('href'))){e.preventDefault();send({type:'console',level:'info',text:'Links don\\'t navigate inside the preview (you clicked one to '+a.getAttribute('href')+').'});}});
+window.addEventListener('submit',function(e){if(e.defaultPrevented)return;e.preventDefault();send({type:'console',level:'info',text:'The form was submitted, but nothing handled it, so the page would have reloaded. Call event.preventDefault() in your submit handler. (In the preview, forms never send anything anywhere.)'});});
 send({type:'ready',linked:${JSON.stringify(linked)}});
 ${syntaxError ? `send({type:'error',name:'SyntaxError',message:${JSON.stringify(syntaxError.message)},line:${syntaxError.line},col:${syntaxError.column}});` : ''}
 })();`;

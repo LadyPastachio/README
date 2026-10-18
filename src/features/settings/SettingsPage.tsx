@@ -8,6 +8,7 @@ import { useLearning } from '@/core/learning/LearningContext';
 import { RECORDS_KEY } from '@/core/learning/records';
 import { observe } from '@/core/learning/observations';
 import { LESSONS } from '@/content/lessons';
+import { PATHS } from '@/content/paths';
 import { createBackup, planImport, applyImport, clearAllLocalData, type ImportPlan } from '@/core/backup/backup';
 import { SETTINGS_KEY } from '@/core/settings/store';
 import { useToast } from '@/app/Toast';
@@ -26,7 +27,12 @@ const SECTIONS = [
 
 const ACCENT_LABELS: Record<(typeof ACCENTS)[number], string> = { teal: 'Teal', clay: 'Clay', indigo: 'Indigo', moss: 'Moss', plum: 'Plum' };
 const ACCENT_SWATCH: Record<(typeof ACCENTS)[number], string> = { teal: '#1d6b64', clay: '#a9492f', indigo: '#4650a8', moss: '#44702f', plum: '#84417a' };
-const KEY_NAMES: Record<string, string> = { [SETTINGS_KEY]: 'Settings and learning profile', [RECORDS_KEY]: 'Learning records (answers, hints, reviews)' };
+const KEY_NAMES: Record<string, string> = {
+  [SETTINGS_KEY]: 'Settings and learning profile',
+  [RECORDS_KEY]: 'Learning records (answers, hints, reviews)',
+  'academy:lab': 'Your Code Lab code',
+  'academy:projects': 'Your project notes',
+};
 
 export function SettingsPage() {
   const { settings, saveState, updateAppearance, updateAccessibility, updateLearning, updateProfile, resetProfile, resetToDefaults, reload, storage } = useSettings();
@@ -149,6 +155,15 @@ export function SettingsPage() {
           </Panel>
 
           <Panel title="Learning" id="learning">
+            <Row label="Current path" hint="The project you're focusing on. Home suggests its next steps. Switching keeps everything you've done.">
+              <select id="current-path" className="input select" value={l.currentPath ?? ''} onChange={(e) => updateLearning({ currentPath: (e.target.value || null) as typeof l.currentPath })} aria-label="Current path">
+                <option value="">Not chosen yet</option>
+                {PATHS.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+              </select>
+            </Row>
+            <Row label="Hours a week" hint="Used only for time estimates on milestones.">
+              <Range id="weekly-hours" label="Hours a week" min={1} max={20} value={l.weeklyHours} unit=" h" onChange={(weeklyHours) => updateLearning({ weeklyHours })} />
+            </Row>
             <Row label="Daily learning load" hint="How many activities Home suggests each day. It never changes what counts as mastery.">
               <Segmented label="Daily learning load" value={String(l.dailyLoad) as '1' | '2' | '3'} onChange={(v) => updateLearning({ dailyLoad: Number(v) })} options={[{ value: '1', label: '1' }, { value: '2', label: '2' }, { value: '3', label: '3' }]} />
             </Row>
@@ -248,7 +263,7 @@ export function SettingsPage() {
 
           <Panel title="Privacy and data" id="data">
             <div className="data-facts">
-              <div><span className="eyebrow">Stored on this device</span><p>Settings, your learning profile, and learning records: answers, explanations, hints and reviews.</p></div>
+              <div><span className="eyebrow">Stored on this device</span><p>Settings, your learning profile, learning records (answers, explanations, hints, reviews), your Code Lab code and project notes.</p></div>
               <div><span className="eyebrow">Sent to a server</span><p>Nothing. There is no server or account yet.</p></div>
               <div><span className="eyebrow">Shared with circles</span><p>Nothing. Circles don't exist yet.</p></div>
             </div>

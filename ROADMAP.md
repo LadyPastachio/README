@@ -2,7 +2,7 @@
 
 The academy is built in phases. Each phase ends runnable, tested and documented. Time estimates for learning paths live in the app (Learn → a path); this file tracks building the app itself.
 
-**Current status:** Phases 0–3 complete. Next: Phase 4 (competency map and the four paths).
+**Current status:** Phases 0–4 complete. Next: Phase 5 (adaptive learning and review).
 
 ---
 
@@ -84,12 +84,33 @@ The academy is built in phases. Each phase ends runnable, tested and documented.
 - Exercise checks run beside your code, so they can be fooled on purpose.
 - Certification details were verified on 2026-10-17 and will drift; the app says to confirm on the provider's site.
 
-## Phase 4: Competency map and four paths
+## Phase 4: Competency map and four paths ✅
 
-- [ ] Prerequisite-aware competency map
-- [ ] Path-specific lessons and real project milestones (Chess first: fastest to a playable result)
-- [ ] Milestone tracking and switching paths without repeating mastered skills
-- [ ] Project workspaces: requirements, acceptance criteria, known issues, review findings
+- [x] Skill map: all skills laid out by prerequisite depth, colored by status, filterable by path
+- [x] 8 path lessons (2 per path) and 9 path Code Lab exercises, each path's first milestone fully buildable:
+  - Website: flexbox, responsive design → responsive nav, **responsive profile page**
+  - Finance: money math in cents, filter/map/reduce → transaction form, **monthly summary**
+  - Chess: board as data, game state → full board, place pieces, **move pieces with clicks**
+  - Automation: HTTP/APIs/webhooks, validating input → parse a webhook, **simulated lead workflow** (approved knowledge only, handoff, logging, injection-resistant)
+- [x] Milestone tracking with required lessons and exercises, deliverable project, acceptance criteria and states (planned, not started, in progress, complete)
+- [x] Time estimates as ranges at your weekly hours ([D18](DECISIONS.md)); current path and weekly hours in Settings
+- [x] Switching paths keeps shared progress; path content never gates shared skills ([D17](DECISIONS.md))
+- [x] Home: path chooser, recommendations toward the current milestone including Code Lab projects
+- [x] Projects workspace: tabs per project, current deliverable, milestone tracker, your notes (design, known issues, improvements), saved and backed up
+- [x] Learn shows each path's lessons, your path first
+
+**Tests at end of Phase 4** (all run and passing on 2026-10-18):
+- 121 unit tests, adding milestone states, path-aware recommendations, skills across paths, estimates and skill-map layout
+- 136 browser checks across desktop, tablet and phone (35 skipped by design), including every new project's starter failing and reference solution passing, choosing and switching paths, project notes surviving a reload, and the skill map filter
+
+**Bugs found by these tests and fixed:**
+- Form exercises could never work: sandboxed iframes need `allow-forms` for submit events to fire ([D14](DECISIONS.md) updated)
+- A check started within ~0.6 s of opening an exercise was silently cancelled by the live-preview run
+- Finishing a generic lesson marked a path-specific lesson as "covered"; a Finance-only lesson would have blocked JavaScript basics for other paths
+
+**Known limitations:**
+- Only each path's first milestone has content. Later milestones show as planned.
+- Time estimates use a fixed practice factor, not your real pace yet.
 
 ## Phase 5: Adaptive learning and review
 
@@ -107,6 +128,8 @@ The academy is built in phases. Each phase ends runnable, tested and documented.
 - [ ] Usage limits and live/simulated indicators
 
 ## Phase 7: Engineering progression and capstone
+
+- [ ] Second milestones for each path (chess rules and tests, budgets with tests, interactivity and components, a small backend service)
 
 - [ ] Backend, SQL, testing and security strands
 - [ ] Business automation project on synthetic data

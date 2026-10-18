@@ -36,6 +36,10 @@ Each screen's purpose, main actions, layout at each size, and important states. 
 
 ## Projects
 
+- **Now (Phase 4):** one tab per project (your path first) with its picture and milestone count; the workspace shows the current deliverable (open in Code Lab, or "Checks pass"), the milestone tracker, and your notes (design notes, known issues, future improvements), saved as you type.
+
+**Original Phase 1 notes:**
+
 - **Purpose:** Workspaces for the four projects, separate from lessons.
 - **Actions (now):** See each project's first milestone; open its milestones. **Planned (Phase 4):** requirements, files, known issues, review findings, evidence, sharing.
 - **Layout:** Exercise / experiment / project explainer, then a 2-column (phone: 1) grid of project cards.

@@ -77,7 +77,11 @@ export function LabWorkspace({ exercise }: { exercise: LabExercise }) {
   }, []);
 
   // Live preview: re-run shortly after typing stops. Save as you type.
+  // Skips the first render: re-running then would cancel a check started right after opening.
+  const lastFiles = useRef(files);
   useEffect(() => {
+    if (lastFiles.current === files) return;
+    lastFiles.current = files;
     const t = setTimeout(() => {
       saveWorkspace(storage, exercise.id, { files, prediction: predictionLocked ? prediction : undefined });
       if (autoRun && (!exercise.predict || predictionLocked)) runner.run(files);
@@ -251,7 +255,7 @@ export function LabWorkspace({ exercise }: { exercise: LabExercise }) {
   const preview = (
     <section className="lab-preview" aria-label="Preview">
       <div className="lab-panel-head"><span>Preview</span><span className="subtle small" title="Your code can't read your saved data, the app or the internet">{runner.lastRunAt ? 'Sandboxed' : 'Press Run'}</span></div>
-      <iframe key={runner.frameKey} ref={runner.iframe} title="Preview of your page" sandbox="allow-scripts allow-modals" srcDoc={runner.srcDoc} className="lab-frame" />
+      <iframe key={runner.frameKey} ref={runner.iframe} title="Preview of your page" sandbox="allow-scripts allow-modals allow-forms" srcDoc={runner.srcDoc} className="lab-frame" />
     </section>
   );
 

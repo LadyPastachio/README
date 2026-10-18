@@ -10,6 +10,8 @@ export const labExerciseSchema = z.object({
   kind: z.enum(['build', 'debug', 'predict', 'refactor', 'playground']),
   /** Skill this exercise gives evidence for. Playgrounds have none. */
   skill: z.string().nullable(),
+  /** Set for path project exercises. */
+  path: z.enum(['web', 'finance', 'chess', 'automation']).optional(),
   minutes: z.number().int().min(3).max(90),
   summary: z.string().min(1),
   instructions: z.array(z.string().min(1)).min(1),

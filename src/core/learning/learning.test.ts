@@ -2,7 +2,9 @@ import { LESSONS, getLesson } from '@/content/lessons';
 import { isGraded } from '@/content/schema';
 import { lessonResult, skillResult, activityResult, reviewResults } from './mastery';
 import { reviewPlan, dueReviews, nextReviewActivity } from './schedule';
-import { recommend } from './recommend';
+import { recommend, type Recommendation } from './recommend';
+
+const idOf = (r: Recommendation) => (r.kind === 'lab' ? r.labId : r.lessonId);
 import { normalizeRecords, saveRecords, loadRecords, MAX_EVENTS, RECORDS_KEY } from './records';
 import { observe } from './observations';
 import { buildEvidence, evidenceToMarkdown, assessorPrompt } from './evidence';
@@ -134,7 +136,7 @@ describe('recommendations', () => {
     const recs = recommend([], LESSONS, 3);
     expect(recs).toHaveLength(3);
     expect(recs.every((r) => r.kind === 'start')).toBe(true);
-    expect(getLesson(recs[0]!.lessonId)!.prerequisites).toEqual([]);
+    expect(getLesson(idOf(recs[0]!))!.prerequisites).toEqual([]);
     expect(recs[0]!.reason).toMatch(/No prerequisites/);
   });
 
@@ -150,9 +152,9 @@ describe('recommendations', () => {
   });
 
   it('unlocks a lesson once its prerequisites are complete', () => {
-    const before = recommend([], LESSONS, 10).map((r) => r.lessonId);
+    const before = recommend([], LESSONS, 10).map(idOf);
     expect(before).not.toContain('conditions');
-    const after = recommend(solveAll(day(1)), LESSONS, 10, new Date(day(1, 12))).map((r) => r.lessonId);
+    const after = recommend(solveAll(day(1)), LESSONS, 10, new Date(day(1, 12))).map(idOf);
     expect(after).toContain('conditions');
   });
 });

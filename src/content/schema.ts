@@ -81,6 +81,8 @@ export const lessonSchema = z
     whyItMatters: text,
     /** Lesson ids that should be done first. */
     prerequisites: z.array(id).default([]),
+    /** Set for path-specific lessons; foundation lessons leave it out. */
+    path: z.enum(['web', 'finance', 'chess', 'automation']).optional(),
     sections: z
       .array(
         z.object({

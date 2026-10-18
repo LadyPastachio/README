@@ -16,6 +16,14 @@ const HUE: Record<string, Hue> = {
   'html-structure': 'web',
   'what-a-model-does': 'chess',
   'describing-requirements': 'finance',
+  'chess-board-as-data': 'chess',
+  'game-state': 'chess',
+  'flexbox-layout': 'web',
+  'responsive-design': 'web',
+  'money-math': 'finance',
+  'filter-map-reduce': 'finance',
+  'http-and-apis': 'automation',
+  'validating-input': 'automation',
 };
 
 export function lessonHue(id: string): Hue {
@@ -175,6 +183,110 @@ export function LessonArt({ lessonId, className = '' }: { lessonId: string; clas
               <rect x="18" y="7.5" width={[34, 40, 28][i]} height="3" rx="1.5" fill="var(--line)" />
             </g>
           ))}
+        </g>
+      )}
+
+      {lessonId === 'chess-board-as-data' && (
+        <g>
+          {card(40, 12, 80, 76, 6)}
+          {Array.from({ length: 16 }, (_, i) => {
+            const r = Math.floor(i / 4), col = i % 4;
+            return <rect key={i} x={52 + col * 15} y={22 + r * 15} width="15" height="15" fill={(r + col) % 2 ? c : 'var(--surface-2)'} opacity={(r + col) % 2 ? 0.35 : 1} />;
+          })}
+          <rect x={52 + 2 * 15} y={22 + 1 * 15} width="15" height="15" fill="none" stroke={c} strokeWidth="2" />
+          {[0, 1, 2, 3].map((i) => <text key={`r${i}`} x="47" y={33 + i * 15} textAnchor="end" className="art-mono art-mono--xs" fill="var(--ink-3)">{i}</text>)}
+          {[0, 1, 2, 3].map((i) => <text key={`c${i}`} x={59 + i * 15} y="90" textAnchor="middle" className="art-mono art-mono--xs" fill="var(--ink-3)">{i}</text>)}
+          <text x="124" y="44" className="art-mono art-mono--xs" fill={c}>[1][2]</text>
+        </g>
+      )}
+      {lessonId === 'game-state' && (
+        <g>
+          {card(10, 22, 66, 56, 8)}
+          <text x="18" y="36" className="art-mono art-mono--xs" fill="var(--ink-3)">state</text>
+          <text x="18" y="50" className="art-mono art-mono--sm" fill={c}>turn</text><text x="44" y="50" className="art-mono art-mono--sm" fill="var(--ink)">"w"</text>
+          <text x="18" y="62" className="art-mono art-mono--sm" fill={c}>sel</text><text x="44" y="62" className="art-mono art-mono--sm" fill="var(--ink)">[6,4]</text>
+          <text x="18" y="73" className="art-mono art-mono--sm" fill={c}>board</text>
+          <path d="M80 50 H 96" stroke={c} strokeWidth="2.2" strokeLinecap="round" /><path d="M92 46l4 4-4 4" fill="none" stroke={c} strokeWidth="2.2" strokeLinecap="round" />
+          <text x="88" y="42" textAnchor="middle" className="art-text art-text--xs" fill="var(--ink-3)">render</text>
+          {card(102, 22, 50, 56, 6)}
+          {Array.from({ length: 9 }, (_, i) => <rect key={i} x={108 + (i % 3) * 13} y={30 + Math.floor(i / 3) * 13} width="13" height="13" fill={((i % 3) + Math.floor(i / 3)) % 2 ? c : 'var(--surface-2)'} opacity={((i % 3) + Math.floor(i / 3)) % 2 ? 0.35 : 1} />)}
+          <rect x="121" y="56" width="13" height="13" fill="none" stroke="var(--warn)" strokeWidth="2" />
+        </g>
+      )}
+      {lessonId === 'flexbox-layout' && (
+        <g>
+          {card(14, 26, 132, 48, 8)}
+          {[0, 1, 2].map((i) => <rect key={i} x={24 + i * 40} y="38" width="30" height="24" rx="4" fill={c} opacity={i === 1 ? 1 : 0.55} />)}
+          {[0, 1].map((i) => (
+            <g key={i} stroke="var(--ink-3)" strokeWidth="1.2">
+              <path d={`M${56 + i * 40} 50 H ${62 + i * 40}`} />
+              <path d={`M${56 + i * 40} 47 V 53 M${62 + i * 40} 47 V 53`} />
+            </g>
+          ))}
+          <text x="80" y="20" textAnchor="middle" className="art-mono art-mono--xs" fill={c}>display: flex; gap</text>
+        </g>
+      )}
+      {lessonId === 'responsive-design' && (
+        <g>
+          {card(12, 18, 92, 64, 6)}
+          <rect x="12" y="18" width="92" height="9" rx="4" fill="var(--surface-2)" />
+          {[0, 1, 2].map((i) => <rect key={i} x={20 + i * 27} y="34" width="22" height="18" rx="3" fill={c} opacity="0.5" />)}
+          <rect x="20" y="58" width="60" height="4" rx="2" fill="var(--line-strong)" />
+          {card(114, 28, 34, 58, 7)}
+          {[0, 1, 2].map((i) => <rect key={i} x="120" y={36 + i * 15} width="22" height="11" rx="2.5" fill={c} opacity="0.5" />)}
+        </g>
+      )}
+      {lessonId === 'money-math' && (
+        <g>
+          <g transform="translate(36 50)">
+            <ellipse cx="0" cy="18" rx="22" ry="8" fill={c} opacity=".45" />
+            <rect x="-22" y="4" width="44" height="14" fill={c} opacity=".45" />
+            <ellipse cx="0" cy="4" rx="22" ry="8" fill={c} />
+            <text x="0" y="8" textAnchor="middle" className="art-mono art-mono--sm" fill="var(--surface)">¢</text>
+          </g>
+          {card(74, 26, 74, 48, 8)}
+          <text x="111" y="44" textAnchor="middle" className="art-mono art-mono--sm" fill="var(--danger)">0.1+0.2 ≠ 0.3</text>
+          <text x="111" y="62" textAnchor="middle" className="art-mono" fill={c}>1999¢</text>
+        </g>
+      )}
+      {lessonId === 'filter-map-reduce' && (
+        <g>
+          {[0, 1, 2, 3].map((i) => <rect key={i} x="12" y={18 + i * 17} width="26" height="13" rx="3" fill={i % 2 ? 'var(--line-strong)' : c} opacity={i % 2 ? 1 : 0.8} />)}
+          <path d="M44 20 L 64 38 V 62 L 44 80" fill="none" stroke="var(--ink-3)" strokeWidth="1.5" />
+          <text x="54" y="14" textAnchor="middle" className="art-mono art-mono--xs" fill="var(--ink-3)">filter</text>
+          {[0, 1].map((i) => <rect key={i} x="72" y={38 + i * 17} width="26" height="13" rx="3" fill={c} opacity=".8" />)}
+          <text x="85" y="30" textAnchor="middle" className="art-mono art-mono--xs" fill="var(--ink-3)">map</text>
+          <path d="M104 50 H 116" stroke="var(--ink-3)" strokeWidth="1.5" /><path d="M112 46l4 4-4 4" fill="none" stroke="var(--ink-3)" strokeWidth="1.5" />
+          <rect x="120" y="38" width="30" height="24" rx="6" fill={c} />
+          <text x="135" y="54" textAnchor="middle" className="art-mono art-mono--sm" fill="var(--surface)">Σ</text>
+          <text x="135" y="30" textAnchor="middle" className="art-mono art-mono--xs" fill="var(--ink-3)">reduce</text>
+        </g>
+      )}
+      {lessonId === 'http-and-apis' && (
+        <g>
+          {card(10, 30, 42, 40, 6)}
+          <rect x="18" y="40" width="26" height="4" rx="2" fill="var(--line-strong)" /><rect x="18" y="48" width="18" height="4" rx="2" fill="var(--line)" />
+          {card(108, 30, 42, 40, 6)}
+          {[40, 48, 56].map((y) => <rect key={y} x="116" y={y} width="26" height="4" rx="2" fill="var(--line)" />)}
+          <path d="M56 42 H 102" stroke={c} strokeWidth="2" /><path d="M98 38l4 4-4 4" fill="none" stroke={c} strokeWidth="2" />
+          <rect x="62" y="30" width="30" height="10" rx="5" fill={c} /><text x="77" y="37.5" textAnchor="middle" className="art-text art-text--xs" fill="var(--surface)">POST</text>
+          <path d="M104 60 H 58" stroke="var(--ok)" strokeWidth="2" /><path d="M62 56l-4 4 4 4" fill="none" stroke="var(--ok)" strokeWidth="2" />
+          <text x="80" y="74" textAnchor="middle" className="art-mono art-mono--sm" fill="var(--ok)">201</text>
+        </g>
+      )}
+      {lessonId === 'validating-input' && (
+        <g>
+          {card(12, 22, 60, 56, 6)}
+          {[0, 1, 2].map((i) => (
+            <g key={i} transform={`translate(20 ${32 + i * 14})`}>
+              <rect width="34" height="8" rx="2" fill="var(--line)" />
+              {i === 1 ? <path d="M40 0l7 8M47 0l-7 8" stroke="var(--danger)" strokeWidth="1.8" strokeLinecap="round" /> : <path d="M40 4l3 3 5-6" fill="none" stroke="var(--ok)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />}
+            </g>
+          ))}
+          <g transform="translate(112 50)">
+            <path d="M0 -26 L 22 -18 V 2 C 22 16, 10 24, 0 28 C -10 24, -22 16, -22 2 V -18 Z" fill={c} />
+            <path d="M-9 0l6 6 12-13" fill="none" stroke="var(--surface)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+          </g>
         </g>
       )}
       {!HUE[lessonId] && card(40, 20, 80, 60, 8)}

@@ -3,7 +3,8 @@ import { ArrowRight, BookOpen, Map as MapIcon } from 'lucide-react';
 import { PageHeader, PathTag, ButtonLink } from '@/design/components';
 import { PathArt } from '@/design/illustrations/PathArt';
 import { PATHS } from '@/content/paths';
-import { LESSONS } from '@/content/lessons';
+import { LESSONS, FOUNDATION_LESSONS, pathLessons } from '@/content/lessons';
+import { useSettings } from '@/core/settings/SettingsContext';
 import { SKILLS, AREA_NAMES } from '@/content/skills';
 import { useLearning } from '@/core/learning/LearningContext';
 import { lessonResult } from '@/core/learning/mastery';
@@ -12,7 +13,10 @@ import { LessonCard } from './LessonCard';
 export function LearnPage() {
   const { events } = useLearning();
   const results = new Map(LESSONS.map((l) => [l.id, lessonResult(events, l)]));
-  const done = [...results.values()].filter((r) => r.complete).length;
+  const done = FOUNDATION_LESSONS.filter((l) => results.get(l.id)!.complete).length;
+  const { settings } = useSettings();
+  const current = settings.learning.currentPath;
+  const pathsOrdered = [...PATHS].sort((a, b) => (a.id === current ? -1 : b.id === current ? 1 : 0));
   const shared = SKILLS.filter((s) => s.paths.length === 4);
 
   return (
@@ -28,19 +32,36 @@ export function LearnPage() {
         <div className="section__head section__head--row">
           <div>
             <h2 id="found-h">Foundations</h2>
-            <p className="muted">Shared by every path. <span className="tabular">{done} of {LESSONS.length}</span> finished.</p>
+            <p className="muted">Shared by every path. <span className="tabular">{done} of {FOUNDATION_LESSONS.length}</span> finished.</p>
           </div>
           <Link to="/progress" className="link-quiet"><MapIcon size={15} aria-hidden="true" /> Skill map</Link>
         </div>
         <div className="lesson-grid">
-          {LESSONS.map((l) => (
+          {FOUNDATION_LESSONS.map((l) => (
             <LessonCard key={l.id} lesson={l} result={results.get(l.id)!} ready={l.prerequisites.every((p) => results.get(p)?.complete)} />
           ))}
         </div>
       </section>
 
+      {pathsOrdered.map((p) => (
+        <section key={p.id} className="section" aria-labelledby={`pl-${p.id}`}>
+          <div className="section__head section__head--row">
+            <div>
+              <h2 id={`pl-${p.id}`}>{p.name} lessons {p.id === current && <span className="chip chip--status" data-status="independent"><span className="chip__dot" aria-hidden="true" />Your path</span>}</h2>
+              <p className="muted">{p.pitch}</p>
+            </div>
+            <Link to={`/learn/path/${p.id}`} className="link-quiet">Milestones <ArrowRight size={14} aria-hidden="true" /></Link>
+          </div>
+          <div className="lesson-grid">
+            {pathLessons(p.id).map((l) => (
+              <LessonCard key={l.id} lesson={l} result={results.get(l.id)!} ready={l.prerequisites.every((x) => results.get(x)?.complete)} />
+            ))}
+          </div>
+        </section>
+      ))}
+
       <section className="section" aria-labelledby="paths-h">
-        <div className="section__head"><h2 id="paths-h">Project paths</h2><p className="muted">Path-specific lessons arrive in Phase 4. The foundations above are where every path starts.</p></div>
+        <div className="section__head"><h2 id="paths-h">Project paths</h2><p className="muted">Choose one to focus on. Foundations and skills carry over if you switch.</p></div>
         <div className="path-showcase">
           {PATHS.map((p) => (
             <Link key={p.id} to={`/learn/path/${p.id}`} className="showcase-card">

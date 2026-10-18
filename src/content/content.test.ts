@@ -27,8 +27,8 @@ describe('curriculum data', () => {
     for (const l of LESSONS) expect(ids, l.id).toContain(l.skill);
   });
 
-  it('has ten valid lessons with unique ids and real, earlier prerequisites', () => {
-    expect(LESSONS).toHaveLength(10);
+  it('has valid lessons with unique ids and real, earlier prerequisites', () => {
+    expect(LESSONS.length).toBeGreaterThanOrEqual(18);
     expect(lessonIds.size).toBe(LESSONS.length);
     LESSONS.forEach((l, i) => {
       for (const p of l.prerequisites) {
@@ -69,5 +69,22 @@ describe('curriculum data', () => {
     expect(() => parseLessons([twoCorrect])).toThrow(/Lesson "broken" is invalid: .*exactly one option/);
     const badGap = { ...base, id: 'gap', activities: [{ kind: 'fill', id: 'f', prompt: 'p', code: 'no gap here', accepted: ['x'], explanation: 'e' }, base.activities[1]!] } as LessonInput;
     expect(() => parseLessons([badGap])).toThrow(/exactly one ___/);
+  });
+});
+
+describe('paths', () => {
+  it('give every path its own lessons and a first milestone with real content', async () => {
+    const { LAB_EXERCISES } = await import('./lab/exercises');
+    const labIds = new Set(LAB_EXERCISES.map((x) => x.id));
+    const lessonIds = new Set(LESSONS.map((l) => l.id));
+    for (const p of PATHS) {
+      expect(LESSONS.filter((l) => l.path === p.id).length, p.id).toBeGreaterThanOrEqual(2);
+      const first = p.milestones[0]!;
+      expect(first.requires.lessons.length + first.requires.labs.length, p.id).toBeGreaterThan(0);
+      for (const id of first.requires.lessons) expect(lessonIds, `${p.id} → ${id}`).toContain(id);
+      for (const id of first.requires.labs) expect(labIds, `${p.id} → ${id}`).toContain(id);
+      if (first.project) expect(first.requires.labs).toContain(first.project);
+      expect(first.acceptance.length).toBeGreaterThan(0);
+    }
   });
 });

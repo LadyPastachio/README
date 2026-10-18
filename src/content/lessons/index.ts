@@ -9,8 +9,16 @@ import { lesson as jsonBasics } from './json-basics';
 import { lesson as htmlStructure } from './html-structure';
 import { lesson as whatAModelDoes } from './what-a-model-does';
 import { lesson as describingRequirements } from './describing-requirements';
+import { lesson as chessBoardAsData } from './chess-board-as-data';
+import { lesson as gameState } from './game-state';
+import { lesson as flexboxLayout } from './flexbox-layout';
+import { lesson as responsiveDesign } from './responsive-design';
+import { lesson as moneyMath } from './money-math';
+import { lesson as filterMapReduce } from './filter-map-reduce';
+import { lesson as httpAndApis } from './http-and-apis';
+import { lesson as validatingInput } from './validating-input';
 
-/** Lessons in suggested order. Add new lesson files here. */
+/** Lessons in suggested order: foundations first, then each path's lessons. Add new lesson files here. */
 const RAW: LessonInput[] = [
   howAPageReachesYou,
   valuesAndVariables,
@@ -22,6 +30,14 @@ const RAW: LessonInput[] = [
   htmlStructure,
   readingErrors,
   jsonBasics,
+  chessBoardAsData,
+  gameState,
+  flexboxLayout,
+  responsiveDesign,
+  moneyMath,
+  filterMapReduce,
+  httpAndApis,
+  validatingInput,
 ];
 
 /** Validates every lesson. A broken lesson fails loudly with its id and the problem. */
@@ -37,7 +53,12 @@ export function parseLessons(raw: LessonInput[]): Lesson[] {
 }
 
 export const LESSONS: Lesson[] = parseLessons(RAW);
+export const FOUNDATION_LESSONS: Lesson[] = LESSONS.filter((l) => !l.path);
 
 export function getLesson(id: string): Lesson | undefined {
   return LESSONS.find((l) => l.id === id);
+}
+
+export function pathLessons(pathId: string): Lesson[] {
+  return LESSONS.filter((l) => l.path === pathId);
 }

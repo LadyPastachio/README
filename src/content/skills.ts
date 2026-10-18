@@ -22,6 +22,7 @@ export const SKILLS: Skill[] = [
   { id: 'css-layout', name: 'CSS and layout', area: 'frontend', summary: 'Styling, flexbox, grid and responsive design.', prerequisites: ['html'], paths: ['web', 'finance', 'chess'] },
   { id: 'dom-events', name: 'DOM and events', area: 'frontend', summary: 'Changing the page in response to people.', prerequisites: ['html', 'js-functions'], paths: ['web', 'finance', 'chess'] },
   { id: 'accessibility', name: 'Accessibility', area: 'frontend', summary: 'Interfaces everyone can use, including by keyboard and screen reader.', prerequisites: ['html'], paths: ['web', 'finance'] },
+  { id: 'state', name: 'State and updates', area: 'frontend', summary: 'Keeping what the app remembers in one place and redrawing from it.', prerequisites: ['data-structures', 'js-functions'], paths: ['web', 'finance', 'chess'] },
   { id: 'typescript', name: 'TypeScript', area: 'frontend', summary: 'Types that catch mistakes before code runs.', prerequisites: ['js-functions', 'data-structures'], paths: ['web', 'finance', 'automation'] },
   { id: 'react', name: 'React components', area: 'frontend', summary: 'Building interfaces from reusable pieces with state.', prerequisites: ['dom-events'], paths: ['web', 'finance', 'chess'] },
   { id: 'json', name: 'JSON', area: 'data', summary: 'The text format most systems use to exchange data.', prerequisites: ['data-structures'], paths: ['web', 'finance', 'automation'] },

@@ -26,6 +26,12 @@ export interface Milestone {
   /** Provisional estimate at ~5–7 hours a week. Not a deadline. */
   estimate: string;
   skills: string[];
+  /** What completes this milestone. Empty lists mean its content isn't written yet. */
+  requires: { lessons: string[]; labs: string[] };
+  /** The Code Lab exercise that is the milestone's working deliverable, if any. */
+  project?: string;
+  /** What "done" means for the deliverable, in plain words. */
+  acceptance: string[];
 }
 
 export interface LearningPath {

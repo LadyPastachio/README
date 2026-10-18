@@ -6,7 +6,7 @@ import { PathArt } from '@/design/illustrations/PathArt';
 import { PATHS } from '@/content/paths';
 import { LESSONS, getLesson } from '@/content/lessons';
 import { SKILLS } from '@/content/skills';
-import { LAB_EXERCISES } from '@/content/lab/exercises';
+import { LAB_EXERCISES, getLabExercise } from '@/content/lab/exercises';
 import { certificationStatus } from '@/core/learning/certifications';
 import { Award } from 'lucide-react';
 import { useLearning } from '@/core/learning/LearningContext';
@@ -17,6 +17,7 @@ import { skillResult } from '@/core/learning/mastery';
 import { observe } from '@/core/learning/observations';
 
 const KIND = {
+  lab: { label: 'Code Lab project', icon: SquareTerminal },
   review: { label: 'Review', icon: Repeat },
   retry: { label: 'Try again', icon: RotateCcw },
   continue: { label: 'Continue', icon: Play },
@@ -24,14 +25,26 @@ const KIND = {
 } as const;
 
 function linkFor(r: Recommendation) {
+  if (r.kind === 'lab') return `/lab/${r.labId}`;
   return r.kind === 'review' ? '/review' : `/learn/lesson/${r.lessonId}`;
+}
+
+/** The picture for a recommendation: the lesson's concept art, or the path scene for a project. */
+function RecArt({ r, className }: { r: Recommendation; className: string }) {
+  return r.kind === 'lab' ? <PathArt path={r.path ?? getLabExercise(r.labId)?.path ?? 'chess'} className={className} /> : <LessonArt lessonId={r.lessonId} className={className} />;
+}
+
+function description(r: Recommendation): string | undefined {
+  if (r.kind === 'review') return 'One new question on this idea. Answer from memory: your first answer is the one that counts.';
+  if (r.kind === 'lab') return getLabExercise(r.labId)?.summary;
+  return getLesson(r.lessonId)?.objective;
 }
 
 export function HomePage() {
   const { events } = useLearning();
-  const { settings } = useSettings();
+  const { settings, updateLearning } = useSettings();
   const now = new Date();
-  const recs = recommend(events, LESSONS, settings.learning.dailyLoad, now);
+  const recs = recommend(events, LESSONS, settings.learning.dailyLoad, { labs: LAB_EXERCISES, paths: PATHS, currentPath: settings.learning.currentPath, now });
   const due = dueReviews(events, LESSONS, now);
   const upcoming = upcomingReviews(events, LESSONS, now).slice(0, 3);
   const [first, ...rest] = recs;
@@ -57,19 +70,17 @@ export function HomePage() {
           <h2 id="plan-h" className="visually-hidden">Recommended activities</h2>
           {first && (
             <Link to={linkFor(first)} className="feature-card">
-              <LessonArt lessonId={first.lessonId} className="feature-card__art" />
+              <RecArt r={first} className="feature-card__art" />
               <div className="feature-card__body">
                 <span className="kind-tag" data-kind={first.kind}>
                   {(() => { const I = KIND[first.kind].icon; return <I size={13} aria-hidden="true" />; })()}
                   {KIND[first.kind].label}
                 </span>
                 <h3>{first.title}</h3>
-                <p className="muted">
-                  {first.kind === 'review' ? 'One new question on this idea. Answer from memory: your first answer is the one that counts.' : getLesson(first.lessonId)?.objective}
-                </p>
+                <p className="muted">{description(first)}</p>
                 <div className="feature-card__why"><span className="eyebrow">Why this</span><span>{first.reason}</span></div>
                 <span className="btn btn--primary feature-card__cta">
-                  {first.kind === 'review' ? 'Start review' : first.kind === 'start' ? 'Start lesson' : 'Open lesson'} <ArrowRight size={16} aria-hidden="true" />
+                  {first.kind === 'review' ? 'Start review' : first.kind === 'lab' ? 'Open project' : first.kind === 'start' ? 'Start lesson' : 'Open lesson'} <ArrowRight size={16} aria-hidden="true" />
                 </span>
               </div>
             </Link>
@@ -79,9 +90,9 @@ export function HomePage() {
               {rest.map((r) => {
                 const I = KIND[r.kind].icon;
                 return (
-                  <li key={`${r.kind}-${r.lessonId}`}>
+                  <li key={`${r.kind}-${r.kind === 'lab' ? r.labId : r.lessonId}`}>
                     <Link to={linkFor(r)} className="plan-row">
-                      <LessonArt lessonId={r.lessonId} className="plan-row__art" />
+                      <RecArt r={r} className="plan-row__art" />
                       <span className="plan-row__text">
                         <span className="kind-tag kind-tag--quiet" data-kind={r.kind}><I size={12} aria-hidden="true" />{KIND[r.kind].label}</span>
                         <strong>{r.title}</strong>
@@ -119,6 +130,21 @@ export function HomePage() {
               </ul>
             )}
           </Panel>
+
+          {!settings.learning.currentPath && (
+            <div className="choose-path">
+              <span className="eyebrow">Choose a path</span>
+              <p className="small muted">Pick the project you most want to build. Home will then suggest its next steps. You can switch any time.</p>
+              <div className="choose-path__list">
+                {PATHS.map((p) => (
+                  <button key={p.id} type="button" className="choose-path__opt" data-path={p.id} onClick={() => updateLearning({ currentPath: p.id })}>
+                    <PathArt path={p.id} className="choose-path__art" />
+                    <span>{p.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {readyCerts.length > 0 && (
             <Link to="/progress/certifications" className="cert-home">

@@ -118,7 +118,7 @@ Short records of decisions that shape the project. Each says what was decided, w
 
 ## D14. Code Lab runs learner code in a sandboxed iframe
 
-**Decision:** Learner HTML, CSS and JavaScript run in `<iframe sandbox="allow-scripts allow-modals">` with no `allow-same-origin`, built with `srcdoc`. Inside it, a Content-Security-Policy blocks all network requests. JavaScript is parsed with acorn first: syntax errors are reported without running anything, and a guard is added to every loop so one that runs longer than a second is stopped. The page and the app talk only through `postMessage`, and the app ignores messages that don't come from the current run's iframe.
+**Decision:** Learner HTML, CSS and JavaScript run in `<iframe sandbox="allow-scripts allow-modals allow-forms">` with no `allow-same-origin`, built with `srcdoc`. (`allow-forms` was added in Phase 4: without it, submit events never fire. The CSP's `form-action 'none'` still stops any form sending data, and unhandled submits are cancelled.) Inside it, a Content-Security-Policy blocks all network requests. JavaScript is parsed with acorn first: syntax errors are reported without running anything, and a guard is added to every loop so one that runs longer than a second is stopped. The page and the app talk only through `postMessage`, and the app ignores messages that don't come from the current run's iframe.
 
 **Why:** Without `allow-same-origin` the preview gets an opaque origin, so the browser itself prevents it from reading the app, its storage or cookies. That's stronger than anything our own code could promise. Nothing runs on a server, so there is no server to attack. Browser tests confirm the boundaries: reading the parent page, local storage or the network all fail.
 
@@ -139,3 +139,15 @@ Short records of decisions that shape the project. Each says what was decided, w
 **Why:** Recommendations must never be invented, and "ready to consider" must not be read as "ready to pass". Most certifications need projects or study beyond this academy, so each card says what else is needed and to confirm prices on the provider's site.
 
 **Maintenance:** Prices and exam versions change (for example, Microsoft replaced AI-900 with AI-901, and CompTIA Security+ V8 is expected around November 2026). Re-check the sources and update `VERIFIED_ON` every few months.
+
+## D17. Path content extends shared skills without gating them
+
+**Decision:** Lessons can belong to a path (`path` field) or be shared foundations. A skill's status is decided by its foundation lessons plus any path lessons or lab exercises you've started. Path content you haven't touched never blocks a shared skill. Milestones list required lessons and lab exercises; shared lessons finished once count in every path. Path lessons are never skipped as "already covered", because they teach things the foundations don't (cents in Finance, board indexes in Chess).
+
+**Why:** Learners on different paths must be able to demonstrate the same shared skill, and switching paths must keep everything already done, without letting a generic lesson stand in for path-specific knowledge. Tests caught both failure modes during Phase 4.
+
+## D18. Time estimates are ranges, from lesson minutes and weekly hours
+
+**Decision:** Remaining time for a milestone = remaining lesson and exercise minutes × 2.5 (practice, mistakes, review) ÷ your weekly hours, shown as a range from 0.75× to 1.5×. The provisional path timelines from the master plan stay alongside as the longer view.
+
+**Why:** People vary a lot; a single number would read as a promise. The factor is deliberately generous and should be tuned once real timing data exists.

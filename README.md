@@ -2,13 +2,17 @@
 
 A personal, project-based academy for learning software engineering and AI systems engineering, built as a real application you can use, read and improve.
 
-> **Status: Phase 3 complete (Code Lab and certification recommendations).** See [ROADMAP.md](ROADMAP.md) for what is built, what is planned, and what comes next. "Atelier Academy" is a working name; change it in `src/app/navigation.ts` and `index.html`.
+> **Status: Phase 4 complete (four distinct paths with milestones).** See [ROADMAP.md](ROADMAP.md) for what is built, what is planned, and what comes next. "Atelier Academy" is a working name; change it in `src/app/navigation.ts` and `index.html`.
 
 ## What works today
 
-- **Code Lab**: write real HTML, CSS and JavaScript with a proper editor, live preview, console and plain-language errors that link to the line. Code runs in a sealed sandbox, and runaway loops are stopped automatically. 8 exercises (build, debug, predict, refactor) with automatic checks, plus a playground
+- **Code Lab**: write real HTML, CSS and JavaScript with a proper editor, live preview, console and plain-language errors that link to the line. Code runs in a sealed sandbox, and runaway loops are stopped automatically. exercises (build, debug, predict, refactor) with automatic checks
 - **Certification recommendations**: 12 certifications (freeCodeCamp, GitHub, Anthropic, AWS, Microsoft, Meta, IAAP, CompTIA) matched to your demonstrated skills, with cost, format, effort, what else to prepare, and sources. You're prompted when you've demonstrated every skill one needs
-- **10 complete foundation lessons**: how the web works, values and variables, conditions, functions, arrays and objects, reading errors, JSON, HTML structure, what a language model does, and writing precise requirements
+- **Four distinct project paths**, each with its own lessons and Code Lab projects and a first milestone that ends in working software: a responsive profile page (Website), a transaction tracker with a monthly summary (Finance), a board where pieces move with clicks (Chess), and a simulated lead workflow that answers only from approved knowledge (Automation)
+- **Milestone tracking** with time estimates at your weekly hours, a "Make this my path" choice, and switching paths without losing anything
+- **18 lessons**: 10 shared foundations plus 2 per path
+- **17 Code Lab exercises** with automatic checks, plus a playground
+- **Skill map**: all 31 skills arranged by what builds on what, colored by your status
 - **Six activity types**: predict the output, find the bug, fill the gap, put steps in order, check your understanding, explain it yourself
 - **Everything you do is saved**: answers, hints used, confidence, solutions shown, your explanations
 - **Mastery calculated from evidence**: five statuses from "Not introduced" to "Retained over time", each with a plain-language reason
@@ -18,7 +22,7 @@ A personal, project-based academy for learning software engineering and AI syste
 - **Learning profile**: what you say helps, kept separate from what your activity shows
 - **Learning settings**: daily load, lesson order (explain first or try first), when hints and solutions appear, confidence check
 - **Illustrated, responsive design**: a drawn scene for each project and a concept picture for each lesson, highlighted code panels, light and dark themes
-- Search, glossary (26 terms), skill map (30 skills), appearance and accessibility settings, backup and restore, delete local data
+- Search, glossary (26 terms), project notes (design, known issues, improvements), appearance and accessibility settings, backup and restore, delete local data
 
 Anything not built yet is marked with a **Phase N** label in the app. Nothing pretends to work.
 

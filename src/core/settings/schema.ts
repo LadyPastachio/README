@@ -38,6 +38,10 @@ export const learningSchema = z.object({
   lessonOrder: z.enum(['explain-first', 'try-first']).catch('explain-first'),
   /** Ask "how sure are you?" before checking an answer. */
   askConfidence: z.boolean().catch(true),
+  /** The project path you're focusing on. null = not chosen yet; switch any time. */
+  currentPath: z.enum(['web', 'finance', 'chess', 'automation']).nullable().catch(null),
+  /** Hours a week you expect to study. Only used for time estimates. */
+  weeklyHours: z.number().int().min(1).max(40).catch(6),
 });
 
 export const EXPLANATION_FORMATS = ['diagrams', 'worked-examples', 'step-by-step', 'analogies', 'experiments', 'short-text'] as const;

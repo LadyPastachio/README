@@ -8,6 +8,7 @@ import { certificationStatus } from '@/core/learning/certifications';
 import { Award } from 'lucide-react';
 import type { SkillArea } from '@/content/types';
 import { useScrollToHash } from '@/app/useScrollToHash';
+import { SkillMap } from './SkillMap';
 import { useLearning } from '@/core/learning/LearningContext';
 import { useSettings } from '@/core/settings/SettingsContext';
 import { skillResult, lessonResult } from '@/core/learning/mastery';
@@ -70,6 +71,11 @@ export function ProgressPage() {
           ))}
         </ul>
       </Panel>
+
+      <section className="section section--tight" aria-labelledby="map-h">
+        <div className="section__head"><h2 id="map-h">Skill map</h2></div>
+        <SkillMap statusOf={(id) => skills.find((x) => x.skill.id === id)?.result.status ?? 'none'} />
+      </section>
 
       <Panel as="section" className="cert-summary section--tight" aria-labelledby="certs-h">
         <div className="panel__head">

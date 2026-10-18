@@ -41,7 +41,7 @@ test.describe('sandbox', () => {
     await expect(c.getByText('network reached')).toHaveCount(0);
     await expect(c.getByText(/storage readable|parent title/)).toHaveCount(0);
     expect(await page.evaluate(() => localStorage.getItem('academy:test-marker'))).toBe('keep-me');
-    await expect(page.locator('iframe.lab-frame')).toHaveAttribute('sandbox', 'allow-scripts allow-modals');
+    await expect(page.locator('iframe.lab-frame')).toHaveAttribute('sandbox', 'allow-scripts allow-modals allow-forms');
   });
 
   test('an infinite loop is stopped and the app stays responsive', async ({ page }) => {
